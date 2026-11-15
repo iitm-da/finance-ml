@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-15 14:41 UTC",
+ "generated": "2026-11-15 14:42 UTC",
  "items": [
   {
    "path": "lloyds_forecasting_and_generative_models.html",
@@ -10,7 +10,7 @@
    "section": "Time series forecasting \u00b7 generative models",
    "kind": "deck",
    "size": 663843,
-   "updated": ""
+   "updated": "2026-11-15"
   },
   {
    "path": "lloyds_forecasting_and_generative_models.ipynb",
@@ -19,7 +19,7 @@
    "section": "Time series forecasting \u00b7 generative models",
    "kind": "notebook",
    "size": 80236,
-   "updated": ""
+   "updated": "2026-11-15"
   }
  ]
 }
