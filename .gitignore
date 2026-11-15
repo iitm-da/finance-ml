@@ -1,0 +1,5 @@
+__pycache__/
+.ipynb_checkpoints/
+lightning_logs/
+build/_js*.js
+build/*.log
