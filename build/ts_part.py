@@ -422,6 +422,116 @@ for k in FC:
 APP['week'] = rows
 pd.DataFrame(rows, columns=['model', 'MASE, days 1 to 7', 'MASE, days 8 to 14'])
 
+# %% [markdown]
+# ## Applications: ATM cash
+#
+# The same four steps on a second problem. `data/atm.csv` holds the cash withdrawn each day at 200 ATMs over two
+# years, in GBP thousand; 20 of the ATMs opened 90 days before the test period. Forecasts are issued once a week
+# for the next 7 days, and the last 91 days are the test.
+
+# %%
+from sklearn.ensemble import HistGradientBoostingRegressor as HGB
+atm = pd.read_csv('data/atm.csv', parse_dates=['date']).sort_values(['atm_id', 'date']).reset_index(drop=True)
+A_TEST = 91
+d0 = atm.date.min(); atm['di'] = (atm.date - d0).dt.days
+ti = int(atm.di.max()) - A_TEST + 1                              # first test day
+NEW = set(atm.groupby('atm_id').di.min().loc[lambda s: s > 0].index)
+atm['kind_c'] = atm.kind.astype('category').cat.codes
+atm['atm_c'] = atm.atm_id.astype('category').cat.codes
+atm['origin'] = atm.di - ((atm.di - ti) % 7)                     # the weekly forecast this day belongs to
+atm['h'] = atm.di - atm.origin + 1                               # 1 to 7 days ahead
+g = atm.groupby('atm_id').withdrawn
+atm['naive'] = g.shift(7)                                        # seasonal naive: the same weekday last week
+atm['r28'] = g.transform(lambda s: s.shift(1).rolling(28, min_periods=14).mean())
+lvl = atm.loc[atm.h == 1, ['atm_id', 'origin', 'r28']].rename(columns={'r28': 'level'})
+atm = atm.merge(lvl, on=['atm_id', 'origin'], how='left').dropna(subset=['level', 'naive'])
+a_tr, a_te = atm[atm.di < ti], atm[atm.di >= ti].copy()
+print('%d ATMs, %d of them new | training rows %d, test rows %d | training days for a new ATM: %d'
+      % (atm.atm_id.nunique(), len(NEW), len(a_tr), len(a_te), a_tr[a_tr.atm_id.isin(NEW)].groupby('atm_id').size().max()))
+
+# %%
+# one shared model for all 200 ATMs, one fit per quantile; and one median model per ATM on its own history
+FEAT = ['dow', 'is_holiday', 'is_payday', 'since_payday', 'december', 'h', 'level', 'kind_c', 'atm_c']
+LOCAL = FEAT[:7]
+QS = [50, 80, 90, 95, 99]
+t0 = time.time()
+for q in QS:
+    mdl = HGB(loss='quantile', quantile=q / 100, max_iter=400, learning_rate=.06, random_state=0,
+              categorical_features=[FEAT.index(c) for c in ('dow', 'kind_c', 'atm_c')]).fit(a_tr[FEAT], a_tr.withdrawn)
+    a_te[f'q{q}'] = mdl.predict(a_te[FEAT])
+t_shared = time.time() - t0
+t0 = time.time()
+a_te['local'] = np.nan
+for a, part in a_tr.groupby('atm_id'):
+    mm = HGB(loss='quantile', quantile=.5, max_iter=80, learning_rate=.1, random_state=0,
+             categorical_features=[0]).fit(part[LOCAL], part.withdrawn)
+    a_te.loc[a_te.atm_id == a, 'local'] = mm.predict(a_te.loc[a_te.atm_id == a, LOCAL])
+t_local = time.time() - t0
+a_scale = (a_tr.withdrawn - a_tr.naive).abs().groupby(a_tr.atm_id).mean()
+a_te['sc'] = a_te.atm_id.map(a_scale)
+is_new = a_te.atm_id.isin(NEW)
+def a_mase(col, mask):
+    d = a_te[mask]
+    return float(((d.withdrawn - d[col]).abs() / d.sc).groupby(d.atm_id).mean().mean())
+rows = [[nm, round(a_mase(c, ~is_new), 3), round(a_mase(c, is_new), 3), round(a_mase(c, is_new | ~is_new), 3)]
+        for nm, c in [('Seasonal naive', 'naive'), ('One model per ATM', 'local'), ('One shared model', 'q50')]]
+print('shared model: %.0f s for %d quantiles | 200 models, one per ATM: %.0f s' % (t_shared, len(QS), t_local))
+pd.DataFrame(rows, columns=['MASE', '180 established ATMs', '20 new ATMs', 'all 200'])
+
+# %%
+# backtest of the P95, ATM by ATM: it should be exceeded on 5% of days
+above95 = (a_te.withdrawn > a_te.q95)
+per_atm = (above95.groupby(a_te.atm_id).sum()).astype(int)
+print('all ATM-days: above the P95 on %.2f%% | by quantile: %s'
+      % (above95.mean() * 100, ', '.join('P%d %.1f%%' % (q, (a_te.withdrawn > a_te[f"q{q}"]).mean() * 100) for q in QS)))
+print('ATMs by number of days above the P95, out of 91:')
+print(per_atm.value_counts().sort_index().to_string())
+print('ATMs with 10 or more days above (binomial p < 0.02 for a true 5%%): %d' % int((per_atm >= 10).sum()))
+
+# %%
+# replenishment: every R days an ATM is topped up to the sum of the next R daily forecasts at one quantile
+Dm = a_te.pivot(index='di', columns='atm_id', values='withdrawn').values
+Fq = {q: a_te.pivot(index='di', columns='atm_id', values=f'q{q}').values for q in QS}
+def replenish(q, R, keep=None):
+    cash = np.zeros(Dm.shape[1]); out_days = unmet = idle = loaded = 0.0; tr_ = []
+    for d in range(A_TEST):
+        if d % R == 0:
+            target = Fq[q][d:d + R].sum(axis=0)
+            loaded += np.clip(target - cash, 0, None).sum(); cash = np.maximum(cash, target)
+        start = cash.copy()
+        short = np.clip(Dm[d] - cash, 0, None)
+        out_days += (short > 0).sum(); unmet += short.sum()
+        cash = np.clip(cash - Dm[d], 0, None); idle += cash.sum()
+        if keep is not None:
+            tr_.append([round(float(start[keep]), 1), round(float(cash[keep]), 1), int(short[keep] > 0)])
+    n_ = Dm.size
+    return {'out': round(out_days / n_ * 100, 2), 'unmet': round(unmet / Dm.sum() * 100, 2),
+            'idle': round(idle / n_, 1), 'visits': round(7 / R, 2), 'trace': tr_}
+ids = sorted(a_te.atm_id.unique())
+KEEP = next(i for i, a in enumerate(ids) if a not in NEW and a_te.loc[a_te.atm_id == a, 'kind'].iloc[0] == 'residential')
+GRID = {f'{q}_{R}': replenish(q, R, KEEP) for q in QS for R in (1, 2, 3, 7)}
+pol = pd.DataFrame([[f'P{k.split("_")[0]}', int(k.split('_')[1]), v['out'], v['unmet'], v['idle'], v['visits']] for k, v in GRID.items()],
+                   columns=['quantile', 'days between visits', '% ATM-days empty', '% of demand not served',
+                            'cash left at day end, GBP k per ATM', 'visits per ATM per week'])
+print('mean withdrawn per ATM per day in the test: %.1f' % Dm.mean())
+pol
+
+# %%
+# kept for the slides
+ex = {}
+for kd in ['high_street', 'residential', 'transport']:
+    a = next(a for a in ids if a not in NEW and atm.loc[atm.atm_id == a, 'kind'].iloc[0] == kd)
+    p = atm[(atm.atm_id == a) & (atm.di >= ti - 42) & (atm.di < ti)]
+    ex[kd] = {'id': a, 'y': p.withdrawn.round(1).tolist(), 'dow': p.dow.tolist(), 'pay': p.is_payday.tolist(),
+              'hol': p.is_holiday.tolist(), 'dates': [str(x.date()) for x in p.date]}
+APP['atm'] = {'n': len(ids), 'n_new': len(NEW), 'days': int(atm.di.max()) + 1, 'test': A_TEST, 'ex': ex,
+              'kinds': a_te.groupby('kind').atm_id.nunique().to_dict(), 'mase': rows,
+              't_shared': round(t_shared), 't_local': round(t_local),
+              'above': {str(q): round(float((a_te.withdrawn > a_te[f'q{q}']).mean() * 100), 2) for q in QS},
+              'per_atm': per_atm.tolist(), 'new_train_days': int(a_tr[a_tr.atm_id.isin(NEW)].groupby('atm_id').size().max()),
+              'grid': GRID, 'keep': ids[KEEP], 'mean_day': round(float(Dm.mean()), 1)}
+print('kept', list(APP['atm']))
+
 # %% [build]
 # everything the deck needs
 j = SEGS.index(HEAD)

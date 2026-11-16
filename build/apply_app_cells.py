@@ -23,7 +23,7 @@ for h, b in zip(heads, bodies):
         cells.append(nbformat.v4.new_markdown_cell('\n'.join(l[2:] if l.startswith('# ') else l.lstrip('#') for l in b.split('\n'))))
     else:
         cells.append(nbformat.v4.new_code_cell(b))
-setup = nbformat.v4.new_code_cell('''import json, numpy as np, pandas as pd
+setup = nbformat.v4.new_code_cell('''import json, time, numpy as np, pandas as pd
 _m = json.load(open('build/m_ts.json')); _z = np.load('build/ts_fc.npz')
 SEGS, HEAD, H, ORIGINS = _m['segs'], _m['head'], _m['H'], _m['ORIGINS']
 ACT, Q = _z['ACT'], _z['Q']
@@ -34,7 +34,7 @@ NAMES = {'naive': 'Seasonal naive', 'arima': 'ARIMA', 'prophet': 'Prophet', 'ari
          'lstm': 'LSTM', 'tft': 'TFT (median)'}''')
 dump = nbformat.v4.new_code_cell("json.dump(APP, open('build/_app.json', 'w'))")
 tmp = nbformat.v4.new_notebook(cells=[setup] + cells + [dump])
-NotebookClient(tmp, timeout=600, kernel_name='python3', resources={'metadata': {'path': ROOT}}).execute()
+NotebookClient(tmp, timeout=3600, kernel_name='python3', resources={'metadata': {'path': ROOT}}).execute()
 done = tmp.cells[1:-1]
 
 nb = nbformat.read(NB, as_version=4)

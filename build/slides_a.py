@@ -599,7 +599,7 @@ add(slide('Applications', 'Applications', 'Forecasting problems in a bank',
           '<div class="card g big"><h3>Demand forecasting</h3><p><b>Target:</b> cash drawn per ATM, calls per hour, logins per minute, mortgage applications per week.<br/><b>Horizon:</b> hours to weeks.<br/><b>Known in advance:</b> calendar, campaigns, rate announcements.<br/><b>Feeds:</b> cash replenishment, staffing, capacity.</p></div>'
           '<div class="card r big"><h3>Market forecasting</h3><p><b>Target:</b> volatility, volumes, spreads. Price direction has almost no forecastable signal at a daily horizon.<br/><b>Horizon:</b> minutes to days.<br/><b>Known in advance:</b> central bank dates, data releases, expiries.<br/><b>Feeds:</b> risk limits, margin, hedging.</p></div>'
           '</div>'
-          '<div class="cols nat"><div class="callout"><b>Many related series favour one shared deep model.</b> 5,000 ATMs or 400 branches are where an LSTM or TFT trained across all of them beats 5,000 separate ARIMA fits, in accuracy and in the number of models to maintain.</div>'
+          '<div class="cols nat"><div class="callout"><b>Many related series favour one shared model.</b> With 5,000 ATMs or 400 branches, one model trained across all of them replaces 5,000 separate fits. The ATM slides measure this on 200 ATMs.</div>'
           '<div class="callout"><b>The cost of an error is lopsided.</b> An empty ATM costs more than a full one, and a funding shortfall more than idle cash. That asymmetry is the q in the pinball loss, which is why these problems are forecast as quantiles.</div></div>'
           '<div class="callout warn sm">In every case the test is the one used today: hold back the most recent period, forecast it from an earlier origin, and compare against the seasonal naive forecast.</div>'))
 
@@ -787,6 +787,100 @@ add(slide('Applications', 'Applications &#183; Horizon', 'Example',
           '<div class="callout warn sm"><b>Which horizon the desk needs</b> depends on the decision: tomorrow for intraday funding, two weeks for the funding plan, 30 days for a liquidity ratio. Only 14 days was tested here. A 30-day claim needs its own backtest.</div>'
           '</div></div>'))
 
+
+# ================================================================ ATM cash: concept
+AT = AP['atm']
+KINDLAB = {'high_street': 'high street', 'residential': 'residential', 'transport': 'transport hub'}
+KCOL = {'high_street': BLUE, 'residential': GREEN, 'transport': PURP}
+s = ''
+for i_, kd in enumerate(('high_street', 'residential', 'transport')):
+    e = AT['ex'][kd]; y0 = 8 + i_ * 146; nd = len(e['y']); top = math.ceil(max(e['y']) / 10) * 10
+    px = lambda d: 52 + (d + 0.5) / nd * 636
+    py = lambda v: y0 + 16 + (top - v) / top * 96
+    s += Rect(52, y0 + 16, 636, 96, '#FFFFFF', HAIR, 1)
+    s += T(58, y0 + 29, f"{KINDLAB[kd]} · {e['id']} · {AT['kinds'][kd]} ATMs of this kind", 10.5, KCOL[kd], 'start', MONO, 700)
+    s += T(46, y0 + 20, str(top), 9.5, SOFT, 'end', MONO) + T(46, y0 + 115, '0', 9.5, SOFT, 'end', MONO)
+    for d in range(nd):
+        wkend = e['dow'][d] >= 5
+        s += Rect(px(d) - 6, py(e['y'][d]), 12, y0 + 112 - py(e['y'][d]), KCOL[kd], extra=f'fill-opacity="{.4 if wkend else .85}"')
+        tag = 'H' if e['hol'][d] else 'P' if e['pay'][d] else ''
+        if tag:
+            s += Rect(px(d) - 6, y0 + 115, 12, 12, RED if tag == 'H' else GREEN) + T(px(d), y0 + 124.5, tag, 8.5, '#FFFFFF', 'middle', MONO, 700)
+        elif e['dow'][d] == 0:
+            s += T(px(d), y0 + 124.5, e['dates'][d][8:] + '/' + e['dates'][d][5:7], 8.5, SOFT, 'middle', MONO)
+add(slide('Applications', 'Applications &#183; ATM cash', 'Concept',
+          f"A second problem with the same shape. {AT['n']} ATMs, cash withdrawn per day for {AT['days']} days, and a van that loads each one for the days until its next visit.",
+          '<div class="cols w6040">' +
+          fig(svg(700, 446, s, 'Six weeks of daily withdrawals at three ATMs'), 'GBP thousand withdrawn per day, the 6 weeks before the test &#183; pale bars are weekends &#183; <span class="tag g">P</span>payday <span class="tag r">H</span>bank holiday') +
+          '<div class="colstack fill"><div class="kv" style="grid-template-columns:1fr 1fr">' +
+          tile('ATMs', str(AT['n']), 'b') + tile('opened 90 days before the test', str(AT['n_new']), 'bad') +
+          tile('mean withdrawn per day', f"{AT['mean_day']:.1f}", '') + tile('test days', str(AT['test']), '') + '</div>'
+          '<div class="callout sm"><b>The decision is the load.</b> Too little and the ATM is empty before the van returns. Too much and cash sits in a box earning nothing. A third cost is new here: each visit is paid for.</div>'
+          '<div class="callout sm"><b>The week differs by site.</b> A transport hub is busy Monday to Friday, a high street on Friday and Saturday, and a residential ATM after payday.</div>'
+          f"<div class=\"callout warn sm\"><b>{AT['n_new']} ATMs are new.</b> Each has {AT['new_train_days']} days to train on, so a model fitted to one of them alone learns its payday and its week from those {AT['new_train_days']} days.</div>"
+          '</div></div>'))
+
+# ================================================================ ATM cash: one shared model (staged)
+AM = {r_[0]: r_ for r_ in AT['mase']}
+order = ['Seasonal naive', 'One model per ATM', 'One shared model']; mcol = ['#7C8C95', AMBER, GREEN]
+def mgroup(y, idx, title):
+    o = T(10, y, title, 11, SOFT, 'start', MONO, 700)
+    for i_, (nm, c) in enumerate(zip(order, mcol)):
+        v = AM[nm][idx]; yy = y + 14 + i_ * 46
+        o += T(178, yy + 23, nm, 12, INK, 'end', MONO, 500) + Rect(186, yy, 420 * v / 1.1, 36, c)
+        o += T(186 + 420 * v / 1.1 + 8, yy + 24, f'{v:.3f}', 16, INK, 'start', MONO, 700)
+    return o
+s = G_(0, mgroup(22, 1, f"MASE, {AT['n'] - AT['n_new']} ESTABLISHED ATMS")) + G_(1, mgroup(232, 2, f"MASE, {AT['n_new']} NEW ATMS, {AT['new_train_days']} TRAINING DAYS EACH"))
+add(slide('Applications', 'Applications &#183; ATM cash', 'Example',
+          f"One model trained on all {AT['n']} ATMs scores MASE {AM['One shared model'][3]:.3f}. {AT['n']} models, one per ATM, score {AM['One model per ATM'][3]:.3f}, and the seasonal naive forecast {AM['Seasonal naive'][3]:.3f}.",
+          '<div class="cols w6040">' + fig(svg(700, 420, s, 'MASE of three forecasts for established and new ATMs'), 'gradient-boosted trees, median forecast, 7 days ahead, 13 weekly origins') +
+          '<div class="colstack fill">'
+          '<div class="callout sm"><b>Same model class, same inputs.</b> Weekday, payday, bank holiday, December, days ahead and the ATM&#8217;s mean over the last 28 days. The shared model also reads the kind of site and the ATM id.</div>'
+          f"<div class=\"callout sm\"><b>Pooling helps the established ATMs too:</b> {AM['One shared model'][1]:.3f} against {AM['One model per ATM'][1]:.3f}. A payday at one residential ATM teaches the model about the other {AT['kinds']['residential'] - 1}.</div>"
+          f"<div class=\"callout good sm\" data-at=\"1\"><b>New ATMs: {AM['One shared model'][2]:.3f} against {AM['One model per ATM'][2]:.3f}.</b> The shared model forecasts an ATM with {AT['new_train_days']} days of history almost as well as the per-ATM models forecast one with two years ({AM['One model per ATM'][1]:.3f}).</div>"
+          f"<div class=\"callout sm\" data-at=\"1\"><b>One model to maintain.</b> The shared fit took {AT['t_shared']} seconds for five quantiles; the {AT['n']} separate fits took {AT['t_local']} seconds for the median alone.</div>"
+          '</div></div>' + bld(1), 'build'))
+
+# ================================================================ ATM cash: test
+PA = AT['per_atm']; mxd = max(PA); exp_d = 0.05 * AT['test']
+cw_ = 31; x0_ = 44; base = 372
+s = ''
+for d in range(mxd + 1):
+    k = sum(1 for v in PA if v == d)
+    for r_ in range(k):
+        s += Rect(x0_ + d * cw_ + 2, base - (r_ + 1) * 9, cw_ - 4, 7.5, RED if d >= 10 else '#8FA0A9')
+    s += T(x0_ + d * cw_ + cw_ / 2, base + 14, str(d), 10, INK if d % 5 == 0 or d >= 10 else SOFT, 'middle', MONO)
+    if k:
+        s += T(x0_ + d * cw_ + cw_ / 2, base - k * 9 - 5, str(k), 10, RED if d >= 10 else SOFT, 'middle', MONO, 700)
+s += L(x0_, base, x0_ + (mxd + 1) * cw_, base, SOFT, 1)
+xe = x0_ + exp_d * cw_ + cw_ / 2
+s += L(xe, 20, xe, base, INK, 1.4, 'stroke-dasharray="4 3"') + T(xe + 6, 28, f'expected {exp_d:.2f} days, which is 5% of {AT["test"]}', 10.5, INK, 'start', MONO, 700)
+s += T(x0_ + (mxd + 1) * cw_, base + 30, 'days above the P95, out of 91', 10, SOFT, 'end', MONO)
+n_bad = sum(1 for v in PA if v >= 10)
+qrows = ''.join(f"<tr><td>P{q}</td><td class=\"r\">{100 - int(q)}%</td><td class=\"r\">{AT['above'][q]:.1f}%</td></tr>" for q in ('50', '80', '90', '95', '99'))
+add(slide('Applications', 'Applications &#183; ATM cash', 'Test',
+          f"Backtest the P95 one ATM at a time. Over all {AT['n'] * AT['test']:,} ATM-days it was exceeded on {AT['above']['95']:.1f}%, close to the 5% it promises. {n_bad} ATMs were above it on 10 days or more.",
+          '<div class="cols w6040">' + fig(svg(x0_ + (mxd + 1) * cw_ + 16, base + 36, s, 'ATMs by number of days above the P95'), 'one square is one ATM &#183; red: 10 or more days above') +
+          '<div class="colstack fill">'
+          f'<table class="d sm"><tr><th>forecast</th><th class="r">should be exceeded</th><th class="r">was exceeded</th></tr>{qrows}</table>'
+          f"<div class=\"callout warn sm\"><b>The average passes and {n_bad} ATMs fail.</b> With a true 5%, ten or more days above in 91 has a probability under 2% for one ATM. These {n_bad} run out more than their share however the fleet average looks.</div>"
+          '<div class="callout good sm">The backtest is run at the level the cash is held, which here is the single ATM. The red ATMs get a higher quantile or a look at what changed at the site.</div>'
+          '</div></div>'))
+
+# ================================================================ ATM cash: cost (widget)
+GR = AT['grid']
+atw = {'grid': GR, 'qs': ['50', '80', '90', '95', '99'], 'keep': AT['keep'], 'mean': AT['mean_day']}
+qb = ''.join(f'<button data-v="{q}"{" class=\"on\"" if q == "95" else ""}>P{q}</button>' for q in atw['qs'])
+rb = ''.join(f'<button data-v="{r_}"{" class=\"on\"" if r_ == 3 else ""}>every {r_} {"day" if r_ == 1 else "days"}</button>' for r_ in (1, 2, 3, 7))
+add(slide('Applications', 'Applications &#183; ATM cash', 'Cost',
+          f"Two choices: the quantile to load to and the days between visits. The P95 every 3 days leaves {GR['95_3']['out']:.2f}% of ATM-days empty and {GR['95_3']['idle']:.1f} thousand in each ATM at day end.",
+          f'<div class="wctl"><div class="seg" id="at-q">{qb}</div><div class="seg" id="at-r">{rb}</div>{JSB}</div>'
+          f"<div class=\"fig\"><div class=\"cap\">left: cash in one residential ATM over the 91 test days under the chosen policy &#160;|&#160; right: all 20 policies for the {AT['n']} ATMs, the chosen one circled</div>"
+          '<svg id="at-svg" viewBox="0 0 1120 280" width="100%" role="img" aria-label="ATM replenishment policies"></svg></div>'
+          '<div class="cols nat"><div class="out" id="at-out"></div>'
+          '<div class="colstack">'
+          f"<div class=\"callout sm\"><b>Fewer visits cost cash.</b> At the P95, a daily visit leaves {GR['95_1']['idle']:.1f} thousand in each ATM at day end and a weekly visit {GR['95_7']['idle']:.1f}. The van is saved 6 trips a week per ATM.</div>"
+          f"<div class=\"callout sm\"><b>A longer cycle is safer than its quantile says.</b> Loading to the P95 daily leaves {GR['95_1']['out']:.1f}% of ATM-days empty, and weekly {GR['95_7']['out']:.2f}%, because 7 daily P95s added are far above the P95 of a week.</div></div></div>" + jdata('at-data', atw)))
 # ================================================================ drawbacks
 pay_no, pay_cal = BYK['arima']['payday'][0], BYK['tft']['payday'][0]
 rows = [
@@ -804,4 +898,4 @@ add(slide('Applications', 'Applications &#183; Drawbacks', 'Drawbacks',
           table(['What goes wrong', 'Measured here', 'What the desk does'],
                 [(f'<b>{a_}</b>', b_, c_) for a_, b_, c_ in rows], 'd free lg') +
           '<div class="cols nat"><div class="callout"><b>The desk is scored on the breach rate and the cash held.</b> MASE ranks the models; the backtest and the margin decide how much money sits idle.</div>'
-          '<div class="callout good"><b>The same four steps carry to ATM cash and call volumes:</b> forecast a quantile, backtest it, price the two errors, forecast at the level of the decision.</div></div>'))
+          '<div class="callout good"><b>Four steps served both problems:</b> forecast a quantile, backtest it, price the two errors, forecast at the level of the decision.</div></div>'))

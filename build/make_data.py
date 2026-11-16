@@ -1,8 +1,9 @@
 """Simulated bank data for the day 1 session.
 
-Two files, one simulated bank:
+Three files, one simulated bank:
   data/cashflow.csv      daily net outflow, 6 segments of the deposit book, 2022-2025
   data/transactions.csv  card transactions over 180 days with a fraud label
+  data/atm.csv           cash withdrawn per day at 200 ATMs, 2024-2025
 
 Everything is simulated. Nothing here comes from a real bank.
 """
@@ -192,11 +193,54 @@ def simulate_transactions(n=100_000, days=180, seed=11):
     })
 
 
+# ------------------------------------------------------------------ ATM cash
+# cash withdrawn per ATM per day, GBP thousand. Three kinds of site with different weeks.
+ATM_KINDS = {
+    #               share  weekday profile (Mon..Sun), mean 1        payday  holiday  december
+    'high_street': (.40, [0.92, 0.95, 1.00, 1.05, 1.30, 1.38, 0.40],  0.35,   0.45,    0.30),
+    'residential': (.35, [0.95, 0.90, 0.92, 0.98, 1.25, 1.15, 0.85],  0.70,   0.90,    0.18),
+    'transport':   (.25, [1.22, 1.25, 1.24, 1.22, 1.32, 0.45, 0.30],  0.15,   0.30,    0.08),
+}
+
+
+def simulate_atm(n_atm=200, n_new=20, start='2024-01-01', end='2025-12-31', test_days=91, seed=23):
+    """n_new of the ATMs open 90 days before the test period, so they have a short history."""
+    rng = np.random.default_rng(seed)
+    cal = calendar(start, end)
+    n = len(cal); t = np.arange(n)
+    kinds = rng.choice(list(ATM_KINDS), size=n_atm, p=[v[0] for v in ATM_KINDS.values()])
+    new = set(rng.choice(n_atm, size=n_new, replace=False).tolist())
+    sp = cal.since_payday.values
+    frames = []
+    for a in range(n_atm):
+        _, wk, pay, hol, dec = ATM_KINDS[kinds[a]]
+        level = float(np.exp(rng.normal(np.log(14), 0.5)))            # GBP thousand a day
+        prof = np.array(wk) * np.exp(rng.normal(0, 0.08, 7)); prof = prof / prof.mean()
+        pay_a = pay * float(np.exp(rng.normal(0, 0.25)))
+        y = level * (1 - 0.00022 * t)                                 # cash use falls about 8% a year
+        y = y * np.where(cal.is_holiday.values == 1, hol, prof[cal.dow.values])
+        y = y * (1 + pay_a * np.select([sp == 0, sp == 1, sp == 2, sp == 3], [1.0, 0.6, 0.35, 0.15], 0.0))
+        y = y * (1 + dec * cal.december.values)
+        e = np.zeros(n); z = rng.standard_normal(n)                   # a slow local level, then day noise
+        for i in range(1, n):
+            e[i] = 0.9 * e[i - 1] + 0.05 * z[i]
+        y = y * np.exp(e) * rng.gamma(shape=22, scale=1 / 22, size=n)
+        f = pd.DataFrame({'date': cal.date, 'atm_id': f'ATM{a:03d}', 'kind': kinds[a],
+                          'withdrawn': np.round(y, 2)})
+        for c in ['dow', 'is_holiday', 'is_payday', 'since_payday', 'december']:
+            f[c] = cal[c].values
+        if a in new:
+            f = f.iloc[n - test_days - 90:]
+        frames.append(f)
+    return pd.concat(frames, ignore_index=True)
+
+
 if __name__ == '__main__':
     cf = simulate_cashflow()
     cf.to_csv(OUT + 'cashflow.csv', index=False)
     tx = simulate_transactions()
     tx.to_csv(OUT + 'transactions.csv', index=False)
+    simulate_atm().to_csv(OUT + 'atm.csv', index=False)
     print(cf.shape, tx.shape, 'fraud rate', round(tx.is_fraud.mean() * 100, 3), '%', tx.is_fraud.sum())
     print(cf.groupby('segment').net_outflow.agg(['mean', 'std', 'min', 'max']).round(1))
     print(tx.groupby('channel').is_fraud.agg(['mean', 'sum', 'size']).round(4))

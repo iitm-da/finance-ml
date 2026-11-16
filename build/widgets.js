@@ -240,3 +240,55 @@ function tx_(x,y,s,o){o=o||{};
   sl.oninput=draw;
   draw();
 })();
+
+/* ---------- ATM replenishment: quantile and days between visits ---------- */
+(function(){
+  const el=document.getElementById('at-data'); if(!el) return;
+  const D=JSON.parse(el.textContent), sv=document.getElementById('at-svg'), out=document.getElementById('at-out');
+  let q='95', R='3';
+  const W=1120,H=280,l=52,t=14,b=30, xa=690, xb=770, xr=1104;
+  const RC={'1':'#125F9E','2':'#0E7A55','3':'#8F5D0A','7':'#9B2C7E'};
+  const keys=Object.keys(D.grid);
+  const tmax=Math.ceil(Math.max(...keys.map(k=>Math.max(...D.grid[k].trace.map(v=>v[0]))))/50)*50;
+  const imax=Math.ceil(Math.max(...keys.map(k=>D.grid[k].idle))/20)*20, omax=Math.ceil(Math.max(...keys.map(k=>D.grid[k].out))/10)*10;
+  function draw(){
+    const g=D.grid[q+'_'+R], tr=g.trace, n=tr.length;
+    const X=d=>l+d/n*(xa-l), Y=v=>t+(tmax-v)/tmax*(H-t-b);
+    let s='<rect x="'+l+'" y="'+t+'" width="'+(xa-l)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    for(let v=0;v<=tmax;v+=tmax/5){ s+='<line x1="'+l+'" x2="'+xa+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#DCE4E8"/>'+tx_(l-6,Y(v)+3.5,v.toFixed(0),{a:'end'}); }
+    for(let w=0;w<13;w++) s+=tx_(X(w*7+3.5),H-b+13,'week '+(w+1),{a:'middle',z:9});
+    s+=tx_(l+6,t+13,'cash in '+D.keep+', GBP thousand',{});
+    let p='';
+    tr.forEach((v,d)=>{
+      if(v[2]) s+='<rect x="'+X(d).toFixed(1)+'" y="'+t+'" width="'+(X(d+1)-X(d)).toFixed(1)+'" height="'+(H-t-b)+'" fill="#B02F3B" fill-opacity=".22"/>';
+      p+=(d?'L':'M')+X(d).toFixed(1)+','+Y(v[0]).toFixed(1)+'L'+X(d+0.96).toFixed(1)+','+Y(v[1]).toFixed(1);
+    });
+    s+='<path d="'+p+'" fill="none" stroke="'+RC[R]+'" stroke-width="2" stroke-linejoin="round"/>';
+    const ne=tr.filter(v=>v[2]).length;
+    s+=tx_(xa-8,t+13,'red band: the ATM ran out that day ('+ne+' of '+n+')',{a:'end',c:'#B02F3B',w:700,z:10.5});
+    /* all 20 policies */
+    const PX=v=>xb+v/imax*(xr-xb), PY=v=>t+(omax-v)/omax*(H-t-b);
+    s+='<rect x="'+xb+'" y="'+t+'" width="'+(xr-xb)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    for(let v=0;v<=omax;v+=10) s+=tx_(xb-6,PY(v)+3.5,v.toFixed(0)+'%',{a:'end'});
+    for(let v=0;v<=imax;v+=imax/4) s+=tx_(PX(v),H-b+13,v.toFixed(0),{a:'middle',z:9.5});
+    s+=tx_(xb+6,t+13,'ATM-days empty',{})+tx_(xr,H-4,'cash left at day end, GBP k per ATM',{a:'end',z:9.5});
+    ['1','2','3','7'].forEach((r,i)=>{
+      const pts=D.qs.map(x=>D.grid[x+'_'+r]);
+      s+='<polyline points="'+pts.map(v=>PX(v.idle).toFixed(1)+','+PY(v.out).toFixed(1)).join(' ')+'" fill="none" stroke="'+RC[r]+'" stroke-width="1.2" stroke-opacity=".6"/>';
+      pts.forEach(v=>{s+='<circle cx="'+PX(v.idle).toFixed(1)+'" cy="'+PY(v.out).toFixed(1)+'" r="3.2" fill="'+RC[r]+'"/>';});
+      s+=tx_(xr-8,t+28+i*13,'every '+r+(r==='1'?' day':' days'),{a:'end',c:RC[r],w:700,z:10});
+    });
+    s+='<circle cx="'+PX(g.idle).toFixed(1)+'" cy="'+PY(g.out).toFixed(1)+'" r="7.5" fill="none" stroke="#14222B" stroke-width="2.4"/>';
+    sv.innerHTML=s;
+    out.textContent='load to the P'+q+' forecast, visit every '+R+(R==='1'?' day':' days')+
+      '\nATM-days empty          '+g.out.toFixed(2)+'%'+
+      '\ndemand not served       '+g.unmet.toFixed(2)+'%'+
+      '\ncash left at day end    '+g.idle.toFixed(1)+' GBP k per ATM'+
+      '\nvisits per ATM per week '+g.visits.toFixed(2)+
+      '\nmean withdrawn per day  '+D.mean.toFixed(1)+' GBP k per ATM';
+    out.style.borderLeftColor=RC[R];
+  }
+  seg_('at-q',v=>{q=v;draw();});
+  seg_('at-r',v=>{R=v;draw();});
+  draw();
+})();
