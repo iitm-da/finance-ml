@@ -292,3 +292,59 @@ function tx_(x,y,s,o){o=o||{};
   seg_('at-r',v=>{R=v;draw();});
   draw();
 })();
+
+/* ---------- call centre staffing: quantile and day ---------- */
+(function(){
+  const el=document.getElementById('cc-data'); if(!el) return;
+  const D=JSON.parse(el.textContent), sv=document.getElementById('cc-svg'), out=document.getElementById('cc-out'),
+        sl=document.getElementById('cc-day'), dl=document.getElementById('cc-dl');
+  let q='80';
+  const W=1120,H=290,l=52,t=14,b=52, xa=720, xb=800, xr=1104;
+  const DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const ymax=Math.ceil(Math.max(...D.act.map(r=>Math.max(...r)), ...D.q['95'].f.map(r=>Math.max(...r)))/50)*50;
+  const hrs=D.staff.map(r=>r[1]), hmin=Math.floor(Math.min(...hrs,D.known)/20)*20, hmax=Math.ceil(Math.max(...hrs)/20)*20;
+  function draw(){
+    const d=+sl.value, a=D.act[d], P=D.q[q], f=P.f[d], ag=P.ag[d], s_=P.sl[d];
+    dl.textContent=DN[D.dow[d]]+' '+D.dates[d];
+    const bw=(xa-l)/24, X=i=>l+i*bw, Y=v=>t+(ymax-v)/ymax*(H-t-b);
+    let s='<rect x="'+l+'" y="'+t+'" width="'+(xa-l)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    for(let v=0;v<=ymax;v+=50){ s+='<line x1="'+l+'" x2="'+xa+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#DCE4E8"/>'+tx_(l-6,Y(v)+3.5,v,{a:'end'}); }
+    s+=tx_(l+6,t+13,'calls per half hour',{});
+    let p='', miss=0;
+    for(let i=0;i<24;i++){
+      const bad=s_[i]<80; miss+=bad?1:0;
+      s+='<rect x="'+(X(i)+2).toFixed(1)+'" y="'+Y(a[i]).toFixed(1)+'" width="'+(bw-4).toFixed(1)+'" height="'+(Y(0)-Y(a[i])).toFixed(1)+'" fill="'+(bad?'#B02F3B':'#8FA0A9')+'"/>';
+      p+=(i?'L':'M')+X(i).toFixed(1)+','+Y(f[i]).toFixed(1)+'L'+X(i+1).toFixed(1)+','+Y(f[i]).toFixed(1);
+      if(i%2===0) s+=tx_(X(i),H-b+13,(8+i/2)+':00',{a:'middle',z:9.5});
+      s+=tx_(X(i)+bw/2,H-b+28,ag[i],{a:'middle',z:10,c:'#14222B',w:700});
+      s+=tx_(X(i)+bw/2,H-b+41,s_[i],{a:'middle',z:9,c:bad?'#B02F3B':'#53666F',w:bad?700:400});
+    }
+    s+=tx_(l-6,H-b+28,'agents',{a:'end',z:9})+tx_(l-6,H-b+41,'% in 20 s',{a:'end',z:9});
+    s+='<path d="'+p+'" fill="none" stroke="#125F9E" stroke-width="2.4"/>';
+    s+=tx_(xa-8,t+13,'blue line: the P'+q+' forecast the agents were rostered for',{a:'end',c:'#125F9E',w:700,z:10.5});
+    s+=tx_(xa-8,t+27,'red bar: fewer than 80% answered in 20 seconds ('+miss+' of 24)',{a:'end',c:'#B02F3B',w:700,z:10.5});
+    /* the four rosters */
+    const PX=v=>xb+(v-hmin)/(hmax-hmin)*(xr-xb), PY=v=>t+(100-v)/60*(H-t-b);
+    s+='<rect x="'+xb+'" y="'+t+'" width="'+(xr-xb)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    for(let v=40;v<=100;v+=20) s+='<line x1="'+xb+'" x2="'+xr+'" y1="'+PY(v).toFixed(1)+'" y2="'+PY(v).toFixed(1)+'" stroke="#DCE4E8"/>'+tx_(xb-6,PY(v)+3.5,v+'%',{a:'end'});
+    for(let v=hmin;v<=hmax;v+=(hmax-hmin)/4) s+=tx_(PX(v),H-b+13,v.toFixed(0),{a:'middle',z:9.5});
+    s+=tx_(xb+6,t+13,'half hours at 80/20, all 91 days',{})+tx_(xr,H-b+28,'agent-hours a day',{a:'end',z:9.5});
+    s+='<line x1="'+PX(D.known).toFixed(1)+'" x2="'+PX(D.known).toFixed(1)+'" y1="'+t+'" y2="'+(H-b)+'" stroke="#0E7A55" stroke-dasharray="3 3"/>'+
+       tx_(PX(D.known)+5,H-b-8,'calls known in advance: '+D.known.toFixed(0),{c:'#0E7A55',w:700,z:9.5});
+    s+='<polyline points="'+D.staff.map(r=>PX(r[1]).toFixed(1)+','+PY(r[2]).toFixed(1)).join(' ')+'" fill="none" stroke="#125F9E" stroke-width="1.4"/>';
+    D.staff.forEach(r=>{ const on=r[0]==='P'+q;
+      s+='<circle cx="'+PX(r[1]).toFixed(1)+'" cy="'+PY(r[2]).toFixed(1)+'" r="'+(on?6.5:4)+'" fill="'+(on?'#14222B':'#125F9E')+'"/>'+
+         tx_(PX(r[1])-9,PY(r[2])-8,r[0],{a:'end',c:on?'#14222B':'#125F9E',w:700,z:10.5}); });
+    sv.innerHTML=s;
+    const R=D.staff.find(r=>r[0]==='P'+q), hrsDay=ag.reduce((x,y)=>x+y,0)/2;
+    out.textContent='rostered to the P'+q+' forecast'+
+      '\nthis day    '+hrsDay.toFixed(1)+' agent-hours, '+miss+' of 24 half hours below target'+
+      '\nall 91 days '+R[1].toFixed(1)+' agent-hours a day'+
+      '\n            '+R[2].toFixed(1)+'% of half hours at 80/20'+
+      '\n            '+R[3].toFixed(1)+'% of calls answered in 20 s'+
+      '\n            '+R[4]+' days with 6 or more half hours below target';
+  }
+  seg_('cc-q',v=>{q=v;draw();});
+  sl.oninput=draw;
+  draw();
+})();

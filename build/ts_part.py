@@ -532,6 +532,124 @@ APP['atm'] = {'n': len(ids), 'n_new': len(NEW), 'days': int(atm.di.max()) + 1, '
               'grid': GRID, 'keep': ids[KEEP], 'mean_day': round(float(Dm.mean()), 1)}
 print('kept', list(APP['atm']))
 
+# %% [markdown]
+# ## Applications: call volumes
+#
+# `data/calls.csv` holds the calls offered to one contact centre in each half hour from 08:00 to 20:00, for two
+# years. The forecast feeds a staffing formula (Erlang C): how many agents each half hour needs so that 80% of calls
+# are answered within 20 seconds, with a mean handling time of 5 minutes. Forecasts are issued once a week and the
+# last 91 days are the test.
+
+# %%
+calls = pd.read_csv('data/calls.csv', parse_dates=['date']).sort_values(['date', 'interval']).reset_index(drop=True)
+C_TEST = 91
+calls['di'] = (calls.date - calls.date.min()).dt.days
+ci = int(calls.di.max()) - C_TEST + 1
+calls['origin'] = calls.di - ((calls.di - ci) % 7)
+calls['h'] = calls.di - calls.origin + 1
+calls['naive'] = calls.groupby('interval').calls.shift(7)          # the same half hour a week earlier
+daily = calls.groupby('di').calls.sum()
+lev = (daily.shift(1).rolling(28).mean() / 24).rename('level')     # mean calls per half hour, last 28 days
+calls = calls.merge(lev, left_on='origin', right_index=True, how='left').dropna(subset=['level', 'naive'])
+c_tr, c_te = calls[calls.di < ci], calls[calls.di >= ci].copy()
+CF = ['interval', 'dow', 'is_holiday', 'post_holiday', 'is_dd_day', 'after_dd', 'december', 'h']
+CQ = [50, 80, 90, 95]
+# the target is calls divided by the recent level, so the trees never have to forecast a level they have not seen
+for q in CQ:
+    mdl = HGB(loss='quantile', quantile=q / 100, max_iter=400, learning_rate=.06, random_state=0,
+              categorical_features=[0, 1]).fit(c_tr[CF], c_tr.calls / c_tr.level)
+    c_te[f'q{q}'] = np.clip(mdl.predict(c_te[CF]), 0, None) * c_te.level
+# the same model on raw calls with the level as an input, for comparison
+raw = {q: HGB(loss='quantile', quantile=q / 100, max_iter=400, learning_rate=.06, random_state=0,
+              categorical_features=[0, 1]).fit(c_tr[CF + ['level']], c_tr.calls).predict(c_te[CF + ['level']]) for q in (50, 90)}
+c_raw = {'bias': round(float(c_te.calls.sum() / raw[50].sum()), 3), 'above90': round(float((c_te.calls > raw[90]).mean() * 100), 1),
+         'lev_train': round(float(c_tr.level.max()), 1), 'lev_test': round(float(c_te.level.max()), 1)}
+c_scale = float((c_tr.calls - c_tr.naive).abs().mean())
+ACTc = c_te.pivot(index='di', columns='interval', values='calls').values.astype(float)        # 91 days x 24 half hours
+FQc = {q: c_te.pivot(index='di', columns='interval', values=f'q{q}').values for q in CQ}
+NVc = c_te.pivot(index='di', columns='interval', values='naive').values
+c_mase = {'naive': round(float(np.abs(ACTc - NVc).mean() / c_scale), 3), 'model': round(float(np.abs(ACTc - FQc[50]).mean() / c_scale), 3)}
+print('%d half hours in training, %d in the test | mean calls per half hour in the test %.1f' % (len(c_tr), ACTc.size, ACTc.mean()))
+print('MASE per half hour: seasonal naive %.3f, model %.3f' % (c_mase['naive'], c_mase['model']))
+print('raw-calls model: actual / forecast %.3f, above its P90 on %.1f%% | highest level in training %.1f, in the test %.1f'
+      % (c_raw['bias'], c_raw['above90'], c_raw['lev_train'], c_raw['lev_test']))
+
+# %%
+# backtest of the P90, and how the misses are spread over days
+up = ACTc > FQc[90]
+per_day = up.sum(axis=1)
+srt = np.sort(per_day)[::-1]
+top_days = int(np.searchsorted(np.cumsum(srt), up.sum() / 2) + 1)          # fewest days that hold half the misses
+print('half hours above the P90: %d of %d, %.1f%%' % (up.sum(), up.size, up.mean() * 100))
+print('days with no half hour above: %d | days with 8 or more above: %d | half of all misses fall on %d of %d days'
+      % ((per_day == 0).sum(), (per_day >= 8).sum(), top_days, C_TEST))
+ratio = ACTc.sum(axis=1) / FQc[50].sum(axis=1)
+print('actual day total / forecast day total: 5th percentile %.2f, 95th percentile %.2f'
+      % (np.quantile(ratio, .05), np.quantile(ratio, .95)))
+
+# %%
+# intraday update: at 12:00, scale the afternoon forecast by what the morning did
+AM = 8                                                              # 08:00 to 12:00 is the first 8 half hours
+r_am = ACTc[:, :AM].sum(axis=1) / FQc[50][:, :AM].sum(axis=1)
+upd = FQc[50][:, AM:] * r_am[:, None]
+mae_before = float(np.abs(ACTc[:, AM:] - FQc[50][:, AM:]).mean()); mae_after = float(np.abs(ACTc[:, AM:] - upd).mean())
+print('afternoon MAE per half hour: %.2f with the weekly forecast, %.2f after the 12:00 update (%.0f%% lower)'
+      % (mae_before, mae_after, (1 - mae_after / mae_before) * 100))
+print('days on which the update helped: %d of %d' % ((np.abs(ACTc[:, AM:] - upd).mean(axis=1) < np.abs(ACTc[:, AM:] - FQc[50][:, AM:]).mean(axis=1)).sum(), C_TEST))
+
+# %%
+# staffing: Erlang C turns calls per half hour into agents, for 80% answered within 20 seconds
+from math import exp
+AHT, TGT_S, TGT = 300, 20, 0.80
+def service_level(n_calls, agents):
+    a = n_calls * AHT / 1800                                        # offered load in erlangs
+    if a <= 0:
+        return 1.0
+    if agents <= a:
+        return 0.0
+    b = 1.0
+    for k in range(1, agents + 1):                                  # Erlang B by recursion, then Erlang C
+        b = a * b / (k + a * b)
+    pw = b / (1 - (a / agents) * (1 - b))
+    return 1 - pw * exp(-(agents - a) * TGT_S / AHT)
+def agents_for(n_calls):
+    n = max(1, int(n_calls * AHT / 1800) + 1)
+    while service_level(n_calls, n) < TGT:
+        n += 1
+    return n
+STAFF = {}; rows = []
+for q in CQ:
+    ag = np.vectorize(agents_for)(FQc[q]); sl = np.vectorize(service_level)(ACTc, ag)
+    STAFF[q] = (ag, sl)
+    rows.append([f'P{q}', round(float(ag.sum() * 0.5 / C_TEST), 1), round(float((sl >= TGT).mean() * 100), 1),
+                 round(float((sl * ACTc).sum() / ACTc.sum() * 100), 1), int(((sl < TGT).sum(axis=1) >= 6).sum())])
+ag0 = np.vectorize(agents_for)(ACTc)
+print('agent-hours a day if the calls were known in advance: %.1f' % (ag0.sum() * 0.5 / C_TEST))
+curve = [[n, round(service_level(100, n) * 100, 1)] for n in range(17, 26)]
+print('100 calls in a half hour: service level by agents', curve)
+pd.DataFrame(rows, columns=['staffed to', 'agent-hours a day', '% of half hours at 80/20', '% of calls answered in 20 s',
+                            'days with 6 or more half hours below target'])
+
+# %%
+# kept for the slides
+wk0 = c_tr[c_tr.di >= ci - 7]
+busy = int(np.argmax(np.where(c_te.groupby('di').is_holiday.max().values == 1, 0, r_am)))
+APP['calls'] = {'n_train': len(c_tr), 'n_test': int(ACTc.size), 'mean': round(float(ACTc.mean()), 1), 'mase': c_mase, 'raw': c_raw,
+                'week': {'calls': wk0.calls.tolist(), 'dow': wk0.dow.tolist()[::24], 'dates': [str(d.date()) for d in wk0.date][::24]},
+                'up': up.astype(int).tolist(), 'up_n': int(up.sum()), 'up_pct': round(float(up.mean() * 100), 1),
+                'day0': int((per_day == 0).sum()), 'day8': int((per_day >= 8).sum()), 'top_days': top_days,
+                'ratio': [round(float(np.quantile(ratio, .05)), 2), round(float(np.quantile(ratio, .95)), 2)],
+                'upd': {'before': round(mae_before, 2), 'after': round(mae_after, 2),
+                        'helped': int((np.abs(ACTc[:, AM:] - upd).mean(axis=1) < np.abs(ACTc[:, AM:] - FQc[50][:, AM:]).mean(axis=1)).sum()),
+                        'day': busy, 'r': round(float(r_am[busy]), 2), 'act': ACTc[busy].astype(int).tolist(),
+                        'fc': FQc[50][busy].round(1).tolist(), 'new': upd[busy].round(1).tolist()},
+                'staff': rows, 'known': round(float(ag0.sum() * 0.5 / C_TEST), 1), 'curve': curve,
+                'act': ACTc.astype(int).tolist(), 'dates': [str(d.date()) for d in c_te.date.drop_duplicates()],
+                'dow': c_te.groupby('di').dow.first().tolist(),
+                'q': {str(q): {'f': FQc[q].round(0).astype(int).tolist(), 'ag': STAFF[q][0].tolist(),
+                               'sl': (STAFF[q][1] * 100).round(0).astype(int).tolist()} for q in CQ}}
+print('kept', list(APP['calls']))
+
 # %% [build]
 # everything the deck needs
 j = SEGS.index(HEAD)

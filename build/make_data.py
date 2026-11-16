@@ -1,9 +1,10 @@
 """Simulated bank data for the day 1 session.
 
-Three files, one simulated bank:
+Four files, one simulated bank:
   data/cashflow.csv      daily net outflow, 6 segments of the deposit book, 2022-2025
   data/transactions.csv  card transactions over 180 days with a fraud label
   data/atm.csv           cash withdrawn per day at 200 ATMs, 2024-2025
+  data/calls.csv         calls per half hour at one contact centre, 2024-2025
 
 Everything is simulated. Nothing here comes from a real bank.
 """
@@ -235,12 +236,42 @@ def simulate_atm(n_atm=200, n_new=20, start='2024-01-01', end='2025-12-31', test
     return pd.concat(frames, ignore_index=True)
 
 
+# ------------------------------------------------------------------ call volumes
+# calls offered to one contact centre per half hour, 08:00 to 20:00
+
+
+def simulate_calls(start='2024-01-01', end='2025-12-31', seed=31):
+    rng = np.random.default_rng(seed)
+    cal = calendar(start, end)
+    n = len(cal); t = np.arange(n)
+    wk = np.array([1.25, 1.08, 1.00, 0.98, 0.95, 0.55, 0.35])[cal.dow.values]
+    day = 2400 * (1 + 0.00016 * t) * np.where(cal.is_holiday.values == 1, 0.40, wk)
+    after_dd = np.r_[0, cal.is_dd_day.values[:-1]]                   # the day after statements go out
+    day = day * (1 + 0.35 * cal.post_holiday.values) * (1 + 0.30 * cal.is_dd_day.values) * (1 + 0.15 * after_dd)
+    day = day * (1 + 0.10 * cal.december.values)
+    day = day * np.exp(rng.normal(0, 0.09, n))                       # some days are busy all day, for no listed reason
+    k = np.arange(24)                                                # interval 0 starts at 08:00
+    two = 1.0 * np.exp(-0.5 * ((k - 5) / 2.6) ** 2) + 0.8 * np.exp(-0.5 * ((k - 13) / 3.2) ** 2) + 0.12
+    one = np.exp(-0.5 * ((k - 9) / 4.5) ** 2) + 0.15
+    frames = []
+    for i in range(n):
+        prof = one if (cal.dow.values[i] >= 5 or cal.is_holiday.values[i]) else two
+        lam = day[i] * prof / prof.sum()
+        frames.append(pd.DataFrame({
+            'date': cal.date.values[i], 'interval': k,
+            'time': [f'{8 + j // 2:02d}:{30 * (j % 2):02d}' for j in k], 'calls': rng.poisson(lam),
+            'dow': cal.dow.values[i], 'is_holiday': cal.is_holiday.values[i], 'post_holiday': cal.post_holiday.values[i],
+            'is_dd_day': cal.is_dd_day.values[i], 'after_dd': after_dd[i], 'december': round(float(cal.december.values[i]), 4)}))
+    return pd.concat(frames, ignore_index=True)
+
+
 if __name__ == '__main__':
     cf = simulate_cashflow()
     cf.to_csv(OUT + 'cashflow.csv', index=False)
     tx = simulate_transactions()
     tx.to_csv(OUT + 'transactions.csv', index=False)
     simulate_atm().to_csv(OUT + 'atm.csv', index=False)
+    simulate_calls().to_csv(OUT + 'calls.csv', index=False)
     print(cf.shape, tx.shape, 'fraud rate', round(tx.is_fraud.mean() * 100, 3), '%', tx.is_fraud.sum())
     print(cf.groupby('segment').net_outflow.agg(['mean', 'std', 'min', 'max']).round(1))
     print(tx.groupby('channel').is_fraud.agg(['mean', 'sum', 'size']).round(4))

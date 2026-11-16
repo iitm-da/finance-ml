@@ -881,6 +881,104 @@ add(slide('Applications', 'Applications &#183; ATM cash', 'Cost',
           '<div class="colstack">'
           f"<div class=\"callout sm\"><b>Fewer visits cost cash.</b> At the P95, a daily visit leaves {GR['95_1']['idle']:.1f} thousand in each ATM at day end and a weekly visit {GR['95_7']['idle']:.1f}. The van is saved 6 trips a week per ATM.</div>"
           f"<div class=\"callout sm\"><b>A longer cycle is safer than its quantile says.</b> Loading to the P95 daily leaves {GR['95_1']['out']:.1f}% of ATM-days empty, and weekly {GR['95_7']['out']:.2f}%, because 7 daily P95s added are far above the P95 of a week.</div></div></div>" + jdata('at-data', atw)))
+
+# ================================================================ call volumes: concept
+CC = AP['calls']; CST = {r_[0]: r_ for r_ in CC['staff']}; CV = dict(CC['curve'])
+wk_ = CC['week']['calls']; top = math.ceil(max(wk_) / 50) * 50
+px = lambda i: 52 + (i + 0.5) / 168 * 636
+py = lambda v: 24 + (top - v) / top * 170
+s = Rect(52, 24, 636, 170, '#FFFFFF', HAIR, 1)
+for v in range(0, top + 1, 100):
+    s += L(52, py(v), 688, py(v), HAIR, 1) + T(46, py(v) + 3.5, str(v), 9.5, SOFT, 'end', MONO)
+for d in range(7):
+    if d:
+        s += L(52 + d * 636 / 7, 24, 52 + d * 636 / 7, 194, LINE, 1)
+    s += T(52 + (d + 0.5) * 636 / 7, 208, DOW[CC['week']['dow'][d]] + ' ' + CC['week']['dates'][d][8:] + '/' + CC['week']['dates'][d][5:7], 10, INK, 'middle', MONO)
+for i_, v in enumerate(wk_):
+    s += Rect(px(i_) - 1.5, py(v), 3, 194 - py(v), BLUE)
+s += T(58, 37, 'calls per half hour, 08:00 to 20:00, the week before the test', 10.5, INK, 'start', MONO, 700)
+# service level against agents, 100 calls in a half hour
+s += T(52, 250, 'SERVICE LEVEL AGAINST AGENTS, 100 CALLS IN A HALF HOUR', 10.5, SOFT, 'start', MONO, 700)
+ns = sorted(CV); bw_ = 636 / len(ns)
+for i_, n_ in enumerate(ns):
+    v = CV[n_]; x = 52 + i_ * bw_; hh = v / 100 * 130
+    s += Rect(x + 8, 400 - hh, bw_ - 16, hh, GREEN if v >= 80 else RED)
+    s += T(x + bw_ / 2, 400 - hh - 5, f'{v:.0f}%', 11, INK, 'middle', MONO, 700) + T(x + bw_ / 2, 415, f'{n_}', 11, INK, 'middle', MONO)
+s += L(52, 400 - 104, 688, 400 - 104, INK, 1.2, 'stroke-dasharray="4 3"') + T(56, 400 - 109, 'target: 80% answered in 20 s', 10, INK, 'start', MONO, 700)
+s += T(688, 430, 'agents on the phones', 10, SOFT, 'end', MONO)
+n_ok = min(n_ for n_ in ns if CV[n_] >= 80)
+add(slide('Applications', 'Applications &#183; Call volumes', 'Concept',
+          f"A third problem. One contact centre, calls counted every half hour, and a roster written a week ahead that needs a number of agents for each half hour.",
+          '<div class="cols w6040">' + fig(svg(700, 436, s, 'A week of half-hourly calls and the service level curve'), 'simulated contact centre &#183; mean handling time 5 minutes') +
+          '<div class="colstack fill"><div class="kv" style="grid-template-columns:1fr 1fr">' +
+          tile('half hours in the test', f"{CC['n_test']:,}", 'b') + tile('mean calls per half hour', f"{CC['mean']:.0f}", '') + '</div>'
+          '<div class="callout sm"><b>Two cycles at once.</b> Monday is the busy day and each weekday has a morning and an afternoon peak. The forecast is needed per half hour because agents are rostered per half hour.</div>'
+          f"<div class=\"callout warn sm\"><b>The cost of being short is steep.</b> With 100 calls in a half hour, {n_ok} agents answer {CV[n_ok]:.0f}% within 20 seconds. Two fewer answer {CV[n_ok - 2]:.0f}%, and {n_ok - 4} answer {CV[n_ok - 4]:.0f}%.</div>"
+          '<div class="callout sm"><b>The formula is Erlang C.</b> It takes calls per half hour and handling time and returns the agents needed. The forecast is its input, so a forecast error becomes a queue.</div>'
+          '</div></div>'))
+
+# ================================================================ call volumes: test (heatmap)
+UP = CC['up']; cw_, ch_ = 7, 13.5; hx, hy = 50, 16
+s = ''
+for d in range(len(UP)):
+    for i_ in range(24):
+        s += Rect(hx + d * cw_, hy + i_ * ch_, cw_ - 0.8, ch_ - 0.8, RED if UP[d][i_] else '#E4EAED')
+    if d % 7 == 0:
+        s += T(hx + d * cw_ + 24, hy + 24 * ch_ + 13, f'week {d // 7 + 1}', 9, SOFT, 'middle', MONO)
+for i_ in range(0, 24, 4):
+    s += T(hx - 6, hy + i_ * ch_ + 10, f'{8 + i_ // 2:02d}:00', 9.5, SOFT, 'end', MONO)
+s += T(hx + 91 * cw_, hy + 24 * ch_ + 28, 'one column is one day, one cell is one half hour', 10, SOFT, 'end', MONO)
+RW = CC['raw']
+add(slide('Applications', 'Applications &#183; Call volumes', 'Test',
+          f"The P90 was exceeded in {CC['up_n']} of {CC['n_test']:,} half hours, {CC['up_pct']:.1f}%. Half of those misses fall on {CC['top_days']} of the 91 days.",
+          '<div class="cols w6040">' + fig(svg(hx + 91 * cw_ + 8, hy + 24 * ch_ + 34, s, 'Half hours above the P90 forecast, by day'), '<span style="color:#B02F3B;font-weight:700">red</span>: calls above the P90 forecast for that half hour',
+              f"<b>The red comes in columns.</b> {CC['day0']} days have no red half hour and {CC['day8']} days have 8 or more.") +
+          '<div class="colstack fill"><div class="kv" style="grid-template-columns:1fr 1fr">' +
+          tile('MASE, seasonal naive', f"{CC['mase']['naive']:.3f}", 'bad') + tile('MASE, model', f"{CC['mase']['model']:.3f}", 'ok') + '</div>'
+          f"<div class=\"callout sm\"><b>A busy day is busy all day.</b> The day&#8217;s total ran between {CC['ratio'][0]:.2f} and {CC['ratio'][1]:.2f} times its forecast on 9 days in 10, and every half hour of that day moved with it.</div>"
+          '<div class="callout warn sm"><b>Half hours are not independent trials.</b> A count of red cells understates how bad a red day is for the people on the phones: the queue from 10:00 is still there at 10:30.</div>'
+          f"<div class=\"callout sm\"><b>A first version failed this test.</b> Trees fed raw call counts were exceeded on {RW['above90']:.1f}% of half hours. The level in the test reached {RW['lev_test']:.0f} calls and training had seen {RW['lev_train']:.0f}, and a tree cannot forecast above what it has seen. The model here forecasts calls divided by the recent level.</div>"
+          '</div></div>'))
+
+# ================================================================ call volumes: intraday update (staged)
+U = CC['upd']; ua, uf, un = U['act'], U['fc'], U['new']; ud = U['day']
+ax = Ax(700, 440, (-0.6, 23.6), (0, math.ceil(max(ua + un + uf) / 50) * 50 + 50), pad=(46, 12, 14, 34))
+s = ax.frame(yticks=range(0, int(ax.yr[1]) + 1, 50), xticks=[(i_ - 0.5, f'{8 + i_ // 2}:00') for i_ in range(0, 24, 2)], ylab='calls per half hour')
+am_b = ''.join(ax.vbar(i_ - 0.4, i_ + 0.4, ua[i_], '#8FA0A9', 0) for i_ in range(8))
+pm_b = ''.join(ax.vbar(i_ - 0.4, i_ + 0.4, ua[i_], '#C9D3D9', 0) for i_ in range(8, 24))
+step = lambda v, i0: ' '.join(f'{ax.X(i0 + k - 0.5):.1f},{ax.Y(x):.1f} {ax.X(i0 + k + 0.5):.1f},{ax.Y(x):.1f}' for k, x in enumerate(v))
+wline = f'<polyline points="{step(uf, 0)}" fill="none" stroke="{BLUE}" stroke-width="2.4"/>'
+nline = f'<polyline points="{step(un, 8)}" fill="none" stroke="{GREEN}" stroke-width="3"/>'
+noon = L(ax.X(7.5), ax.t, ax.X(7.5), ax.t + ax.ph, INK, 1.4, 'stroke-dasharray="4 3"')
+s += G_(0, am_b + wline + noon + T(ax.X(7.5) + 6, ax.t + 14, '12:00', 10.5, INK, 'start', MONO, 700) +
+        T(ax.l + ax.pw - 8, ax.t + 14, 'blue: forecast issued earlier in the week', 10.5, BLUE, 'end', MONO, 700) +
+        T(ax.l + ax.pw - 8, ax.t + 28, 'dark bars: calls received by 12:00', 10.5, INK, 'end', MONO, 700))
+s += G_(1, nline + T(ax.l + ax.pw - 8, ax.t + 42, f"green: afternoon forecast x {U['r']:.2f}", 10.5, GREEN, 'end', MONO, 700))
+s += G_(2, pm_b + T(ax.l + ax.pw - 8, ax.t + 56, 'pale bars: what the afternoon did', 10.5, SOFT, 'end', MONO, 700))
+add(slide('Applications', 'Applications &#183; Call volumes', 'Example',
+          f"The morning is a measurement of the day. Scaling the afternoon forecast at 12:00 by the morning&#8217;s ratio takes the afternoon error from {U['before']:.1f} to {U['after']:.1f} calls per half hour.",
+          '<div class="cols w6040">' + fig(svg(700, 440, s, 'Intraday update on one busy day'), f"{DOW[CC['dow'][ud]]} {CC['dates'][ud]}, the test day with the largest morning ratio") +
+          '<div class="colstack fill">'
+          f"<div class=\"kv\" style=\"grid-template-columns:1fr 1fr\" data-at=\"1\">" + tile('morning, actual / forecast', f"{U['r']:.2f}", 'bad') + tile('days the update helped', f"{U['helped']} of 91", 'b') + '</div>'
+          f"<div class=\"kv\" style=\"grid-template-columns:1fr 1fr\" data-at=\"2\">" + tile('afternoon MAE, weekly forecast', f"{U['before']:.1f}", 'bad') + tile('after the 12:00 update', f"{U['after']:.1f}", 'ok') + '</div>'
+          '<div class="callout sm" data-at="1"><b>The update is one multiplication:</b> calls received by 12:00 divided by calls forecast by 12:00, applied to every half hour left.</div>'
+          f"<div class=\"callout warn sm\" data-at=\"2\"><b>It made {91 - U['helped']} days worse.</b> On an ordinary day the morning ratio carries more noise than signal, so a production version shrinks it toward 1.</div>"
+          '<div class="callout good sm" data-at="2">The roster is fixed, so the update buys the afternoon&#8217;s levers: moved breaks, overtime, call-backs offered.</div>'
+          '</div></div>' + bld(2), 'build'))
+
+# ================================================================ call volumes: cost (widget)
+ccw = {'act': CC['act'], 'dates': CC['dates'], 'dow': CC['dow'], 'q': CC['q'], 'staff': CC['staff'], 'known': CC['known']}
+qb = ''.join(f'<button data-v="{q}"{" class=\"on\"" if q == "80" else ""}>P{q}</button>' for q in ('50', '80', '90', '95'))
+add(slide('Applications', 'Applications &#183; Call volumes', 'Cost',
+          f"Roster to the median forecast and {CST['P50'][2]:.0f}% of half hours meet the target. Roster to the P90 and {CST['P90'][2]:.0f}% do, for {CST['P90'][1] - CST['P50'][1]:.0f} more agent-hours a day.",
+          f'<div class="wctl"><div class="seg" id="cc-q">{qb}</div>'
+          f'<label class="rg"><span>test day: <b id="cc-dl"></b></span><input type="range" id="cc-day" min="0" max="90" step="1" value="{CC['dow'].index(0)}"/></label>{JSB}</div>'
+          '<div class="fig"><div class="cap">left: one test day, calls received against the forecast the roster was written for &#160;|&#160; right: the four rosters over all 91 days</div>'
+          '<svg id="cc-svg" viewBox="0 0 1120 290" width="100%" role="img" aria-label="Staffing to a forecast quantile"></svg></div>'
+          '<div class="cols nat"><div class="out" id="cc-out"></div>'
+          '<div class="colstack">'
+          f"<div class=\"callout sm\"><b>The price of not knowing.</b> With the calls known in advance the target needs {CC['known']:.0f} agent-hours a day. The P90 roster uses {CST['P90'][1]:.0f} and still misses in {100 - CST['P90'][2]:.0f}% of half hours.</div>"
+          f"<div class=\"callout sm\"><b>The median is the wrong forecast to roster to.</b> Being 10% short costs far more service than being 10% over costs in wages, so the roster follows a high quantile. On {CST['P50'][4]} of 91 days the median roster had 6 or more half hours below target.</div></div></div>" + jdata('cc-data', ccw)))
 # ================================================================ drawbacks
 pay_no, pay_cal = BYK['arima']['payday'][0], BYK['tft']['payday'][0]
 rows = [
@@ -890,12 +988,14 @@ rows = [
      'Forecast the total and the period the buffer is held against.'),
     ('The calendar is an input', f"Payday error {pay_no:.1f} without the calendar and {pay_cal:.1f} with it",
      'A moved payday or a new bank holiday has to reach the model before the day does.'),
+    ('Trees do not extrapolate', f"Call model on raw counts: P90 exceeded in {AP['calls']['raw']['above90']:.1f}% of half hours. On calls divided by the recent level: {AP['calls']['up_pct']:.1f}%",
+     'Scale the target by a recent level when the series trends.'),
     ('The history holds ordinary days', f"{TS['n']:,} days, none of them a run on deposits",
      'The forecast sizes the day-to-day buffer. A stress buffer comes from regulatory scenarios.'),
 ]
 add(slide('Applications', 'Applications &#183; Drawbacks', 'Drawbacks',
-          'Where a cash-flow forecast misleads a treasury desk, with the number measured in this session.',
+          'Where a forecast misleads the people who act on it, with the number measured in this session.',
           table(['What goes wrong', 'Measured here', 'What the desk does'],
                 [(f'<b>{a_}</b>', b_, c_) for a_, b_, c_ in rows], 'd free lg') +
           '<div class="cols nat"><div class="callout"><b>The desk is scored on the breach rate and the cash held.</b> MASE ranks the models; the backtest and the margin decide how much money sits idle.</div>'
-          '<div class="callout good"><b>Four steps served both problems:</b> forecast a quantile, backtest it, price the two errors, forecast at the level of the decision.</div></div>'))
+          '<div class="callout good"><b>Four steps served all three problems:</b> forecast a quantile, backtest it, price the two errors, forecast at the level of the decision.</div></div>'))
