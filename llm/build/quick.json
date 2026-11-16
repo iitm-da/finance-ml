@@ -1,0 +1,34 @@
+[
+ [
+  "te.sample(600, random_state=0)",
+  "te.sample(64, random_state=0)"
+ ],
+ [
+  "load('loans.jsonl')[:120]",
+  "load('loans.jsonl')[:8]"
+ ],
+ [
+  "for _ in range(80):",
+  "for _ in range(16):"
+ ],
+ [
+  "pool = tr.sample(3000, random_state=1)",
+  "pool = tr.sample(300, random_state=1)"
+ ],
+ [
+  "ft = tr.sample(3000, random_state=2)",
+  "ft = tr.sample(160, random_state=2)"
+ ],
+ [
+  "for r in (1, 2, 4, 8, 16, 32):",
+  "for r in (4, 8):"
+ ],
+ [
+  "for _ in range(5)]",
+  "for _ in range(2)]"
+ ],
+ [
+  "for k in range(5)]",
+  "for k in range(2)]"
+ ]
+]
