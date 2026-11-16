@@ -45,6 +45,9 @@ table.d tr.best td{background:#F3FBF7;font-weight:700}
 .card.big{padding:14px 16px}
 .card.big h3{font-size:16.5px;margin-bottom:8px}
 .card.big p{font-size:13.6px;line-height:1.55}
+table.d.lg{font-size:15px;line-height:1.45}
+table.d.lg td{padding:15px 14px}
+table.d.lg td:first-child{font-family:var(--body);white-space:normal;width:21%}
 .refs{font-size:12.5px;line-height:1.5}
 .refs p{margin-bottom:8px;padding-left:16px;text-indent:-16px}
 </style>

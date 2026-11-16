@@ -362,6 +362,66 @@ tab = pd.DataFrame({NAMES[k]: list(RES[k][0].round(2)) + [round(RES[k][1], 3)] f
                    index=SEGS + ['mean MASE']).T
 tab
 
+# %% [markdown]
+# ## Applications: from a forecast to a decision
+#
+# A treasury desk holds cash against the outflow it expects. The four cells below use the forecasts already made,
+# with no new model: a backtest of the P90, the margin each model needs, the whole bank, and the second week.
+
+# %%
+# 1. backtest of the P90: it should be exceeded on 10% of days
+from scipy.stats import binomtest
+j = SEGS.index(HEAD)
+n_days = ACT[:, :, 0].size
+rows = []
+for i, s in enumerate(SEGS):
+    up = int((ACT[:, :, i] > Q[:, :, i, 2]).sum()); dn = int((ACT[:, :, i] < Q[:, :, i, 0]).sum())
+    rows.append([s, up, round(up / n_days * 100, 1), dn, round(dn / n_days * 100, 1),
+                 round(float(binomtest(up, n_days, 0.10).pvalue), 4)])
+bt = pd.DataFrame(rows, columns=['segment', 'days above P90', '% above', 'days below P10', '% below', 'p-value against 10%'])
+APP = {'bt': rows, 'n_days': n_days}
+bt
+
+# %%
+# 2. the margin each model needs: hold forecast + margin, and choose the margin that leaves 9 of 182 days short
+rows = []
+ERR = {}
+for k in FC:
+    e = (ACT[:, :, j] - FC[k][:, :, j]).ravel()              # positive: more went out than forecast
+    c = float(np.quantile(e, 0.95, method='higher'))
+    rows.append([NAMES[k], round(c, 1), int((e > c).sum()), round(float(np.clip(c - e, 0, None).mean()), 1)])
+    ERR[k] = e.round(1).tolist()
+mg = pd.DataFrame(rows, columns=['model', 'margin, GBP m', 'days short', 'idle cash per day, GBP m'])
+APP['margin'] = rows; APP['err'] = ERR; APP['mean_out'] = round(float(ACT[:, :, j].mean()), 1)
+mg
+
+# %%
+# 3. the whole bank: add the six segments
+tot = ACT.sum(axis=2); p50 = Q[..., 1].sum(axis=2); p90 = Q[..., 2].sum(axis=2)
+seg_mae = np.abs(FC['tft'] - ACT).mean(axis=(0, 1))
+e_tot = (tot - p50).ravel()
+need = float(np.quantile(e_tot, 0.90, method='higher'))
+APP['bank'] = {'seg_mae': seg_mae.round(1).tolist(), 'sum_seg_mae': round(float(seg_mae.sum()), 1),
+               'mae_total': round(float(np.abs(FC['tft'].sum(axis=2) - tot).mean()), 1),
+               'seg_margin': (Q[..., 2] - Q[..., 1]).mean(axis=(0, 1)).round(1).tolist(),
+               'sum_margin': round(float((p90 - p50).mean()), 1), 'above_sum_p90': int((tot > p90).sum()),
+               'need_margin': round(need, 1), 'above_need': int((e_tot > need).sum()),
+               'mean_total': round(float(tot.mean()), 1)}
+print('TFT median: sum of the six segment MAEs %.1f | MAE of the bank total %.1f'
+      % (APP['bank']['sum_seg_mae'], APP['bank']['mae_total']))
+print('sum of six P90s: %.1f above the summed medians, exceeded on %d of %d days'
+      % (APP['bank']['sum_margin'], APP['bank']['above_sum_p90'], n_days))
+print('margin exceeded on 10%% of days at bank level: %.1f (%d days)' % (need, APP['bank']['above_need']))
+
+# %%
+# 4. the second week against the first: each holds every weekday once
+rows = []
+for k in FC:
+    a = np.abs(FC[k] - ACT) / SCALE
+    rows.append([NAMES[k], round(float(a[:, :7].mean()), 3), round(float(a[:, 7:].mean()), 3)])
+APP['week'] = rows
+pd.DataFrame(rows, columns=['model', 'MASE, days 1 to 7', 'MASE, days 8 to 14'])
+
 # %% [build]
 # everything the deck needs
 j = SEGS.index(HEAD)
@@ -412,6 +472,7 @@ M['liq'] = {'cum_act': cum_act.round(1).tolist(), 'cum_p50': Q[:, :, j, 1].sum(a
             'breach_p50': int((cum_act > Q[:, :, j, 1].sum(axis=1)).sum()),
             'breach_p90': int((cum_act > Q[:, :, j, 2].sum(axis=1)).sum()),
             'day_breach_p90': int((ACT[:, :, j] > Q[:, :, j, 2]).sum()), 'days': int(ACT[:, :, j].size)}
+M['app'] = APP
 json.dump(M, open('build/m_ts.json', 'w'))
 np.savez('build/ts_fc.npz', ACT=ACT, Q=Q, **FC)
 print('wrote build/m_ts.json')

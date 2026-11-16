@@ -178,3 +178,65 @@ function tx_(x,y,s,o){o=o||{};
   seg_('ab-model',v=>{model=v;draw();});
   sl.oninput=draw; draw();
 })();
+
+/* ---------- margin, shortfall and idle cash ---------- */
+(function(){
+  const el=document.getElementById('cs-data'); if(!el) return;
+  const D=JSON.parse(el.textContent), sv=document.getElementById('cs-svg'), out=document.getElementById('cs-out'),
+        sl=document.getElementById('cs-margin'), ml=document.getElementById('cs-ml');
+  let model='naive', r=9;
+  const W=1120,H=280,l=52,t=14,b=30, xa=760, xb=830, xr=1104;
+  const all=[].concat(...Object.values(D.err)), lo=Math.floor(Math.min(...all)/20)*20, hi=Math.ceil(Math.max(...all,90)/20)*20;
+  const Y=v=>t+(hi-v)/(hi-lo)*(H-t-b);
+  function stats(e,c){
+    let sh=0,idle=0,n=0;
+    e.forEach(v=>{ if(v>c){sh+=v-c;n++;} else idle+=c-v; });
+    return {n:n, sh:sh/e.length, idle:idle/e.length};
+  }
+  function draw(){
+    const e=D.err[model], c=+sl.value, n=e.length, st=stats(e,c), col=D.col[model];
+    ml.textContent=c.toFixed(1);
+    const X=i=>l+(i+0.5)/n*(xa-l), bw=(xa-l)/n-0.8;
+    let s='<rect x="'+l+'" y="'+t+'" width="'+(xa-l)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    for(let v=lo;v<=hi;v+=20){ if(v%40) continue;
+      s+='<line x1="'+l+'" x2="'+xa+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#DCE4E8"/>'+tx_(l-6,Y(v)+3.5,v,{a:'end'});}
+    for(let k=1;k<13;k++){ const x=l+k*14/n*(xa-l); s+='<line x1="'+x.toFixed(1)+'" x2="'+x.toFixed(1)+'" y1="'+t+'" y2="'+(H-b)+'" stroke="#EEF2F4"/>'; }
+    for(let k=0;k<13;k++) s+=tx_(l+(k*14+7)/n*(xa-l),H-b+13,k+1,{a:'middle',z:9.5});
+    s+=tx_(xa,H-4,'test window',{a:'end',z:9.5})+tx_(l+6,t+13,'actual minus forecast, GBP million',{});
+    e.forEach((v,i)=>{
+      const y0=Y(Math.max(v,0)), y1=Y(Math.min(v,0));
+      s+='<rect x="'+(X(i)-bw/2).toFixed(1)+'" y="'+y0.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(0.6,y1-y0).toFixed(1)+'" fill="'+col+'" fill-opacity=".55"/>';
+      if(v>c) s+='<rect x="'+(X(i)-bw/2).toFixed(1)+'" y="'+Y(v).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(1.5,Y(c)-Y(v)).toFixed(1)+'" fill="#B02F3B"/>';
+    });
+    s+='<line x1="'+l+'" x2="'+xa+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'" stroke="#53666F"/>';
+    s+='<line x1="'+l+'" x2="'+xa+'" y1="'+Y(c).toFixed(1)+'" y2="'+Y(c).toFixed(1)+'" stroke="#14222B" stroke-width="2.2"/>';
+    s+='<rect x="'+(xa-128)+'" y="'+(t+5)+'" width="122" height="16" fill="#fff" fill-opacity=".9"/>'+tx_(xa-10,t+17,'line: forecast + '+c.toFixed(1),{a:'end',c:'#14222B',w:700,z:10.5});
+    /* cost curve */
+    const cs=[]; let best=0, bc=Infinity, cmax=0;
+    for(let m=0;m<=90;m+=0.5){ const q=stats(e,m), v=q.idle+r*q.sh; cs.push([m,v]); if(v<bc){bc=v;best=m;} if(v>cmax) cmax=v; }
+    const top=Math.ceil(cmax/20)*20, CX=m=>xb+m/90*(xr-xb), CY=v=>t+(top-v)/top*(H-t-b);
+    s+='<rect x="'+xb+'" y="'+t+'" width="'+(xr-xb)+'" height="'+(H-t-b)+'" fill="#fff" stroke="#DCE4E8"/>';
+    [0,top/2,top].forEach(v=>{s+=tx_(xb-6,CY(v)+3.5,v.toFixed(0),{a:'end'});});
+    [0,30,60,90].forEach(m=>{s+=tx_(CX(m),H-b+13,m,{a:'middle',z:9.5});});
+    s+=tx_(xr,H-4,'margin',{a:'end',z:9.5})+tx_(xb+6,t+13,'cost per day',{});
+    s+='<polyline points="'+cs.map(p=>CX(p[0]).toFixed(1)+','+CY(p[1]).toFixed(1)).join(' ')+'" fill="none" stroke="'+col+'" stroke-width="2.4"/>';
+    s+='<line x1="'+CX(best).toFixed(1)+'" x2="'+CX(best).toFixed(1)+'" y1="'+CY(bc).toFixed(1)+'" y2="'+(H-b)+'" stroke="#0E7A55" stroke-dasharray="3 3"/>';
+    s+='<circle cx="'+CX(best).toFixed(1)+'" cy="'+CY(bc).toFixed(1)+'" r="4" fill="#0E7A55"/>';
+    s+=tx_(xr-8,t+13,'green: cheapest margin '+best.toFixed(1),{a:'end',c:'#0E7A55',w:700,z:10.5})+tx_(xr-8,t+27,'black: the margin chosen',{a:'end',c:'#14222B',w:700,z:10.5});
+    const cur=st.idle+r*st.sh;
+    s+='<circle cx="'+CX(c).toFixed(1)+'" cy="'+CY(cur).toFixed(1)+'" r="5.5" fill="#14222B"/>';
+    sv.innerHTML=s;
+    const bs=stats(e,best);
+    out.textContent=D.name[model]+'   margin '+c.toFixed(1)+
+      '\ndays short            '+st.n+' of '+n+'  ('+(st.n/n*100).toFixed(1)+'%)'+
+      '\nidle cash per day     '+st.idle.toFixed(1)+
+      '\nshortfall per day     '+st.sh.toFixed(2)+
+      '\ncost per day at '+r+'x    '+cur.toFixed(1)+
+      '\ncheapest margin at '+r+'x '+best.toFixed(1)+'  ('+bs.n+' days short, cost '+bc.toFixed(1)+')';
+    out.style.borderLeftColor=col;
+  }
+  seg_('cs-model',v=>{model=v;draw();});
+  seg_('cs-ratio',v=>{r=+v;draw();});
+  sl.oninput=draw;
+  draw();
+})();

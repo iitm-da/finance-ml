@@ -105,32 +105,6 @@ add(f'''
 </section>
 ''')
 
-# ================================================================ plan
-blocks = [('Baselines', 15, BLUE, ['seasonal naive', 'ARIMA', 'Prophet']),
-          ('Deep learning forecasting', 25, PURP, ['LSTM', 'Temporal Fusion Transformer', 'quantile forecasts']),
-          ('Applications', 10, SLATE, ['cash flow', 'demand and market', 'liquidity risk']),
-          ('GANs for synthetic data', 25, RED, ['generator and critic', 'fidelity, utility, privacy']),
-          ('Fraud pipeline', 15, GREEN, ['alert budget', 'synthetic fraud rows'])]
-s = ''; x = 10; tot = 90; wid = 1100; t = 0
-for name, mins, col, items in blocks:
-    w = wid * mins / tot
-    s += Rect(x, 30, w - 4, 54, col)
-    s += T(x + 10, 53, name, 13.5, '#FFFFFF', 'start', BODY, 700)
-    s += T(x + 10, 72, f'{mins} min', 11, '#FFFFFF', 'start', MONO)
-    s += T(x, 20, f'{t}', 10.5, SOFT, 'start', MONO)
-    for i, it in enumerate(items):
-        s += T(x + 10, 108 + i * 19, it, 12, INK, 'start', MONO)
-    x += w; t += mins
-s += T(1106, 20, '90', 10.5, SOFT, 'end', MONO)
-s += Rect(10, 176, wid * 50 / 90 - 4, 30, PALE) + T(20, 196, 'data: daily net outflow, 6 segments, 2022 to 2025', 12, INK, 'start', MONO, 500)
-s += Rect(10 + wid * 50 / 90, 176, wid * 40 / 90 - 4, 30, PALE) + T(20 + wid * 50 / 90, 196, f"data: {comma(GN['n']['tx'])} card transactions, 180 days", 12, INK, 'start', MONO, 500)
-add(slide('Plan', 'Plan', 'Plan for the 90 minutes',
-          'Five blocks on one simulated bank. Every number on the slides comes from the notebook, and the notebook runs on a laptop CPU.',
-          fig(svg(1120, 214, s, 'Session plan'), 'minutes from the start') +
-          '<div class="cols nat"><div class="callout"><b>Forecasting.</b> Each model forecasts the next 14 days and is scored on the same 182 held-back days, so the numbers on different slides can be compared directly.</div>'
-          '<div class="callout"><b>Generative models.</b> A GAN writes a synthetic copy of the transaction table. The copy is tested for fidelity, utility and privacy, then used in a fraud detection pipeline.</div></div>'
-          '<div class="callout warn sm">All data is simulated; nothing comes from a real bank. The generator, <code class="k">make_data.py</code>, is in the folder, and its effects (weekday, payday, bank holidays, direct debits) are stated on the slides that use them.</div>'))
-
 # ================================================================ the series
 ax = Ax(1140, 318, (0, n - 1), (20, 260), pad=(46, 12, 12, 30))
 yr = [(idx[f'{y}-01-01'], str(y)) for y in (2022, 2023, 2024, 2025)]
@@ -629,6 +603,44 @@ add(slide('Applications', 'Applications', 'Forecasting problems in a bank',
           '<div class="callout"><b>The cost of an error is lopsided.</b> An empty ATM costs more than a full one, and a funding shortfall more than idle cash. That asymmetry is the q in the pinball loss, which is why these problems are forecast as quantiles.</div></div>'
           '<div class="callout warn sm">In every case the test is the one used today: hold back the most recent period, forecast it from an earlier origin, and compare against the seasonal naive forecast.</div>'))
 
+
+# ================================================================ liquidity: concept (staged)
+AP = TS['app']
+KC = 8                                  # window 9: a payday and a direct-debit day inside it
+oc = ORIG[KC]; qc = TS['q_head'][KC]; ac = Y[oc:oc + H]
+shortc = [max(0, a_ - q_[2]) for a_, q_ in zip(ac, qc)]; idlec = [max(0, q_[2] - a_) for a_, q_ in zip(ac, qc)]
+n_short = sum(1 for v in shortc if v > 0); n_med = sum(1 for a_, q_ in zip(ac, qc) if a_ > q_[1])
+ax = Ax(700, 450, (oc - 0.7, oc + H - 0.3), (0, 260), pad=(46, 12, 14, 50))
+s = ax.frame(yticks=range(0, 261, 50), ylab='GBP million, one day')
+bars = ''; med = ''; p90 = ''; res = ''
+for h in range(H):
+    i = oc + h; x0, x1 = ax.X(i - 0.36), ax.X(i + 0.36)
+    bars += Rect(x0, ax.Y(ac[h]), x1 - x0, ax.Y(0) - ax.Y(ac[h]), '#C9D3D9')
+    bars += T(ax.X(i), ax.t + ax.ph + 14, DATES[i][8:], 10, SOFT, 'middle', MONO)
+    bars += T(ax.X(i), ax.t + ax.ph + 26, DOW[CAL['dow'][i]], 9, SOFT, 'middle', MONO)
+    med += L(x0 - 3, ax.Y(qc[h][1]), x1 + 3, ax.Y(qc[h][1]), GREEN, 1.6, 'stroke-dasharray="4 3"')
+    p90 += L(x0 - 3, ax.Y(qc[h][2]), x1 + 3, ax.Y(qc[h][2]), GREEN, 3.2)
+    if shortc[h] > 0:
+        res += Rect(x0, ax.Y(ac[h]), x1 - x0, ax.Y(qc[h][2]) - ax.Y(ac[h]), RED)
+        res += T(ax.X(i), ax.Y(ac[h]) - 5, f'{shortc[h]:.0f}', 10.5, RED, 'middle', MONO, 700)
+    else:
+        res += Rect(x0, ax.Y(qc[h][2]), x1 - x0, ax.Y(ac[h]) - ax.Y(qc[h][2]), GREEN, extra='fill-opacity=".16"')
+s += G_(0, bars + tags(ax, oc, oc + H, ax.t + ax.ph + 32) + T(ax.l + 8, ax.t + 30, 'grey bar: outflow that happened', 10.5, INK, 'start', MONO, 700))
+s += G_(1, med + T(ax.l + 8, ax.t + 44, 'dashed green: median forecast (P50)', 10.5, GREEN, 'start', MONO))
+s += G_(2, p90 + T(ax.l + 8, ax.t + 58, 'thick green: P90 forecast, the cash held', 10.5, GREEN, 'start', MONO, 700))
+s += G_(3, res + T(ax.l + 8, ax.t + 72, 'red: short that day · pale green: cash held and not used', 10.5, RED, 'start', MONO, 700))
+add(slide('Applications', 'Applications &#183; Liquidity risk', 'Concept',
+          'A treasury desk holds cash today against tomorrow&#8217;s outflow. The forecast it acts on is a high quantile: an amount that should be enough on 9 days in 10.',
+          '<div class="cols w6040">' +
+          fig(svg(700, 450, s, 'One two-week window: outflow, median forecast and P90 buffer'),
+              f'retail current accounts, forecast made on {dm(oc - 1)} for {dm(oc)} to {dm(oc + H - 1)} &#183; ' + LEGEND) +
+          '<div class="colstack fill">'
+          f'<div class="kv" style="grid-template-columns:1fr 1fr" data-at="1">' + tile('days above the median', f'{n_med} of 14', 'b') + tile('mean outflow per day', f'{sum(ac) / H:.0f}', '') + '</div>'
+          f'<div class="kv" style="grid-template-columns:1fr 1fr" data-at="3">' + tile('days short of the P90', f'{n_short} of 14', 'bad') + tile('short, total', f'{sum(shortc):.1f}', 'bad') + '</div>'
+          f'<div class="kv" style="grid-template-columns:1fr 1fr" data-at="3">' + tile('cash held, not used', f'{sum(idlec):.1f}', 'ok') + tile('per day', f'{sum(idlec) / H:.1f}', 'ok') + '</div>'
+          '<div class="callout sm" data-at="2"><b>The decision is the green line.</b> A point forecast answers what will happen. The desk asks how much to hold, and that is a quantile of the same forecast.</div>'
+          '<div class="callout warn sm" data-at="3"><b>Two costs pull against each other.</b> Cash held and not used earns less than it would elsewhere. A short day is covered by borrowing at a worse rate. A higher line trades one for the other.</div>'
+          '</div></div>' + bld(3), 'build'))
 # ================================================================ liquidity
 LQ = TS['liq']
 lo_l = math.floor(min(LQ['cum_act'] + LQ['cum_p50']) / 100) * 100; hi_l = math.ceil(max(LQ['cum_act'] + LQ['cum_p90']) / 100) * 100
@@ -642,14 +654,154 @@ for k in range(13):
 s += T(ax.l + 8, ax.t + 30, 'thick green: sum of the daily P90 forecasts', 10.5, GREEN, 'start', MONO, 700)
 s += T(ax.l + 8, ax.t + 44, 'thin green: sum of the daily medians', 10.5, GREEN, 'start', MONO)
 s += T(ax.l + 8, ax.t + 58, 'dot: actual 14-day outflow, red when above the P90 line', 10.5, INK, 'start', MONO, 700)
-add(slide('Applications', 'Applications &#183; Liquidity risk', 'Liquidity risk',
-          f"A liquidity buffer is a quantile of future outflow. Sized from the TFT&#8217;s P90, the buffer was exceeded in {LQ['breach_p90']} of 13 two-week windows; sized from the median, in {LQ['breach_p50']}.",
+add(slide('Applications', 'Applications &#183; Liquidity risk', 'Example',
+          f"Sized from the TFT&#8217;s P90, the two-week buffer was exceeded in {LQ['breach_p90']} of 13 windows; sized from the median, in {LQ['breach_p50']}.",
           '<div class="cols w6040">' + fig(svg(700, 430, s, 'Cumulative 14-day outflow against two buffers'), 'retail current accounts, cumulative outflow per window') +
           '<div class="colstack fill"><div class="kv" style="grid-template-columns:1fr 1fr">' +
           tile('windows above the P90 buffer', f"{LQ['breach_p90']} of 13", 'bad' if LQ['breach_p90'] > 1 else 'ok') +
-          tile('days above the daily P90', f"{LQ['day_breach_p90']} of {LQ['days']}", 'bad' if LQ['day_breach_p90'] > 0.15 * LQ['days'] else 'ok') + '</div>' +
-          (f"<div class=\"callout warn sm\">A P90 should be exceeded on 10% of days. Here it was exceeded on {LQ['day_breach_p90'] / LQ['days'] * 100:.0f}% for this segment: the model was trained on 2022 to early 2025 and the book kept growing. Backtest the quantile on recent data, and recalibrate or retrain when the breach rate drifts.</div>"
-           if LQ['day_breach_p90'] > 0.25 * LQ['days'] else
-           f"<div class=\"callout sm\">A P90 should be exceeded on 10% of days. Here it was exceeded on {LQ['day_breach_p90'] / LQ['days'] * 100:.0f}% for this segment. That backtest is the evidence a treasury desk needs before sizing a buffer from the forecast, and it is repeated as new data arrives.</div>") +
+          tile('windows above the median buffer', f"{LQ['breach_p50']} of 13", 'bad') + '</div>' +
+          '<div class="callout sm">A buffer sized from the median forecast is too small about half the time by construction. The desk holds a high quantile, and the question for the next slide is whether the P90 behaves like one.</div>'
           '<div class="callout sm">Adding 14 daily P90s gives more than the P90 of the 14-day total, because the days do not all run high together. To size a two-week buffer exactly, train the model on the cumulative outflow or sample whole paths.</div>'
           '</div></div>'))
+
+# ================================================================ liquidity: test (backtest of the P90)
+BT = AP['bt']; ND = AP['n_days']
+SEGLAB = {'retail_current': 'retail current', 'retail_savings': 'retail savings', 'sme': 'SME', 'corporate': 'corporate',
+          'cards': 'cards', 'mortgages': 'mortgages'}
+cw, ch, gx, gy = 30, 22, 92, 26
+s = ''
+for h in range(H):
+    s += T(gx + h * cw + cw / 2, gy - 8, str(h + 1), 9.5, SOFT, 'middle', MONO)
+s += T(gx + H * cw / 2, 9, 'day ahead', 9.5, SOFT, 'middle', MONO) + T(gx - 8, gy - 8, 'forecast made', 9.5, SOFT, 'end', MONO)
+tot_up = 0
+for k in range(13):
+    o = ORIG[k]; up = 0
+    s += T(gx - 8, gy + k * ch + 15, dm(o - 1), 10, INK, 'end', MONO)
+    for h in range(H):
+        a_, q_ = Y[o + h], TS['q_head'][k][h]
+        c = RED if a_ > q_[2] else BLUE if a_ < q_[0] else '#E4EAED'
+        up += a_ > q_[2]
+        s += Rect(gx + h * cw + 1, gy + k * ch + 1, cw - 2, ch - 2, c)
+    tot_up += up
+    s += T(gx + H * cw + 10, gy + k * ch + 15, f'{up} above', 10.5, RED if up > 2 else SOFT, 'start', MONO, 700 if up > 2 else 400)
+gh = gy + 13 * ch + 8
+assert tot_up == BT[J][1]
+grid = svg(gx + H * cw + 80, gh, s, 'Each of 182 test days against the P10 to P90 band')
+bw, lw = 250, 118
+s = ''
+for i_, r_ in enumerate(BT):
+    y = 30 + i_ * 40; v = r_[2]; sig = r_[5] < 0.05
+    col = (RED if v > 10 else AMBER) if sig else '#8FA0A9'
+    s += T(lw - 8, y + 16, SEGLAB[r_[0]], 11.5, INK, 'end', MONO, 500)
+    s += Rect(lw, y, bw * v / 20, 24, col)
+    s += T(lw + bw * v / 20 + 6, y + 16, f'{v:.1f}%', 11.5, INK, 'start', MONO, 700)
+    s += T(lw + bw + 66, y + 16, f'{r_[1]} days &#183; p {r_[5]:.4f}'.replace('&#183;', '·'), 10, RED if sig else SOFT, 'start', MONO)
+s += L(lw + bw / 2, 18, lw + bw / 2, 30 + 6 * 40 - 8, INK, 1.4, 'stroke-dasharray="4 3"') + T(lw + bw / 2, 12, '10% expected', 9.5, INK, 'middle', MONO, 700)
+segbars = svg(lw + bw + 190, 30 + 6 * 40, s, 'Share of days above the P90 by segment')
+n_fail = sum(1 for r_ in BT if r_[5] < 0.05)
+add(slide('Applications', 'Applications &#183; Liquidity risk', 'Test',
+          f"Backtest the quantile. A P90 should be exceeded on 10% of days; for retail current accounts it was exceeded on {BT[J][1]} of {ND}, which is {BT[J][2]:.1f}%.",
+          '<div class="cols">' +
+          fig(grid, 'retail current accounts &#183; <span style="color:#B02F3B;font-weight:700">red</span> above P90 &#183; <span style="color:#125F9E;font-weight:700">blue</span> below P10 &#183; grey inside the band',
+              f'<b>{BT[J][1]} red and {BT[J][3]} blue of {ND}.</b> The band was meant to hold 80% of days and held {(ND - BT[J][1] - BT[J][3]) / ND * 100:.0f}%, so it is too narrow on both sides.') +
+          '<div class="colstack" data-at="1">' +
+          fig(segbars, 'days above the P90, all six segments, with a binomial test against 10%') +
+          f'<div class="callout warn sm" data-at="2"><b>{n_fail} of 6 segments fail the test</b>, three with a P90 that is too low and SME with one that is too high. The test counts days as independent. Red days here arrive together, 0 to 6 in a window, so the p-values overstate the evidence.</div>'
+          '<div class="callout good sm" data-at="2">A desk runs this count every week on the newest days. When the rate drifts from 10% it widens the margin from recent errors, which is the next slide, or retrains.</div>'
+          '</div></div>' + bld(2), 'build'))
+
+# ================================================================ liquidity: cost (widget)
+MG = {r_[0]: r_ for r_ in AP['margin']}
+mk = {'naive': 'Seasonal naive', 'arima': 'ARIMA', 'prophet': 'Prophet', 'arimax': 'ARIMA + calendar', 'lstm': 'LSTM', 'tft': 'TFT (median)'}
+cost = {'err': AP['err'], 'col': COL, 'name': NAME, 'mean': AP['mean_out']}
+cbt = ''.join(f'<button data-v="{m}"{" class=\"on\"" if m == "naive" else ""}>{NAME[m]}</button>' for m in ('naive', 'arima', 'prophet', 'arimax', 'lstm', 'tft'))
+rbt = ''.join(f'<button data-v="{r_}"{" class=\"on\"" if r_ == 9 else ""}>{r_}x</button>' for r_ in (1, 4, 9, 19))
+add(slide('Applications', 'Applications &#183; Liquidity risk', 'Cost',
+          f"Hold the forecast plus a fixed margin. To be short on 9 of {ND} days the margin is {MG[mk['naive']][1]:.1f} with the seasonal naive forecast, {MG[mk['arima']][1]:.1f} with ARIMA and {MG[mk['tft']][1]:.1f} with the TFT.",
+          f'<div class="wctl"><div class="seg" id="cs-model">{cbt}</div>'
+          '<label class="rg"><span>margin above the forecast: <b id="cs-ml">58.0</b> GBP m</span><input type="range" id="cs-margin" min="0" max="90" step="0.5" value="58"/></label>'
+          f'<div class="seg" id="cs-ratio" title="cost of a pound short, in pounds idle">{rbt}</div>{JSB}</div>'
+          '<div class="fig"><div class="cap">left: actual minus forecast, 182 test days, retail current accounts &#183; red: short that day &#160;|&#160; right: cost per day against the margin</div>'
+          '<svg id="cs-svg" viewBox="0 0 1120 280" width="100%" role="img" aria-label="Margin against shortfall and idle cash"></svg></div>'
+          '<div class="cols nat"><div class="out" id="cs-out"></div>'
+          f'<div class="colstack"><div class="callout sm"><b>Accuracy is paid back as cash.</b> For the same 9 short days the TFT desk holds {MG[mk["naive"]][3] - MG[mk["tft"]][3]:.0f} million a day less idle cash than the seasonal naive desk, on one segment with a mean outflow of {AP["mean_out"]:.0f} million a day.</div>'
+          '<div class="callout sm"><b>The multiple picks the quantile.</b> If a pound short costs 9 times a pound idle, the cheapest margin is the 90th percentile of the errors: 9 / (9 + 1). That multiple is the q in the pinball loss.</div></div></div>' + jdata('cs-data', cost)))
+
+# ================================================================ whole bank (staged)
+BK = AP['bank']
+SHORT = ['current', 'savings', 'SME', 'corporate', 'cards', 'mortg.']
+SEGCOL = [BLUE, SLATE, PURP, AMBER, GREEN, '#7C8C95']
+def stack(y, vals, scale, h=52, names=True):
+    x = 150; o = ''
+    for v, nm, c in zip(vals, SHORT, SEGCOL):
+        w_ = abs(v) * scale
+        o += Rect(x, y, w_ - 1.5, h, c)
+        if names and w_ > 34:
+            o += T(x + w_ / 2, y + h / 2 + 4, nm, 10.5, '#FFFFFF', 'middle', MONO, 700)
+        x += w_
+    return o, x
+sc1 = 500 / BK['sum_seg_mae']; sc2 = 500 / BK['sum_margin']
+b1, x1 = stack(40, BK['seg_mae'], sc1)
+b3, x3 = stack(290, BK['seg_margin'], sc2)
+s = T(10, 22, 'MEAN ABSOLUTE ERROR, GBP MILLION A DAY', 11, SOFT, 'start', MONO, 700)
+s += G_(0, T(142, 64, 'six segments', 12, INK, 'end', MONO) + T(142, 79, 'added', 12, INK, 'end', MONO) + b1 + T(x1 + 8, 73, f"{BK['sum_seg_mae']:.1f}", 18, INK, 'start', MONO, 700))
+s += G_(1, T(142, 142, 'bank total', 12, INK, 'end', MONO) + Rect(150, 110, BK['mae_total'] * sc1, 52, INK) +
+        T(150 + BK['mae_total'] * sc1 + 8, 143, f"{BK['mae_total']:.1f}", 18, RED, 'start', MONO, 700) +
+        T(150, 184, 'errors in different segments partly cancel', 11.5, SOFT, 'start', MONO))
+s += G_(2, T(10, 272, 'CASH HELD ABOVE THE MEDIAN FORECAST, GBP MILLION A DAY', 11, SOFT, 'start', MONO, 700) +
+        T(142, 314, 'six P90', 12, INK, 'end', MONO) + T(142, 329, 'margins added', 12, INK, 'end', MONO) + b3 +
+        T(x3 + 8, 323, f"{BK['sum_margin']:.1f}", 18, INK, 'start', MONO, 700))
+s += G_(3, T(142, 384, 'needed for 10%', 12, INK, 'end', MONO) + T(142, 399, 'at bank level', 12, INK, 'end', MONO) +
+        Rect(150, 360, BK['need_margin'] * sc2, 52, GREEN) +
+        T(150 + BK['need_margin'] * sc2 + 8, 393, f"{BK['need_margin']:.1f}", 18, GREEN, 'start', MONO, 700) +
+        T(150, 434, f"exceeded on {BK['above_need']} of {ND} days", 11.5, SOFT, 'start', MONO))
+add(slide('Applications', 'Applications &#183; The whole bank', 'Example',
+          f"The desk funds the bank, which is the six segments added. The TFT&#8217;s six errors add to {BK['sum_seg_mae']:.1f} million a day, and its error on the total is {BK['mae_total']:.1f}.",
+          '<div class="cols w6040">' + fig(svg(740, 450, s, 'Segment errors and margins against the bank total'), f"TFT, 182 test days &#183; mean net outflow of the bank {BK['mean_total']:.0f} million a day") +
+          '<div class="colstack fill">'
+          '<div class="kv" style="grid-template-columns:1fr 1fr" data-at="2">' + tile('days above the six P90s added', f"{BK['above_sum_p90']} of {ND}", 'b') + tile('that is', f"{BK['above_sum_p90'] / ND * 100:.1f}%", 'b') + '</div>'
+          f"<div class=\"callout sm\" data-at=\"2\"><b>Six P90s added are far above a P90.</b> The segments do not all run high on the same day, so the sum was exceeded on {BK['above_sum_p90'] / ND * 100:.1f}% of days and the bank holds more than the 10% target asks for.</div>"
+          f"<div class=\"callout good sm\" data-at=\"3\"><b>{BK['sum_margin'] - BK['need_margin']:.0f} million a day is released</b> by sizing the margin on the total: {BK['need_margin']:.1f} against {BK['sum_margin']:.1f}. Forecast the quantity the decision is made on, or sample the six segments together.</div>"
+          '<div class="callout sm" data-at="3">The same arithmetic applied across days on the earlier slide: 14 daily P90s added were never exceeded in 13 windows.</div>'
+          '</div></div>' + bld(3), 'build'))
+
+# ================================================================ horizon
+WK = {r_[0]: r_ for r_ in AP['week']}
+ax = Ax(700, 450, (-0.6, 5.6), (0, 1.2), pad=(46, 12, 14, 44))
+s = ax.frame(yticks=[0, .2, .4, .6, .8, 1.0, 1.2], ylab='MASE over 6 segments', yfmt=lambda v: f'{v:.1f}')
+for i_, m in enumerate(('naive', 'arima', 'arimax', 'prophet', 'lstm', 'tft')):
+    w1, w2 = WK[mk[m]][1], WK[mk[m]][2]
+    s += ax.vbar(i_ - 0.36, i_ - 0.02, w1, COL[m], 0, .55) + ax.vbar(i_ + 0.02, i_ + 0.36, w2, COL[m], 0)
+    s += T(ax.X(i_ - 0.19), ax.Y(w1) - 5, f'{w1:.3f}', 10, SOFT, 'middle', MONO)
+    s += T(ax.X(i_ + 0.19), ax.Y(w2) - 5, f'{w2:.3f}', 10, INK, 'middle', MONO, 700)
+    for q_, part in enumerate(NAME[m].replace(' + ', ' +|').split('|') if '+' in NAME[m] else NAME[m].split(' ', 1)):
+        s += T(ax.X(i_), ax.t + ax.ph + 15 + 12 * q_, part, 10, INK, 'middle', MONO)
+s += T(ax.l + ax.pw - 8, ax.t + 16, 'pale: days 1 to 7 · solid: days 8 to 14', 10.5, INK, 'end', MONO, 700)
+hold = [m for m in ('prophet', 'lstm', 'tft') if WK[mk[m]][2] <= WK[mk[m]][1] + 0.002]
+add(slide('Applications', 'Applications &#183; Horizon', 'Example',
+          f"The second week against the first. The TFT scores {WK[mk['tft']][1]:.3f} on days 1 to 7 and {WK[mk['tft']][2]:.3f} on days 8 to 14; ARIMA goes from {WK[mk['arima']][1]:.3f} to {WK[mk['arima']][2]:.3f}.",
+          '<div class="cols w6040">' + fig(svg(700, 450, s, 'MASE in the first and second forecast week by model'), '13 windows, 6 segments; each week holds every weekday once') +
+          '<div class="colstack fill">'
+          f"<div class=\"callout\"><b>{len(hold)} models lose nothing in week 2:</b> {', '.join(NAME[m] for m in hold)}. Paydays, direct-debit days and bank holidays for day 14 are known on day 0, and most of this series is calendar.</div>"
+          f"<div class=\"callout\"><b>Both ARIMA models lose about {((WK[mk['arima']][2] - WK[mk['arima']][1]) + (WK[mk['arimax']][2] - WK[mk['arimax']][1])) / 2:.2f}.</b> Part of their forecast comes from the last few days&#8217; errors, and that information is used up within a week.</div>"
+          '<div class="callout warn sm"><b>Which horizon the desk needs</b> depends on the decision: tomorrow for intraday funding, two weeks for the funding plan, 30 days for a liquidity ratio. Only 14 days was tested here. A 30-day claim needs its own backtest.</div>'
+          '</div></div>'))
+
+# ================================================================ drawbacks
+pay_no, pay_cal = BYK['arima']['payday'][0], BYK['tft']['payday'][0]
+rows = [
+    ('The band is the wrong width', f"P90 exceeded on {BT[J][2]:.1f}% of days for retail current and {BT[SEGS.index('sme')][2]:.1f}% for SME, against 10%",
+     'Backtest each segment on the newest days.'),
+    ('Quantiles do not add', f"Six P90s added: exceeded on {BK['above_sum_p90'] / ND * 100:.1f}% of days. 14 daily P90s added: exceeded in {LQ['breach_p90']} of 13 windows",
+     'Forecast the total and the period the buffer is held against.'),
+    ('The calendar is an input', f"Payday error {pay_no:.1f} without the calendar and {pay_cal:.1f} with it",
+     'A moved payday or a new bank holiday has to reach the model before the day does.'),
+    ('The history holds ordinary days', f"{TS['n']:,} days, none of them a run on deposits",
+     'The forecast sizes the day-to-day buffer. A stress buffer comes from regulatory scenarios.'),
+]
+add(slide('Applications', 'Applications &#183; Drawbacks', 'Drawbacks',
+          'Where a cash-flow forecast misleads a treasury desk, with the number measured in this session.',
+          table(['What goes wrong', 'Measured here', 'What the desk does'],
+                [(f'<b>{a_}</b>', b_, c_) for a_, b_, c_ in rows], 'd free lg') +
+          '<div class="cols nat"><div class="callout"><b>The desk is scored on the breach rate and the cash held.</b> MASE ranks the models; the backtest and the margin decide how much money sits idle.</div>'
+          '<div class="callout good"><b>The same four steps carry to ATM cash and call volumes:</b> forecast a quantile, backtest it, price the two errors, forecast at the level of the decision.</div></div>'))
