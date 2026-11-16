@@ -1,5 +1,5 @@
 /* ============================================================
-   widgets for the Lloyds deck. Each one reads a JSON block the
+   widgets for the deck. Each one reads a JSON block the
    builder wrote and redraws from it; nothing is fetched.
    ============================================================ */
 const MONO_='JetBrains Mono,monospace', BODY_='Public Sans,system-ui,sans-serif';

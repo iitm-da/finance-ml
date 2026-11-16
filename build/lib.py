@@ -1,7 +1,7 @@
-import html, re, json, math
+import html, os, re, json, math
 
-TS = json.load(open('/mnt/e/iitm course/lloyds/build/m_ts.json'))
-GN = json.load(open('/mnt/e/iitm course/lloyds/build/m_gan.json'))
+TS = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'm_ts.json')))
+GN = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'm_gan.json')))
 
 INK = '#14222B'; SOFT = '#53666F'; LINE = '#C3CFD5'; HAIR = '#DCE4E8'
 BLUE = '#125F9E'; GREEN = '#0E7A55'; RED = '#B02F3B'; AMBER = '#8F5D0A'; PURP = '#9B2C7E'; SLATE = '#4B5A87'

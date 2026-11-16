@@ -1,0 +1,29 @@
+/* deck additions */
+.seg{flex-wrap:wrap}
+.seg button{text-transform:none}
+.wctl{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.wctl .out{padding:6px 10px}
+.wctl label.rg{display:flex;flex-direction:column;justify-content:center;gap:3px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.1em;color:var(--soft);min-width:230px}
+.wctl label.rg b{color:var(--ink);font-size:12px;letter-spacing:0}
+input[type=range]{width:100%;accent-color:#B02F3B}
+.wbtn{font-family:var(--mono);font-size:11px;padding:5px 16px;border:1px solid var(--ink);background:var(--ink);
+  color:#fff;cursor:pointer;border-radius:2px;min-width:74px}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kv .lf{font-family:var(--mono);font-size:24px;font-weight:700;padding:8px 12px;background:var(--card);
+  border:1px solid var(--hair);border-left:4px solid var(--soft);line-height:1.2}
+.kv .lf small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:500}
+.kv .lf.bad{color:#B02F3B;border-left-color:#B02F3B}.kv .lf.ok{color:#0E7A55;border-left-color:#0E7A55}
+.kv .lf.b{color:#125F9E;border-left-color:#125F9E}
+.kv.k3{grid-template-columns:repeat(3,1fr)}
+ul.b.lg{font-size:15px;line-height:1.5}
+ul.b.lg li{margin-bottom:11px}
+table.d td.r,table.d th.r{text-align:right;font-family:var(--mono);white-space:nowrap}
+table.d tr.best td{background:#F3FBF7;font-weight:700}
+.cols.nat{flex:none}
+.wctl .jsbadge{align-self:center}
+.card.big{padding:14px 16px}
+.card.big h3{font-size:16.5px;margin-bottom:8px}
+.card.big p{font-size:13.6px;line-height:1.55}
+.refs{font-size:12.5px;line-height:1.5}
+.refs p{margin-bottom:8px;padding-left:16px;text-indent:-16px}

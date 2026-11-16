@@ -422,7 +422,7 @@ table.log.roomy td,table.log.roomy th{padding:17px 10px}
 </style>
 
 <style>
-/* Lloyds deck additions */
+/* deck additions */
 .seg{flex-wrap:wrap}
 .seg button{text-transform:none}
 .wctl{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
@@ -470,7 +470,7 @@ table.d tr.best td{background:#F3FBF7;font-weight:700}
     <div>&#160;</div>
     <div><span class="h-dim">10 alerts a day &#8594; </span><span class="h-val">138</span><span class="h-dim"> of 281 fraud rows</span></div>
   </div>
-  <div class="kicker">Lloyds Bank</div>
+  <div class="kicker">Machine Learning for Finance</div>
   <h1>Forecasting and<br/>Generative Models</h1>
   <div class="pt">Time series forecasting for finance<br/>Generative models, applied</div>
   <div class="rule"></div>
@@ -481,7 +481,7 @@ table.d tr.best td{background:#F3FBF7;font-weight:700}
     <tr><td>Time series with</td><td>Dr. Nirav Bhatt</td></tr>
     <tr><td>Duration</td><td>90 minutes</td></tr>
     <tr><td>Data</td><td>simulated bank &#183; 6 segments &#183; 100,000 transactions</td></tr>
-    <tr><td>Code</td><td>lloyds_forecasting_and_generative_models.ipynb</td></tr>
+    <tr><td>Code</td><td>forecasting_and_generative_models.ipynb</td></tr>
   </table>
 </section>
 
@@ -923,7 +923,7 @@ model = fraud_model(pd.concat([train, fake_fraud]))</pre><div class="callout sm"
   <h1 class="t">References and the notebook
     <small>Everything on the slides can be rerun from the folder.</small></h1>
   <div class="wrap">
-<div class="cols"><div class="colstack"><h2 class="s">Papers</h2><div class="refs"><p>Hochreiter and Schmidhuber (1997). Long short-term memory. <i>Neural Computation</i> 9(8).</p><p>Taylor and Letham (2018). Forecasting at scale. <i>The American Statistician</i> 72(1). Prophet.</p><p>Lim, Arik, Loeff and Pfister (2021). Temporal Fusion Transformers for interpretable multi-horizon time series forecasting. <i>International Journal of Forecasting</i> 37(4).</p><p>Hyndman and Koehler (2006). Another look at measures of forecast accuracy. <i>International Journal of Forecasting</i> 22(4). MASE.</p><p>Goodfellow et al. (2014). Generative adversarial nets. <i>NeurIPS</i>.</p><p>Gulrajani et al. (2017). Improved training of Wasserstein GANs. <i>NeurIPS</i>. The gradient penalty.</p><p>Xu et al. (2019). Modeling tabular data using conditional GAN. <i>NeurIPS</i>. CTGAN.</p><p>Abadi et al. (2016). Deep learning with differential privacy. <i>ACM CCS</i>. DP-SGD.</p></div></div><div class="colstack"><h2 class="s">In the folder</h2><div class="out xs">lloyds_forecasting_and_generative_models.ipynb
+<div class="cols"><div class="colstack"><h2 class="s">Papers</h2><div class="refs"><p>Hochreiter and Schmidhuber (1997). Long short-term memory. <i>Neural Computation</i> 9(8).</p><p>Taylor and Letham (2018). Forecasting at scale. <i>The American Statistician</i> 72(1). Prophet.</p><p>Lim, Arik, Loeff and Pfister (2021). Temporal Fusion Transformers for interpretable multi-horizon time series forecasting. <i>International Journal of Forecasting</i> 37(4).</p><p>Hyndman and Koehler (2006). Another look at measures of forecast accuracy. <i>International Journal of Forecasting</i> 22(4). MASE.</p><p>Goodfellow et al. (2014). Generative adversarial nets. <i>NeurIPS</i>.</p><p>Gulrajani et al. (2017). Improved training of Wasserstein GANs. <i>NeurIPS</i>. The gradient penalty.</p><p>Xu et al. (2019). Modeling tabular data using conditional GAN. <i>NeurIPS</i>. CTGAN.</p><p>Abadi et al. (2016). Deep learning with differential privacy. <i>ACM CCS</i>. DP-SGD.</p></div></div><div class="colstack"><h2 class="s">In the folder</h2><div class="out xs">forecasting_and_generative_models.ipynb
     every model and every number, executed
 
 data/cashflow.csv             6 segments x 1,461 days
@@ -947,7 +947,7 @@ build/make_data.py            the simulator</div><pre class="code xs">pip instal
   let i=0;
   slides.forEach((s,idx)=>{
     const r=document.createElement('div'); r.className='rail';
-    r.innerHTML='<div class="a">Lloyds Bank &#183; Forecasting and Generative Models</div>'+
+    r.innerHTML='<div class="a">Machine Learning for Finance &#183; Forecasting and Generative Models</div>'+
       '<div class="n">Dr. Arun B Ayyar</div>'+
       '<div class="b">'+(s.dataset.sec||'')+'</div>'+
       '<div class="c">'+String(idx+1).padStart(2,'0')+' / '+slides.length+'</div>';
@@ -1010,7 +1010,7 @@ build/make_data.py            the simulator</div><pre class="code xs">pip instal
 
 
 /* ============================================================
-   widgets for the Lloyds deck. Each one reads a JSON block the
+   widgets for the deck. Each one reads a JSON block the
    builder wrote and redraws from it; nothing is fetched.
    ============================================================ */
 const MONO_='JetBrains Mono,monospace', BODY_='Public Sans,system-ui,sans-serif';

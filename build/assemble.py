@@ -1,11 +1,11 @@
-"""Assemble the Lloyds deck: DA2402 theme + slides.py + widgets.js -> one HTML file."""
-import re, subprocess, sys
-B = '/mnt/e/iitm course/lloyds/build/'
+"""Assemble the day 1 deck: DA2402 theme + slides.py + widgets.js -> one HTML file."""
+import os, re, subprocess, sys
+B = os.path.dirname(os.path.abspath(__file__)) + '/'
 sys.path.insert(0, B)
 from slides import S
 
 SRC = '/mnt/e/iitm course/DA2402/data storage/data_storage_1_file_formats.html'
-OUT = '/mnt/e/iitm course/lloyds/lloyds_forecasting_and_generative_models.html'
+OUT = os.path.join(os.path.dirname(B[:-1]), 'forecasting_and_generative_models.html')
 src = open(SRC, encoding='utf-8').read()
 
 head = src[:src.index('<style>\n/* storage L1 additions')]
@@ -13,12 +13,12 @@ head = re.sub(r'<title>.*?</title>',
               '<title>Time Series Forecasting and Generative Models for Finance</title>', head)
 mech = src[src.index('/* ============================================================\n   deck mechanics'):
            src.index("(function(){\n  const el=document.getElementById('bw-data')")]
-mech = mech.replace('DA2402 &#183; Data Curation and Visualization', 'Lloyds Bank &#183; Forecasting and Generative Models')
+mech = mech.replace('DA2402 &#183; Data Curation and Visualization', 'Machine Learning for Finance &#183; Forecasting and Generative Models')
 mech = mech.replace('Lecture 1 &#183; ', '')
 assert 'DA2402' not in mech
 
 css = '''<style>
-/* Lloyds deck additions */
+/* deck additions */
 .seg{flex-wrap:wrap}
 .seg button{text-transform:none}
 .wctl{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}

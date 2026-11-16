@@ -37,7 +37,7 @@ end.append(slide('References', 'References', 'References and the notebook',
                  '<p>Xu et al. (2019). Modeling tabular data using conditional GAN. <i>NeurIPS</i>. CTGAN.</p>'
                  '<p>Abadi et al. (2016). Deep learning with differential privacy. <i>ACM CCS</i>. DP-SGD.</p>'
                  '</div></div><div class="colstack"><h2 class="s">In the folder</h2>' +
-                 out("""lloyds_forecasting_and_generative_models.ipynb
+                 out("""forecasting_and_generative_models.ipynb
     every model and every number, executed
 
 data/cashflow.csv             6 segments x 1,461 days

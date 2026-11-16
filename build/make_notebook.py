@@ -1,16 +1,16 @@
 """Build the session notebook from ts_part.py and gan_part.py, execute it, and save it without the deck cells.
 
-    ~/venv_lloyds/bin/python build/make_notebook.py
+    python build/make_notebook.py        (needs torch, prophet, statsmodels, pytorch-forecasting)
 """
 import os, re, time
 import nbformat
 from nbclient import NotebookClient
 
-ROOT = '/mnt/e/iitm course/lloyds'
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 INTRO = """# Forecasting and generative models for finance
 
-Lloyds Bank session, Dr. Arun B Ayyar. This notebook produces every number on the slides.
+Machine Learning for Finance, Dr. Arun B Ayyar. This notebook produces every number on the slides.
 
 All data is simulated by `build/make_data.py`. The two CSV files it writes are in `data/`.
 
@@ -41,5 +41,5 @@ t0 = time.time()
 NotebookClient(nb, timeout=None, kernel_name='python3', resources={'metadata': {'path': ROOT}}).execute()
 print('executed in %.0f s' % (time.time() - t0))
 nb.cells = [c for c in nb.cells if 'build' not in c.metadata.get('tags', [])]
-nbformat.write(nb, 'lloyds_forecasting_and_generative_models.ipynb')
+nbformat.write(nb, 'forecasting_and_generative_models.ipynb')
 print('wrote notebook with', len(nb.cells), 'cells')

@@ -1,4 +1,4 @@
-"""Simulated bank data for the Lloyds session.
+"""Simulated bank data for the day 1 session.
 
 Two files, one simulated bank:
   data/cashflow.csv      daily net outflow, 6 segments of the deposit book, 2022-2025
@@ -6,10 +6,11 @@ Two files, one simulated bank:
 
 Everything is simulated. Nothing here comes from a real bank.
 """
+import os
 import numpy as np
 import pandas as pd
 
-OUT = '/mnt/e/iitm course/lloyds/data/'
+OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data') + '/'
 
 # ------------------------------------------------------------------ calendar
 # England and Wales bank holidays, 2022-2025

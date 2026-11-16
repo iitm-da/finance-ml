@@ -1,4 +1,4 @@
-"""Run a '# %%' script as plain Python from the lloyds/ folder.
+"""Run a '# %%' script as plain Python from the repo root.
 
     python build/run_part.py build/ts_part.py
 
@@ -6,7 +6,7 @@ Markdown cells are skipped, a bare last expression in a cell is printed.
 """
 import ast, os, re, sys
 
-os.chdir('/mnt/e/iitm course/lloyds')
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 src = open(sys.argv[1], encoding='utf-8').read()
 cells = re.split(r'^# %%.*$', src, flags=re.M)
 heads = re.findall(r'^# %%(.*)$', src, flags=re.M)

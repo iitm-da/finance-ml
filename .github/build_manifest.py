@@ -11,7 +11,7 @@ import json
 import os
 import subprocess
 
-SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", "data"}  # "data" = raw files notebooks fetch, not course material
+SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", "data", "build"}  # "data" = raw files notebooks fetch, not course material
 KINDS = {".html": "deck", ".ipynb": "notebook", ".pdf": "pdf"}
 # HTML files named like "07 http_explorer.html" are interactive demos, not decks
 DEMO_RE = re.compile(r"^\d\d ")
@@ -19,7 +19,9 @@ DEMO_RE = re.compile(r"^\d\d ")
 # Optional: nicer names for folders. Anything not listed falls back to the
 # folder name with dashes/underscores turned into spaces and title-cased.
 SECTION_TITLES = {
-    ".": "Time series forecasting · generative models",
+    ".": "Day 1 · Time series forecasting · generative models",
+    "nlp": "Day 2 · Advanced NLP for finance",
+    "llm": "Day 2 · LLMs in depth",
     "intro": "Introduction · pandas",
     "data cleaning": "Data cleaning",
     "data-cleaning": "Data cleaning",

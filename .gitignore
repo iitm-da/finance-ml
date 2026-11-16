@@ -3,3 +3,8 @@ __pycache__/
 lightning_logs/
 build/_js*.js
 build/*.log
+nlp/data/sent_*.csv
+llm/data/sent_*.csv
+llm/data/loans.jsonl
+*/build/*.log
+*/build/_js*.js

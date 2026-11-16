@@ -89,7 +89,7 @@ add(f'''
     <div>&#160;</div>
     <div><span class="h-dim">10 alerts a day &#8594; </span><span class="h-val">{GN['fraud']['budget']['10']['gb']['caught']}</span><span class="h-dim"> of {GN['n']['fraud_test']} fraud rows</span></div>
   </div>
-  <div class="kicker">Lloyds Bank</div>
+  <div class="kicker">Machine Learning for Finance</div>
   <h1>Forecasting and<br/>Generative Models</h1>
   <div class="pt">Time series forecasting for finance<br/>Generative models, applied</div>
   <div class="rule"></div>
@@ -100,7 +100,7 @@ add(f'''
     <tr><td>Time series with</td><td>Dr. Nirav Bhatt</td></tr>
     <tr><td>Duration</td><td>90 minutes</td></tr>
     <tr><td>Data</td><td>simulated bank &#183; 6 segments &#183; {comma(GN['n']['tx'])} transactions</td></tr>
-    <tr><td>Code</td><td>lloyds_forecasting_and_generative_models.ipynb</td></tr>
+    <tr><td>Code</td><td>forecasting_and_generative_models.ipynb</td></tr>
   </table>
 </section>
 ''')
