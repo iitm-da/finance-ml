@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-16 18:23 UTC",
+ "generated": "2026-11-16 18:33 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -9,8 +9,8 @@
    "folder": ".",
    "section": "Day 1 \u00b7 Time series forecasting \u00b7 generative models",
    "kind": "deck",
-   "size": 816653,
-   "updated": "2026-11-16"
+   "size": 1172847,
+   "updated": "2026-11-17"
   },
   {
    "path": "forecasting_and_generative_models.ipynb",
@@ -18,8 +18,8 @@
    "folder": ".",
    "section": "Day 1 \u00b7 Time series forecasting \u00b7 generative models",
    "kind": "notebook",
-   "size": 117627,
-   "updated": "2026-11-16"
+   "size": 132975,
+   "updated": "2026-11-17"
   },
   {
    "path": "llm/llms_in_depth.html",
