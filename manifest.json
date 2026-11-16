@@ -1,25 +1,43 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-15 14:42 UTC",
+ "generated": "2026-11-16 07:02 UTC",
  "items": [
   {
-   "path": "lloyds_forecasting_and_generative_models.html",
-   "name": "lloyds_forecasting_and_generative_models.html",
+   "path": "forecasting_and_generative_models.html",
+   "name": "forecasting_and_generative_models.html",
    "folder": ".",
-   "section": "Time series forecasting \u00b7 generative models",
+   "section": "Day 1 \u00b7 Time series forecasting \u00b7 generative models",
    "kind": "deck",
-   "size": 663843,
-   "updated": "2026-11-15"
+   "size": 663849,
+   "updated": "2026-11-16"
   },
   {
-   "path": "lloyds_forecasting_and_generative_models.ipynb",
-   "name": "lloyds_forecasting_and_generative_models.ipynb",
+   "path": "forecasting_and_generative_models.ipynb",
+   "name": "forecasting_and_generative_models.ipynb",
    "folder": ".",
-   "section": "Time series forecasting \u00b7 generative models",
+   "section": "Day 1 \u00b7 Time series forecasting \u00b7 generative models",
    "kind": "notebook",
-   "size": 80236,
-   "updated": "2026-11-15"
+   "size": 80245,
+   "updated": "2026-11-16"
+  },
+  {
+   "path": "nlp/advanced_nlp_for_finance.html",
+   "name": "advanced_nlp_for_finance.html",
+   "folder": "nlp",
+   "section": "Day 2 \u00b7 Advanced NLP for finance",
+   "kind": "deck",
+   "size": 1103021,
+   "updated": "2026-11-16"
+  },
+  {
+   "path": "nlp/advanced_nlp_for_finance.ipynb",
+   "name": "advanced_nlp_for_finance.ipynb",
+   "folder": "nlp",
+   "section": "Day 2 \u00b7 Advanced NLP for finance",
+   "kind": "notebook",
+   "size": 102355,
+   "updated": "2026-11-16"
   }
  ]
 }
