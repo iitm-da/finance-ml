@@ -121,7 +121,7 @@ QE_CONCEPT = slide('RAG', 'RAG &#183; Query expansion &#183; Concept', 'Concept'
     fig(svg(1140, 146, s, 'Query expansion: one question becomes several searches'), 'between the question and the index') +
     f'<div class="out sm" style="white-space:normal"><b>question</b> &#160;{esc(EX["q"])}</div>'
     '<div class="cols3">'
-    f'<div class="card sm o" data-at="4"><h3>Feedback terms</h3><p>Search once. Add the 8 most distinctive words of the top 3 sections and search again. No model.</p><div class="out xs" style="white-space:normal">+ {esc(", ".join(EX["prf"][:6]))}</div></div>'
+    f'<div class="card sm o" data-at="4"><h3>Feedback terms</h3><p>Search once. Add the most distinctive words of the top 3 sections, 8 at most, and search again. No model.</p><div class="out xs" style="white-space:normal">+ {esc(", ".join(EX["prf"][:6]))}</div></div>'
     f'<div class="card sm" data-at="5"><h3>Multi-query</h3><p>The language model writes 3 rewordings. All 4 versions are searched and the rankings merged.</p><div class="out xs" style="white-space:normal">{esc(EX["rw"][1])}</div></div>'
     f'<div class="card sm g" data-at="6"><h3>HyDE</h3><p>The model writes a made-up passage that would answer the question. The passage is searched for.</p><div class="out xs" style="white-space:normal">{esc(hy)}</div></div>'
     '</div>' + bld(6), 'build')
@@ -233,7 +233,7 @@ q1, m1 = qline(20, 24, [('What is the daily ', None), ('ATM', PURP), (' limit on
 q2, m2 = qline(610, 24, [('Which ', None), ('account', GREEN), (' has the highest daily cash machine limit?', None)])
 L1 = ON['link_ex'][0]
 s = q1
-s += G_(1, arrow(m1[0], 34, 125, 62, PURP) + box(20, 64, 210, 48, 'term: cash machine', 'ATM, cashpoint, cash dispenser', PURP, tsize=12.5) + arrow(125, 114, 125, 142, PURP) +
+s += G_(1, arrow(m1[0], 34, 125, 62, PURP) + box(20, 64, 210, 48, 'term: cash machine', 'ATM, cashpoint, cash point', PURP, tsize=12.5) + arrow(125, 114, 125, 142, PURP) +
         box(20, 144, 210, 52, '1 · synonyms', 'join the query', PURP))
 s += G_(2, arrow(m1[1], 34, 385, 62, BLUE) + box(260, 64, 250, 48, 'instance: ' + L1['inst'][0][0], 'document ' + L1['inst'][0][1], BLUE, tsize=12.5) + arrow(385, 114, 385, 142, BLUE) +
         box(260, 144, 250, 52, '2 · filter', 'search only ' + L1['inst'][0][1], BLUE))

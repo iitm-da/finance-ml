@@ -16,8 +16,8 @@ add(f'''
     <div><span class="h-dim">sentiment, general model   macro-F1 </span><span class="h-bad">{GENM['f1']:.3f}</span></div>
     <div><span class="h-dim">sentiment, fine-tuned      macro-F1 </span><span class="h-val">{FT['f1']:.3f}</span></div>
     <div>&#160;</div>
-    <div><span class="h-dim">NER, general model   F1 </span><span class="h-bad">{NE['m']['general']['all']['f1']:.3f}</span></div>
-    <div><span class="h-dim">NER, fine-tuned      F1 </span><span class="h-val">{NE['m']['ft']['all']['f1']:.3f}</span></div>
+    <div><span class="h-dim">NER, general model, 3 types  F1 </span><span class="h-bad">{NE['m']['general']['all']['f1']:.3f}</span></div>
+    <div><span class="h-dim">NER, fine-tuned, 6 types     F1 </span><span class="h-val">{NE['m']['ft']['all']['f1']:.3f}</span></div>
     <div>&#160;</div>
     <div><span class="h-dim">loan fields, rules      </span><span class="h-bad">{pct(sum(IE['m']['rules'].values()) / 6)}</span></div>
     <div><span class="h-dim">loan fields, QA model   </span><span class="h-val">{pct(sum(IE['m']['qa'].values()) / 6)}</span></div>

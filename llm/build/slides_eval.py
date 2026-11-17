@@ -16,7 +16,7 @@ add(slide('Evaluation', 'Evaluation &#183; Concept', 'Concept',
           '<div class="card big g"><h3>3. A score per stage</h3><p>Recall@k for retrieval, the three grades for the answer, and the abstention rate on unanswerable questions. One blended score hides which stage moved.</p></div>'
           '</div>'
           '<div class="cols nat"><div class="callout"><b>Here the grade is exact.</b> Every accepted answer is a number or a short phrase, so a string match decides. Free-text answers need a person, or a model checked against a person.</div>'
-          f'<div class="callout warn"><b>The test bed for this block.</b> Dense retrieval with a plain prompt, the weakest pipeline so far: {POOL["correct"]} correct, {POOL["abstained"]} abstained, {POOL["wrong"]} wrong out of {NP}. It supplies enough wrong answers to test a detector on.</div></div>'))
+          f'<div class="callout warn"><b>The test bed for this block.</b> Dense retrieval with a plain prompt, the retrieval pipeline with the most wrong answers: {POOL["correct"]} correct, {POOL["abstained"]} abstained, {POOL["wrong"]} wrong out of {NP}. It supplies enough wrong answers to test a detector on.</div></div>'))
 
 # ================================================================ overlap metrics
 items = [(k, round(MET[k]['auc'], 3), SLATE, f"mean {MET[k]['mean_ok']:.2f} when correct, {MET[k]['mean_bad']:.2f} when not") for k in MET]
@@ -67,7 +67,7 @@ s = ax.frame(yticks=[0, .25, .5, .75, 1], xticks=[(v, f'{v:.2f}') for v in (0, .
 for k, d in DET.items():
     s += ax.dot(d['recall'], d['precision'], DCOL[k], 8) + T(ax.X(d['recall']) + (12 if d['recall'] < .7 else -12), ax.Y(d['precision']) + 4, k, 11.5, DCOL[k], 'start' if d['recall'] < .7 else 'end', MONO, 700)
 add(slide('Hallucination', 'Hallucination &#183; Example', 'Example',
-          f"The four detectors on the {NP} test-bed answers, {POOL['wrong']} of them wrong. {best_r.capitalize()} flags the most wrong answers ({DET[best_r]['recall']:.2f}); {best_p} has the cleanest flags ({DET[best_p]['precision']:.2f}).",
+          f"The four detectors on the {NP} test-bed answers, {POOL['wrong']} of them wrong. The entailment model catches all {DET['entailment model']['caught']} by flagging {DET['entailment model']['flagged']} of the {NP}. The judge catches {DET['model as judge']['caught']} with {DET['model as judge']['flagged']} flags; {best_p} has the cleanest flags (precision {DET[best_p]['precision']:.2f}).",
           '<div class="cols"><div class="colstack" style="flex:1.3">' +
           table(['detector', 'flagged', 'wrong answers caught', 'precision', 'recall', 'AUC'], rows, 'd sm free') +
           f'<div class="callout {"warn" if DET["model as judge"]["auc"] < 0.7 else ""}"><b>The judge is the model that wrote the answer.</b> It said YES to {pct(EV["judge_yes"], 0)} of all answers. '
@@ -85,8 +85,8 @@ def scblock(e):
 add(slide('Hallucination', 'Hallucination &#183; Example', 'Example continued 1',
           'Self-consistency on two questions: the first answer at temperature 0, then five samples at temperature 0.8.',
           '<div class="cols"><div class="colstack">' + scblock(ex) + '</div><div class="colstack">' + scblock(ex2) + '</div></div>'
-          '<div class="cols nat"><div class="callout"><b>Disagreement is the signal.</b> When the number is on the page in front of the model, sampling returns it again. When the model is guessing, each sample guesses differently.</div>'
-          '<div class="callout warn sm"><b>Agreement is weaker evidence.</b> A model can be consistently wrong, for instance when it copies the same superseded section five times.</div></div>'))
+          '<div class="cols nat"><div class="callout"><b>Disagreement is the signal, and it misfires.</b> The first answer on the left is correct. Two samples drift to the GBP 2 statement fee and three give no figure, so the number comparison counts all five as changed.</div>'
+          '<div class="callout warn sm"><b>Agreement is weaker evidence.</b> The wrong answer on the right is repeated by all five samples. The model copies the same superseded section each time.</div></div>'))
 
 # ================================================================ finer checks: claim-level faithfulness
 XM = LM['eval_more']; CL, LGP, JD, TRI = XM['claim'], XM['logp'], XM['judge'], XM['triad']
@@ -168,7 +168,7 @@ add(slide('Hallucination', 'Hallucination &#183; Example', 'Example continued 2'
           fig(stacked([(short[s_], LAD[s_]) for s_ in STEPS], w=720, label_w=240, bar_h=34, gap=14, label='Grades by mitigation step'), f'all {NP} questions, answerable and unanswerable', GLEG) +
           '</div><div class="colstack">' +
           table(['step', 'wrong', 'correct'], [[short[s_], f"<b>{pct(LAD[s_]['wrong'])}</b>", pct(LAD[s_]['correct'])] for s_ in STEPS], 'd sm free') +
-          f'<div class="callout sm"><b>Each step removes a different error.</b> Retrieval supplies the fact. The strict prompt stops answers to unanswerable questions. The number check stops figures that are absent from the context.</div>'
+          f'<div class="callout sm"><b>What each step did.</b> Retrieval supplies the fact. The strict prompt stops answers to unanswerable questions. The number check removed no wrong answer on this run: wrong stays at {pct(LAD[STEPS[-1]]['wrong'])} and correct falls from {pct(LAD[STEPS[-2]]['correct'])} to {pct(LAD[STEPS[-1]]['correct'])}.</div>'
           '</div></div>'))
 
 # ================================================================ mitigation: what it costs

@@ -97,7 +97,7 @@ add(slide('Extraction', 'Extraction &#183; Data', 'Fields to extract from a loan
           '<div class="cols"><div class="colstack" style="flex:2.1">' + f'<div class="card" style="font-size:13px;line-height:1.75">{txt}</div>' +
           '</div><div class="colstack">' +
           table(['field', 'value'], [[f'<span class="tag" style="background:{FCOL[f]}">{f}</span>', esc(L0[f])] for f in FIELDS], 'd sm free') +
-          '<div class="callout warn sm"><b>Distractors.</b> An arrangement fee is an amount, a default rate is a rate, a first repayment date is a date, a guarantor is a company. "The first amount in the text" is not a rule that works.</div>'
+          '<div class="callout warn sm"><b>Distractors.</b> An arrangement fee is an amount, a default rate is a rate, a first repayment date is a date, a guarantor, where there is one, is a company. "The first amount in the text" is not a rule that works.</div>'
           '<div class="callout sm">Clauses come in a random order and each has three phrasings, one of them much the commonest.</div>'
           '</div></div>'))
 
@@ -250,7 +250,7 @@ add(slide('Extraction', 'Extraction &#183; Language model as extractor &#183; Ex
               f'<span class="tag" style="background:{AMBER}">&#160;</span>rules &#160; <span class="tag" style="background:{GREEN}">&#160;</span>question-answering model &#160; '
               f'<span class="tag" style="background:{PURP}">&#160;</span>language model, measured in the next session') +
           '</div><div class="colstack">'
-          f'<div class="callout good sm"><b>What it adds.</b> The {FNAME[worst]} goes from {pct(QA[worst], 0)} to {pct(LF[worst], 0)}: a definition of the field in the prompt tells the model which date is wanted. It also returns all six fields as one JSON object.</div>'
+          f'<div class="callout good sm"><b>What it adds.</b> The {FNAME[worst]} goes from {pct(QA[worst], 0)} to {pct(LF[worst], 0)}: a worked example in the prompt shows the model which date is wanted. All six fields come back as one JSON object. The interest rate does not improve: {pct(LF["rate"], 0)} against {pct(QA["rate"], 0)}.</div>'
           '<div class="callout warn sm"><b>What it gives up.</b> The question-answering model copies a span, so its value is always on the page. A language model writes its value, so the check that the value is on the page becomes necessary.</div>'
           '<div class="callout warn sm"><b>No score comes with the answer.</b> The accept-or-review threshold needs one. The probabilities the model gave its own tokens are the usual stand-in.</div>'
           '<div class="callout sm"><b>Next session</b> builds the prompt step by step, from a plain request to this result.</div>'

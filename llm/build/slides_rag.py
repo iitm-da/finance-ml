@@ -21,8 +21,8 @@ add(f'''
     <div><span class="h-dim">wrong answers, plain RAG   </span><span class="h-bad">{pct(LAD['RAG, dense, top 3']['wrong'], 0)}</span></div>
     <div><span class="h-dim">wrong answers, guarded     </span><span class="h-val">{pct(LAD['+ number check on the output']['wrong'], 0)}</span></div>
     <div>&#160;</div>
-    <div><span class="h-dim">sentiment, zero-shot   macro-F1 </span><span class="h-bad">{PF['prompt']['zero-shot, 1.5B model']:.3f}</span></div>
-    <div><span class="h-dim">sentiment, LoRA        macro-F1 </span><span class="h-val">{PF['llm']['LoRA, rank 8, 3,000 labels']['f1']:.3f}</span></div>
+    <div><span class="h-dim">sentiment, 1.5B model, zero-shot  macro-F1 </span><span class="h-bad">{PF['prompt']['zero-shot, 1.5B model']:.3f}</span></div>
+    <div><span class="h-dim">sentiment, 0.5B model + LoRA      macro-F1 </span><span class="h-val">{PF['llm']['LoRA, rank 8, 3,000 labels']['f1']:.3f}</span></div>
     <div>&#160;</div>
     <div><span class="h-dim">LoRA trains </span><span class="h-val">{PF['llm']['LoRA, rank 8, 3,000 labels']['trainable'] / PF['llm']['LoRA, rank 8, 3,000 labels']['total']:.2%}</span><span class="h-dim"> of the weights</span></div>
   </div>
@@ -30,8 +30,7 @@ add(f'''
   <h1>LLMs in Depth</h1>
   <div class="pt">Retrieval, evaluation, prompting, fine-tuning</div>
   <div class="rule"></div>
-  <p class="sub">A {B15}-billion-weight open model answers questions on a bank&#8217;s internal knowledge base. Every claim about
-  retrieval, hallucination, prompts and LoRA is a number measured on it.</p>
+  <p class="sub">A {B15}-billion-weight open model answers questions on a bank&#8217;s internal knowledge base. Every claim about retrieval, hallucination and prompts is a number measured on it. The LoRA results use two smaller models.</p>
   <div class="by"><span>Instructor</span>Dr. Arun B Ayyar</div>
   <table class="meta">
     <tr><td>Duration</td><td>90 minutes</td></tr>
@@ -139,7 +138,7 @@ add(slide('RAG', 'RAG &#183; Concept', 'Concept',
 
 # ================================================================ retrieval: four ways
 add(slide('RAG', 'RAG &#183; Mechanism', 'Mechanism',
-          'Four ways to rank the sections for a question. Each fixes a failure of the one before.',
+          'Four ways to rank the sections for a question. The next slide measures all four on the same questions.',
           '<div class="cols4">'
           '<div class="card o"><h3>BM25</h3><p>Scores a section by the words it shares with the question, with rare words counting more. Exact on codes and product names. Blind to synonyms: "cash machine" does not match "ATM".</p></div>'
           '<div class="card"><h3>Dense</h3><p>An embedding model turns question and section into vectors; rank by the angle between them. Matches meaning across different words. Can drift to a section on the right topic for the wrong product.</p></div>'
@@ -168,7 +167,7 @@ for i, kd in enumerate(KINDS):
 leg = ' &#160; '.join(f'<span class="tag" style="background:{RCOL[r]}">&#160;</span>{r}' for r in RK)
 worst_b = min(KINDS, key=lambda k: RET['BM25'][k]['r3']); worst_d = min(KINDS, key=lambda k: RET['dense'][k]['r3'])
 add(slide('RAG', 'RAG &#183; Example', 'Example continued 1',
-          f"Recall@3: the share of questions whose answering section is among the top three. BM25 is weakest on {worst_b} questions ({RET['BM25'][worst_b]['r3']:.2f}), dense on {worst_d} questions ({RET['dense'][worst_d]['r3']:.2f}).",
+          f"Recall@3: the share of questions whose answering section is among the top three. BM25 is weakest on {worst_b} questions ({RET['BM25'][worst_b]['r3']:.2f}), dense on {worst_d} questions ({RET['dense'][worst_d]['r3']:.2f}). Merging the two ({RET['hybrid']['all']['r3']:.3f} over all questions) lands below dense alone ({RET['dense']['all']['r3']:.3f}); the reranker lifts it to {RET['hybrid + reranker']['all']['r3']:.3f}.",
           fig(svg(1120, H, s, 'Recall at 3 by retriever and question kind'), 'recall@3', leg) +
           '<div class="kv">' + ''.join(tile(f'{r}, all questions', f"{RET[r]['all']['r3']:.3f}", 'ok' if r == max(RK, key=lambda q: RET[q]['all']['r3']) else '') for r in RK) + '</div>'
           f'<div class="callout sm"><b>Recall@1 for the best retriever is {max(RET[r]["all"]["r1"] for r in RK):.3f}.</b> The right section is first most of the time, and passing three sections covers most of the rest.</div>'))
@@ -195,7 +194,7 @@ rows = [[f"{c['words']} words" + (f", {c['overlap']} overlap" if c['overlap'] el
 rows.append(['<b>one chunk per section</b>', sec_['chunks'], sec_['context words'], f"<b>{pct(sec_['served'])}</b>"])
 bestf = max(fixed, key=lambda c: c['served']); small_ = fixed[0]
 items = [((f"{c['words']}w" + (f"+{c['overlap']}" if c['overlap'] else '')), round(c['served'], 3), BLUE if c['overlap'] == 0 else PURP, f"{c['context words']} words to the model") for c in fixed]
-items.append(('by section', round(sec_['served'], 3), GREEN, f"{sec_['context words']} words to the model"))
+items.append(('by section', round(sec_['served'], 3), GREEN, f"{sec_['context words']} words · title in the index"))
 add(slide('RAG', 'RAG &#183; Chunking &#183; Example', 'Example',
           f"Chunk size. Each document is cut into windows of a fixed number of words; a question is served if one of the top three chunks holds the whole answering sentence.",
           '<div class="cols"><div class="colstack" style="flex:1.3">' +
@@ -204,7 +203,7 @@ add(slide('RAG', 'RAG &#183; Chunking &#183; Example', 'Example',
           '</div><div class="colstack">' +
           f'<div class="callout warn"><b>Small chunks cut sentences.</b> At {small_["words"]} words a chunk, {pct(1 - small_["served"], 0)} of questions are not served: the answering sentence is split across two chunks, or the chunk lost the product name that sat in the sentence before.</div>'
           f'<div class="callout"><b>Large chunks cost context.</b> Three chunks of {fixed[-1]["words"]} words send {fixed[-1]["context words"]} words to the model for a one-line answer, and the model has to find the line.</div>'
-          f'<div class="callout good sm"><b>Cut where the author cut.</b> Splitting at section headings serves {pct(sec_["served"])} with {sec_["context words"]} words of context.</div>'
+          f'<div class="callout good sm"><b>Cut where the author cut.</b> One chunk per section, indexed with its document title and heading, serves {pct(sec_["served"])} with {sec_["context words"]} words of section text.</div>'
           '</div></div>'))
 
 A.extend(X.CHUNK_X)
@@ -235,7 +234,7 @@ add(slide('RAG', 'RAG &#183; Example', 'Example continued 2',
           '</div></div>'
           '<div class="cols nat">'
           f'<div class="callout"><b>The prompt decides the unanswerable questions.</b> With a plain prompt the model abstains on {pct(GEN["RAG, hybrid + reranker, top 3"]["una"]["abstained"], 0)} of them; with the strict prompt, {pct(ST["una"]["abstained"], 0)}.</div>'
-          f'<div class="callout"><b>The ceiling is the reader.</b> Handed exactly the right section, this model is correct on {pct(ORA["ans"]["correct"], 0)}. Retrieval explains the gap from {pct(ST["ans"]["correct"], 0)} to there.</div></div>'))
+          f'<div class="callout"><b>The ceiling is the reader.</b> Handed exactly the right section, this model is correct on {pct(ORA["ans"]["correct"], 0)}. Most of the gap from {pct(ST["ans"]["correct"], 0)} is the model abstaining with the right section among the three in front of it. The next slide counts those.</div></div>'))
 
 # ================================================================ test: where the errors come from
 E = RG['err']   # rows correct/abstained/wrong, cols retrieved False/True

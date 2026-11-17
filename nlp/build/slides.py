@@ -28,11 +28,11 @@ end.append(slide('Summary', 'Summary', 'What the notebook measured',
                  '<div class="outlbl">entities and documents</div>'
                  '<div class="kv">' +
                  tile('NER on narratives, general model', f"{NE['m']['general_genre']['narrative']['f1']:.3f}", 'bad') +
-                 tile('NER, fine-tuned, six types', f"{NE['m']['ft']['all']['f1']:.3f}", 'ok') +
+                 tile('NER on narratives, fine-tuned', f"{NE['m']['ft_genre']['narrative']['f1']:.3f}", 'ok') +
                  tile('loan fields right, rules', pct(mean(IE['m']['rules'])), 'b') +
                  tile('loan fields right, QA model', pct(mean(IE['m']['qa'])), 'ok') +
                  '</div>'
-                 '<div class="cols nat"><div class="callout"><b>A model as it comes is a starting point.</b> On sentiment and on entities, the download lost to a model that had seen the bank&#8217;s own kind of text. A few hundred labels changed the result.</div>'
+                 '<div class="cols nat"><div class="callout"><b>A model as it comes is a starting point.</b> On sentiment and on entities, the download lost to a model that had seen the bank&#8217;s own kind of text. A few hundred to a few thousand labels changed the result.</div>'
                  '<div class="callout"><b>Measure each stage, then route.</b> Rules where the text has a shape, a model where it does not, a score on every output, and a person for the outputs with low scores.</div></div>'))
 
 end.append(slide('References', 'References', 'References and the notebook',

@@ -27,12 +27,12 @@ end.append(slide('Summary', 'Summary', 'What the notebook measured',
                  '</div>'
                  '<div class="outlbl">prompting and fine-tuning</div>'
                  '<div class="kv">' +
-                 tile('loan fields right, plain prompt', pct(SO[PN[0]]['all'], 0), 'bad') +
+                 tile('loan replies that parse, plain prompt', pct(SO[PN[0]]['valid'], 0), 'bad') +
                  tile('loan fields right, full prompt', pct(SO[PN[-1]]['all'], 0), 'ok') +
-                 tile('sentiment, zero-shot prompt', f"{PF['prompt']['zero-shot, 1.5B model']:.3f}", 'b') +
-                 tile(f"sentiment, LoRA ({L8['trainable'] / L8['total']:.1%} of weights)", f"{L8['f1']:.3f}", 'ok') +
+                 tile('sentiment, 1.5B model, zero-shot', f"{PF['prompt']['zero-shot, 1.5B model']:.3f}", 'b') +
+                 tile(f"sentiment, 67M encoder + LoRA ({L8['trainable'] / L8['total']:.1%} of weights)", f"{L8['f1']:.3f}", 'ok') +
                  '</div>'
-                 '<div class="cols nat"><div class="callout"><b>Facts come from documents.</b> Retrieval supplies them, a strict prompt keeps the model to them, and a check outside the model catches what slips through. Each stage has its own score.</div>'
+                 '<div class="cols nat"><div class="callout"><b>Facts come from documents.</b> Retrieval supplies them and a strict prompt keeps the model to them. A check outside the model is the backstop; the number check caught no further error on this run. Each stage has its own score.</div>'
                  '<div class="callout"><b>Skills come from prompts and training.</b> A format, a definition and a chosen example go a long way. With thousands of labels and a fixed task, a small adapter on a small model goes further.</div></div>'))
 
 end.append(slide('References', 'References', 'References and the notebook',

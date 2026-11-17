@@ -186,7 +186,7 @@ add(slide('Entities', 'Entities &#183; Example', 'Example continued 2',
           '<div class="cols"><div class="colstack">' + prf_table(F, TYPES) +
           f'<div class="callout sm"><b>Payment narratives: {FG["narrative"]["f1"]:.3f}</b>, against {GG["narrative"]["f1"]:.3f} for the general model. The tagger has now seen capitals without grammar.</div>'
           '</div><div class="colstack">' + fig(svg(520, 250, s, 'F1 against training sentences'), 'F1 on the test set, by number of training sentences') +
-          f'<div class="callout sm"><b>{int(ns[0])} labelled sentences already give {CU[ns[0]]:.3f}.</b> An afternoon of annotation moves a tagger a long way; the last points cost the most labels.</div>'
+          f'<div class="callout sm"><b>{int(ns[0])} labelled sentences already give {CU[ns[0]]:.3f}.</b> An afternoon of annotation moves a tagger a long way; the last points cost the most labels. Each point is one training run, so the dip at 1,000 is noise around the trend.</div>'
           '</div></div>'))
 
 # ================================================================ drawbacks: what is still missed
@@ -197,7 +197,7 @@ add(slide('Entities', 'Entities &#183; Drawbacks', 'Drawbacks',
           '<div class="cols"><div class="colstack" style="flex:1.5">' + table(['text', 'type', 'entity in the label', 'what the tagger returned'], rows, 'd sm free') +
           '</div><div class="colstack">'
           '<div class="callout warn"><b>These scores are from simulated text.</b> Real narratives are messier: truncated names, reference codes, typing errors. Expect lower numbers and the same ordering of methods.</div>'
-          '<div class="callout"><b>Company or person.</b> A firm named after its founders reads as two people. Context settles it in a sentence and is absent in a narrative.</div>'
+          '<div class="callout"><b>Company or person.</b> In the first row a person&#8217;s name in capitals is tagged as a company. Context settles it in a sentence and is absent in a narrative.</div>'
           '<div class="callout sm"><b>Labels are personal data.</b> Sentences tagged with real names and account numbers need the same controls as the source system.</div>'
           '</div></div>'))
 
@@ -223,4 +223,4 @@ add(slide('Entities', 'Entities &#183; Verdict', 'Verdict',
           'F1 by entity type for the three approaches. Each approach is absent where it has nothing to offer.',
           fig(svg(1120, H, s, 'F1 by entity type and approach'), 'F1 on the test set', leg) +
           '<div class="cols nat"><div class="callout"><b>Shaped entities: start with rules.</b> They need no labels and their failures can be read. Keep them as a check on the model even after a tagger exists.</div>'
-          '<div class="callout"><b>Names: label the bank&#8217;s own text.</b> A few hundred sentences from the real channel did more here than a model trained on a large corpus of the wrong kind of text.</div></div>'))
+          '<div class="callout"><b>Names: label the bank&#8217;s own text.</b> The tagger trained on 2,400 sentences of this kind of text beats the general model on each of the three types they share.</div></div>'))

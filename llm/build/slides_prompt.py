@@ -7,6 +7,7 @@ SO = PR['so']; SENS = PR['sens']; FEW = PR['few']; COT = PR['cot']; INJ = PR['in
 PN = list(SO)
 FIELDS = ['borrower', 'lender', 'principal', 'rate', 'maturity', 'law']
 RU, QA = NLP_IE['m']['rules'], NLP_IE['m']['qa']
+INJ_ = PR['inj']
 
 # ================================================================ concept: the parts of a prompt (build)
 parts = [('role', 'who the model is answering for', SLATE, 'You answer questions from staff of Northmere Bank.'),
@@ -58,7 +59,7 @@ rows = [[f, pct(RU[f], 0), pct(QA[f], 0)] + [pct(SO[n]['field'][f], 0) for n in 
 rows.append(['<b>all</b>', f'<b>{pct(mean(RU), 0)}</b>', f'<b>{pct(mean(QA), 0)}</b>'] + [f"<b>{pct(SO[n]['all'], 0)}</b>" for n in PN[1:]])
 gain = max(FIELDS, key=lambda f: SO[PN[3]]['field'][f] - SO[PN[1]]['field'][f])
 add(slide('Prompting', 'Structured output &#183; Example', 'Example continued 1',
-          f"Field by field. The definitions help most on the {gain} ({pct(SO[PN[1]]['field'][gain], 0)} to {pct(SO[PN[3]]['field'][gain], 0)}), the field with a distractor beside it.",
+          f"Field by field. The worked example lifts the {gain} from {pct(SO[PN[1]]['field'][gain], 0)} to {pct(SO[PN[2]]['field'][gain], 0)}, and the definitions leave it at {pct(SO[PN[3]]['field'][gain], 0)}. The rate goes the other way: {pct(SO[PN[1]]['field']['rate'], 0)}, {pct(SO[PN[2]]['field']['rate'], 0)}, {pct(SO[PN[3]]['field']['rate'], 0)}.",
           '<div class="cols"><div class="colstack" style="flex:1.2">' +
           table(['field', 'rules', 'QA model', 'prompt 2', 'prompt 3', 'prompt 4'], rows, 'd sm free') +
           '<div class="callout sm"><b>Three tools, one set of documents.</b> Rules are exact where they match. The question-answering model copies spans and scores them. The language model follows definitions written in English.</div>'
@@ -120,7 +121,7 @@ add(slide('Prompting', 'Working &#183; Example', 'Example',
           '<div class="cols"><div class="colstack">' +
           fig(hbars(items, w=540, label_w=150, bar_h=34, gap=14, maxv=1.0, valfmt=lambda v: pct(v, 0), label='Accuracy with and without working'), 'share of calculations right') +
           f'<div class="outlbl">one of the calculations (right answer {calc[1]:g})</div><div class="out sm" style="white-space:normal">{esc(calc[0])}</div>' +
-          '<div class="callout sm"><b>Why working helps.</b> The model writes one token at a time. Each intermediate result it writes becomes input for the next token, so it can use a result it could not hold in a single step.</div>'
+          '<div class="callout sm"><b>What working does.</b> The model writes one token at a time, and each intermediate result becomes input for the next token. A mistake is carried forward the same way: below, the model multiplies correctly and then adds the minimum fee.</div>'
           '</div><div class="colstack">' + '<div class="outlbl">the model&#8217;s working</div>' +
           f'<div class="out xs" style="white-space:pre-wrap;max-height:300px;overflow:hidden">{esc(c1["ex"][:620])}</div>' +
           '<div class="callout warn sm"><b>For arithmetic that matters, call a function.</b> Let the model pick the rule and the inputs, and let code do the multiplication.</div>'
@@ -138,7 +139,7 @@ add(slide('Prompting', 'Hidden instructions &#183; Example', 'Example',
           fig(hbars(items, w=620, label_w=230, bar_h=30, gap=12, maxv=1.0, valfmt=lambda v: pct(v, 0), label='How often the model obeyed the planted instruction'), 'share of answers that obeyed the planted sentence') +
           '</div><div class="colstack">'
           '<div class="callout warn"><b>The model reads one stream of text.</b> It has no channel that separates the bank&#8217;s instruction from a sentence inside a document. Whoever can edit a document that gets retrieved can address the model.</div>'
-          '<div class="callout"><b>Fences and warnings reduce it.</b> Marking the context as reference material and telling the model so lowers the rate. It does not reach zero.</div>'
+          '<div class="callout"><b>Fences and a warning.</b> Marking the context as reference material took the rate from ' + pct(INJ_['strict prompt']['obeyed'], 0) + ' to ' + pct(INJ_['+ fenced context and a warning']['obeyed'], 0) + ' on these questions, and correct answers from ' + pct(INJ_['strict prompt']['correct'], 0) + ' to ' + pct(INJ_['+ fenced context and a warning']['correct'], 0) + '. A zero on ' + str(INJ_['n']) + ' questions is no guarantee for the next document.</div>'
           '<div class="callout sm"><b>Controls outside the model.</b> Check the output against the context. Keep the model&#8217;s permissions narrow: a model that can only read cannot be talked into sending a payment.</div>'
           '</div></div>'))
 

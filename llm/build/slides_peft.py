@@ -43,7 +43,7 @@ p2 += T(600, 88, f'B: {d} × 8 = {d * 8:,}', 13, INK, 'start', MONO) + T(600, 11
 p2 += T(600, 138, f'{2 * d * 8:,} trained weights', 13, RED, 'start', MONO, 700) + T(600, 160, f'= {2 * d * 8 / (d * d):.1%} of W', 13, RED, 'start', MONO, 700)
 p3 = T(860, 60, 'DistilBERT', 15, INK, 'start', MONO, 700)
 p3 += T(860, 88, '6 layers × 2 matrices', 13, INK, 'start', MONO) + T(860, 110, f'= 12 × {2 * d * 8:,}', 13, INK, 'start', MONO)
-p3 += T(860, 138, f'= {L8["lora"]:,} weights', 13, RED, 'start', MONO, 700) + T(860, 160, f'of {L8["total"] / 1e6:.1f} million', 13, RED, 'start', MONO, 700)
+p3 += T(860, 138, f'= {L8["lora"]:,} weights', 13, RED, 'start', MONO, 700) + T(860, 160, f'of {FU["total"] / 1e6:.1f} million', 13, RED, 'start', MONO, 700)
 s += G_(1, p1) + G_(2, p2) + G_(3, p3)
 add(slide('LoRA', 'LoRA &#183; Intuition', 'Intuition',
           'A weight matrix W is left alone. The change to it is written as the product of two thin matrices, B and A, and only those are trained.',
@@ -79,7 +79,7 @@ model.print_trainable_parameters()""", 'sm') +
 # ================================================================ widget: rank
 rk = sorted(RANK, key=int)
 data = {'ranks': [int(r) for r in rk], 'f1': [RANK[r]['f1'] for r in rk], 'lora': [RANK[r]['lora'] for r in rk], 'full': FU['f1'], 'head': HO['f1'],
-        'models': [{'name': 'DistilBERT (66 million weights)', 'd': 768, 'mats': 12, 'total': L8['total'] - L8['trainable'] + (L8['trainable'] - L8['lora'])},
+        'models': [{'name': 'DistilBERT (67 million weights)', 'd': 768, 'mats': 12, 'total': L8['total'] - L8['trainable'] + (L8['trainable'] - L8['lora'])},
                    {'name': 'a 7-billion-weight LLM (32 layers, width 4,096)', 'd': 4096, 'mats': 64, 'total': 7.2e9}]}
 add(slide('LoRA', 'LoRA &#183; Example', 'The rank, from 1 to 32',
           f"The sentiment task with LoRA at six ranks. Macro-F1 moves from {RANK[rk[0]]['f1']:.3f} at rank {rk[0]} to {RANK[rk[-1]]['f1']:.3f} at rank {rk[-1]}; full fine-tuning scores {FU['f1']:.3f}.",
@@ -140,5 +140,5 @@ add(slide('Adaptation', 'Adaptation &#183; Verdict', 'Verdict',
                  ['few labels, task changes often', 'prompt, with chosen examples'],
                  ['thousands of labels, fixed task', 'LoRA on a small model'],
                  ['one task at very high volume', 'fine-tune a small encoder']], 'd sm free') +
-          '<div class="callout sm"><b>Labels outweigh size here.</b> The comparison is a 66-million-weight encoder trained on labels against a 1.5-billion-weight model that was only prompted.</div>'
+          '<div class="callout sm"><b>Labels outweigh size here.</b> The comparison is a 67-million-weight encoder trained on labels against a 1.5-billion-weight model that was only prompted.</div>'
           '</div></div>'))

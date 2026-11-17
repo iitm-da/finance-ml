@@ -37,16 +37,16 @@ add(slide('Sentiment', 'Sentiment &#183; Data', 'Finance headlines with three la
           '</div></div>'))
 
 # ================================================================ concept: three ways to use a pretrained model
-def stack(x, title, sub, body_trained, head, head_trained, labels):
+def stack(x, title, sub, body_trained, head, head_trained, labels, size):
     s = T(x + 130, 18, title, 14, INK, 'middle', BODY, 700) + T(x + 130, 36, sub, 11, SOFT, 'middle', MONO)
     s += Rect(x + 40, 50, 180, 34, RED if head_trained else GREY) + T(x + 130, 72, head, 12, '#FFFFFF', 'middle', MONO, 700)
     s += Rect(x + 40, 90, 180, 96, RED if body_trained else GREY) + T(x + 130, 134, 'transformer', 12.5, '#FFFFFF', 'middle', MONO, 700)
-    s += T(x + 130, 152, '66 million weights', 10.5, '#FFFFFF', 'middle', MONO)
+    s += T(x + 130, 152, size, 10.5, '#FFFFFF', 'middle', MONO)
     s += T(x + 130, 208, labels, 11.5, INK, 'middle', MONO, 600)
     return s
-s = stack(0, 'As it comes', 'someone else trained it', False, 'their label set', False, 'labels needed: 0')
-s += stack(290, 'Frozen embeddings', 'train a linear model on top', False, 'logistic regression', True, 'labels needed: hundreds')
-s += stack(580, 'Fine-tuning', 'update every weight', True, 'new head', True, 'labels needed: thousands')
+s = stack(0, 'As it comes', 'someone else trained it', False, 'their label set', False, 'labels needed: 0', '110 to 125 million weights')
+s += stack(290, 'Frozen embeddings', 'train a linear model on top', False, 'logistic regression', True, 'labels needed: hundreds', '33 million weights')
+s += stack(580, 'Fine-tuning', 'update every weight', True, 'new head', True, 'labels needed: thousands', '66 million weights')
 s += Rect(880, 60, 16, 16, RED) + T(902, 73, 'trained on the bank&#8217;s labels'.replace('&#8217;', '’'), 11.5, INK, 'start', MONO)
 s += Rect(880, 86, 16, 16, GREY) + T(902, 99, 'left as downloaded', 11.5, INK, 'start', MONO)
 add(slide('Sentiment', 'Sentiment &#183; Concept', 'Concept',
@@ -71,19 +71,19 @@ add(slide('Sentiment', 'Sentiment &#183; Example', 'Example',
           '</div><div class="colstack">'
           '<div class="callout"><b>General tweet model.</b> RoBERTa trained on 124 million general tweets. Its "negative" is an unhappy author, which a profit warning written in neutral words is not.</div>'
           f'<div class="callout"><b>FinBERT.</b> BERT trained on financial news sentences. Right domain, different text: full sentences from news wires, where these rows are clipped headlines with tickers.</div>'
-          f'<div class="callout {"warn" if TF["f1"] > best_asis else "good"}"><b>TF-IDF and logistic regression</b> has no idea what a word means, and has read {comma(SE["n_train"])} rows of exactly this text. Here that is worth {TF["f1"] - best_asis:+.3f} macro-F1 over the better download.</div>'
+          f'<div class="callout {"warn" if TF["f1"] > best_asis else "good"}"><b>TF-IDF and logistic regression</b> has no idea what a word means, and has read {comma(SE["n_train"])} rows of exactly this text. Here that is worth {round(TF["f1"], 3) - round(best_asis, 3):+.3f} macro-F1 over the better download.</div>'
           '</div></div>'))
 
 # ================================================================ example continued 1: rows the general model gets wrong
 rows = [[esc(t), f'<span class="tag {["r", "g", "s"][LAB.index(tr)]}">{tr}</span>', f'<span style="font-family:var(--mono);font-size:11.5px">{g}</span>']
         for t, tr, g in SE['ex_fix'] if len(t) < 88][:9]
 add(slide('Sentiment', 'Sentiment &#183; Example', 'Example continued 1',
-          'Rows the general model gets wrong. The words that carry the label are market vocabulary: cut, downgrade, raises target, beats.',
+          'Rows the general model gets wrong. The words that carry the label are market vocabulary: cuts to Hold, downgraded, targets trimmed, pulls outlook.',
           '<div class="cols"><div class="colstack" style="flex:2.1">' + rowtable(rows, ['headline', 'label', 'general model said']) +
           '</div><div class="colstack">'
-          '<div class="callout"><b>Analyst actions.</b> "Cuts to Neutral" holds no emotional word. To an investor it is a downgrade.</div>'
-          '<div class="callout"><b>Direction words.</b> "Falls", "slides" and "jumps" describe a price. A general model learned them from text that was not about prices.</div>'
-          '<div class="callout sm">These rows are from the test set, picked where the fine-tuned model is right and the general model is wrong.</div>'
+          '<div class="callout"><b>Analyst actions.</b> "Cuts to Hold" holds no emotional word. To an investor it is a downgrade.</div>'
+          '<div class="callout"><b>Plain verbs.</b> "Pulls outlook" and "cools on" read as neutral statements. The label comes from what the event does to the share price, which a model trained on general tweets never saw.</div>'
+          '<div class="callout sm">These rows are from the test set, picked where the general model is wrong and the fine-tuned model of the next slides is right.</div>'
           '</div></div>'))
 
 # ================================================================ example continued 2: all models
@@ -139,7 +139,7 @@ c100 = {k: CU[k][str(SZ[0])] for k in CU}; b100 = max(c100, key=c100.get)
 cross = next((n for n in SZ if CU['DistilBERT, fine-tuned'][str(n)] > max(GE['f1'], FB['f1'])), None)
 crossT = next((n for n in SZ if CU['DistilBERT, fine-tuned'][str(n)] > CU['TF-IDF + logistic regression'][str(n)] and CU['DistilBERT, fine-tuned'][str(n)] > CU['embeddings + logistic regression'][str(n)]), None)
 add(slide('Sentiment', 'Sentiment &#183; Example', 'Example continued 3',
-          f"The same three methods trained on fewer labels. With {SZ[0]} labelled rows the best is {b100.split(',')[0].split(' +')[0]} at {c100[b100]:.3f}"
+          f"The same three methods trained on fewer labels. With {SZ[0]} labelled rows the best trained method is {b100.split(',')[0].split(' +')[0]} at {c100[b100]:.3f}, just under FinBERT as it comes"
           + (f"; fine-tuning passes the downloaded models at {cross:,} rows." if cross else '.'),
           '<div class="cols"><div class="colstack" style="flex:1.5">' + fig(svg(680, 330, s, 'Macro-F1 against number of labelled rows'), 'macro-F1 on the full test set, by training size (log scale)') +
           '</div><div class="colstack">' +
