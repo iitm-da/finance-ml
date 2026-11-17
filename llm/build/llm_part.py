@@ -7,7 +7,8 @@ if 'google.colab' in sys.modules:            # Colab ships torch, transformers a
 RAW = 'https://raw.githubusercontent.com/iitm-da/finance-ml/master/'
 HF = 'https://huggingface.co/datasets/zeroshot/twitter-financial-news-sentiment/resolve/main/'
 os.makedirs('data', exist_ok=True)
-for f, url in (('kb.jsonl', RAW + 'llm/data/'), ('questions.jsonl', RAW + 'llm/data/'), ('loans.jsonl', RAW + 'nlp/data/'),
+for f, url in (('kb.jsonl', RAW + 'llm/data/'), ('questions.jsonl', RAW + 'llm/data/'), ('ontology.json', RAW + 'llm/data/'),
+               ('questions_multi.jsonl', RAW + 'llm/data/'), ('loans.jsonl', RAW + 'nlp/data/'),
                ('sent_train.csv', HF), ('sent_valid.csv', HF)):
     if not os.path.exists('data/' + f):      # not run from the repo folder: fetch the files
         local = '../nlp/data/' + f
@@ -229,6 +230,134 @@ CHUNK.append({'words': 'by section', 'overlap': 0, 'chunks': len(kb), 'served': 
 pd.DataFrame(CHUNK).round(3)
 
 # %% [markdown]
+# ## Chunking strategies
+#
+# Window size is one choice. Where the cuts fall is another. The same documents are cut eight ways, each at about 40
+# words a chunk where the strategy has a size:
+#
+# - **fixed**: every 40 words, with and without a 10-word overlap;
+# - **sentence**: whole sentences, added until the next one would pass 40 words;
+# - **semantic**: a cut wherever two neighbouring sentences are less alike than usual (embedding similarity in the
+#   lowest 30%);
+# - **recursive**: cut at headings first, and cut a section into sentences only if it is longer than 40 words;
+# - **by section**: one chunk per section, as the author wrote it;
+# - **with a header**: the document title and code written at the top of every chunk before it is embedded;
+# - **small to big**: index single sentences, and hand the model the whole section each matched sentence came from.
+#
+# `whole` is the share of questions whose answering sentence survives uncut in some chunk. `served` is the share
+# for which one of the top 3 chunks holds it.
+
+# %%
+sent_split = lambda t: [s for s in re.split(r'(?<=[.!?])\s+(?=[A-Z])', t.strip()) if s]
+SECS = {}                                   # document code -> [(index of the section, heading, its sentences)]
+for j, k in enumerate(kb):
+    SECS.setdefault(k['code'], []).append((j, k['section'], sent_split(k['text'])))
+HEAD = {k['code']: f"{k['doc']} ({k['code']})" for k in kb}
+nw = lambda t: len(t.split())
+
+def units(code):                            # a document as a list of sentences; each heading is a sentence
+    return [u for _, h, ss in SECS[code] for u in [h + '.'] + ss]
+
+def pack(us, size):                         # whole sentences, until the next one would pass the size
+    out, cur = [], []
+    for u in us:
+        if cur and nw(' '.join(cur + [u])) > size:
+            out.append(' '.join(cur)); cur = []
+        cur.append(u)
+    return out + [' '.join(cur)]
+
+def by_fixed(size, overlap=0):
+    out = []
+    for c in SECS:
+        w = ' '.join(units(c)).split()
+        for a in range(0, len(w), size - overlap):
+            out.append((c, ' '.join(w[a:a + size])))
+            if a + size >= len(w): break
+    return out
+
+def by_sentence(size):
+    return [(c, t) for c in SECS for t in pack(units(c), size)]
+
+def by_meaning(q=30, cap=80):
+    U = {c: units(c) for c in SECS}
+    EU = {c: emb.encode(U[c], normalize_embeddings=True) for c in SECS}
+    cut = np.percentile(np.concatenate([(EU[c][1:] * EU[c][:-1]).sum(1) for c in SECS]), q)
+    out = []
+    for c in SECS:
+        cur = [U[c][0]]
+        for j in range(1, len(U[c])):
+            if EU[c][j] @ EU[c][j - 1] < cut or nw(' '.join(cur + [U[c][j]])) > cap:
+                out.append((c, ' '.join(cur))); cur = []
+            cur.append(U[c][j])
+        out.append((c, ' '.join(cur)))
+    return out
+
+def by_structure(size):                     # recursive: headings first, sentences only inside a long section
+    return [(c, t) for c in SECS for _, h, ss in SECS[c] for t in pack([h + '.'] + ss, size)]
+
+def by_section():
+    return [(c, f"{h}. {' '.join(ss)}") for c in SECS for _, h, ss in SECS[c]]
+
+with_header = lambda ch: [(c, f'{HEAD[c]}. {t}') for c, t in ch]
+
+def served(texts, parent=None, back=None):
+    """Dense retrieval over the chunks. With parent, the top chunks are swapped for the sections they came from."""
+    E = emb.encode(texts, normalize_embeddings=True)
+    hit, ctx = [], []
+    for i in ans_i:
+        top = np.argsort(-(E @ E_q[i]))
+        got = [texts[d] for d in top[:3]] if parent is None else [back[p] for p in list(dict.fromkeys(parent[d] for d in top))[:3]]
+        hit.append(any(nrm(qs[i]['evidence']) in nrm(g) for g in got)); ctx.append(sum(nw(g) for g in got))
+    return np.array(hit), float(np.mean(ctx))
+
+CUTS = {'fixed, 40 words': by_fixed(40), 'fixed, 40 words, 10 overlap': by_fixed(40, 10), 'sentence, up to 40 words': by_sentence(40),
+        'semantic': by_meaning(), 'recursive, up to 40 words': by_structure(40), 'by section': by_section()}
+CUTS['sentence + header'] = with_header(CUTS['sentence, up to 40 words'])
+CUTS['by section + header'] = with_header(CUTS['by section'])
+kind_of = np.array([qs[i]['kind'] for i in ans_i])
+STRAT = []
+def record(name, texts, **kw):
+    hit, ctx = served(texts, **kw)
+    pool = list(kw['back'].values()) if 'back' in kw else texts
+    whole = np.mean([any(nrm(qs[i]['evidence']) in nrm(t) for t in pool) for i in ans_i])
+    STRAT.append({'strategy': name, 'chunks': len(texts), 'words a chunk': float(np.mean([nw(t) for t in texts])), 'whole': float(whole),
+                  'served': float(hit.mean()), **{kd: float(hit[kind_of == kd].mean()) for kd in KINDS}, 'context words': ctx})
+for name, ch in CUTS.items():
+    record(name, [t for _, t in ch])
+small = [(j, f"{HEAD[c]}. {h}. {s}") for c in SECS for j, h, ss in SECS[c] for s in ss]      # one sentence, with its headings
+record('small to big: sentence found, section returned', [t for _, t in small], parent=[j for j, _ in small],
+       back={j: f"{kb[j]['section']}. {kb[j]['text']}" for j in range(len(kb))})
+pd.DataFrame(STRAT).round(3)
+
+# %%
+ev = qs[2]['evidence']
+print('Q:', qs[2]['question'], '\n')
+for name in ('fixed, 40 words', 'sentence, up to 40 words', 'by section + header'):
+    print(name)
+    for c, t in CUTS[name]:
+        if c == 'PG-01' and (nrm(ev) in nrm(t) or nrm(ev)[:40] in nrm(t) or nrm(ev)[-40:] in nrm(t)):
+            print('   |', t)
+    print()
+
+# %% [build]
+def spans(ch, code):                        # where each chunk of one document starts and ends, in words
+    w = ' '.join(units(code)).split(); out = []; a = 0
+    for c, t in ch:
+        if c == code:
+            n = nw(t)
+            while w[a:a + n] != t.split():
+                a += 1; assert a < len(w)
+            out.append([a, a + n]); a += 1
+    return out
+_w = ' '.join(units('PG-01')).split(); _e = ev.split()
+_a = next(a for a in range(len(_w)) if _w[a:a + len(_e)] == _e)
+FIGC = {'code': 'PG-01', 'sents': [[nw(u), int(u[:-1] in [h for _, h, _ in SECS['PG-01']])] for u in units('PG-01')], 'ev': [_a, _a + len(_e)],
+        'q': qs[2]['question'], 'evidence': ev, 'head': HEAD['PG-01'],
+        'cuts': {n: spans(CUTS[n], 'PG-01') for n in list(CUTS)[:6]},
+        'texts': {n: [t for c, t in CUTS[n] if c == 'PG-01'][:6] for n in CUTS},
+        'sim': [float(x) for x in (lambda E: (E[1:] * E[:-1]).sum(1))(emb.encode(units('PG-01'), normalize_embeddings=True))]}
+
+# %% [markdown]
 # ## Retrieval and generation together
 #
 # The top sections are pasted into the prompt above the question.
@@ -282,10 +411,284 @@ bad = [(qs[i]['question'], a[i], qs[i]['answers']) for i in range(len(ANS)) if g
 for q_, a_, k_ in bad:
     print(f'\nQ: {q_}\nA: {a_}\naccepted: {k_}')
 
+# %% [markdown]
+# ## Query expansion
+#
+# A retrieval miss is often a vocabulary miss: the question says "ATM" and the document says "cash machine".
+# Query expansion rewrites or lengthens the question before it is searched. Three ways that need no extra data:
+#
+# - **pseudo-relevance feedback**: search once, take the 8 most distinctive words of the top 3 sections, add them to
+#   the question and search again;
+# - **multi-query**: the language model writes 3 rewordings; every version is searched and the rankings are merged;
+# - **HyDE**: the language model writes a made-up passage that would answer the question, and the passage is searched
+#   for in place of the question.
+#
+# A fourth way, synonyms from an ontology, follows in the next section and joins the same table.
+
+# %%
+STOP = set('a an the of to in on for is are was be by with and or at from as it that this which what how much many does do can '
+           'i my we our you your there when who where long will if any have has not no its each per up into than'.split())
+bm25_rank = lambda text: list(np.argsort(-bm25.get_scores(words(text))))
+dense_rank = lambda vec: list(np.argsort(-(E_doc @ vec)))
+embed_q = lambda texts: emb.encode([QPRE + t for t in texts], normalize_embeddings=True)
+
+def fuse(ranks, k=60):                       # reciprocal rank fusion of any number of rankings
+    if len(ranks) == 1: return ranks[0]
+    s = np.zeros(len(DOCS))
+    for rk in ranks:
+        for pos, d in enumerate(rk):
+            s[d] += 1 / (k + pos + 1)
+    return list(np.argsort(-s))
+
+def prf_terms(q, n_docs=3, n_terms=8):
+    have = set(words(q)); score = {}
+    for d in bm25_rank(q)[:n_docs]:
+        w = words(DOCS[d])
+        for t in set(w) - have - STOP:
+            if not t.isdigit():
+                score[t] = score.get(t, 0) + bm25.idf.get(t, 0) * w.count(t)
+    return sorted(score, key=score.get, reverse=True)[:n_terms]
+
+Q = [r['question'] for r in qs]
+t0 = time.time()
+raw = chat(['Write 3 different rewordings of this question. Use other words for the same things. Keep product names and '
+            f'document codes unchanged. One per line, no numbering.\n\nQuestion: {q}' for q in Q],
+           "You reword questions for a search engine over a bank's internal documents.", max_new_tokens=110)
+REWRITE = [[re.sub(r'^[\s\-\*\d\.\)]+', '', l).strip() for l in a.split('\n') if len(l.split()) > 3][:3] for a in raw]
+t_rewrite = time.time() - t0
+t0 = time.time()
+HYDE = chat([f"Write a two-sentence passage from a bank's internal document that answers this question. Invent plausible details and figures.\n\nQuestion: {q}"
+             for q in Q], "You write passages for a bank's internal policy documents.", max_new_tokens=90)
+t_hyde = time.time() - t0
+PRF = [prf_terms(q) for q in Q]
+print(f'rewording {t_rewrite:.0f} s, HyDE {t_hyde:.0f} s for {len(Q)} questions\n')
+i = 3
+print('Q:', Q[i]); print('feedback terms:', PRF[i]); print('rewordings:', REWRITE[i]); print('HyDE passage:', HYDE[i])
+
+# %%
+def rankings(bm_queries, dense_vecs):
+    """Per question: the texts searched by BM25 and the vectors searched by the dense retriever. Several are fused."""
+    B = [fuse([bm25_rank(t) for t in ts]) for ts in bm_queries]
+    D = [fuse([dense_rank(v) for v in vs]) for vs in dense_vecs]
+    H = [fuse([b, d]) for b, d in zip(B, D)]
+    R = []
+    for i, h in enumerate(H):                # the reranker always reads the original question
+        sc = rerank.predict([(Q[i], DOCS[d]) for d in h[:20]])
+        R.append([h[j] for j in np.argsort(-sc)] + h[20:])
+    return {'BM25': B, 'dense': D, 'hybrid': H, 'hybrid + reranker': R}
+
+def recall(rk):
+    out = {}
+    for kind in KINDS + ['all']:
+        pos = [rk[i].index(IDS.index(r['gold'])) for i, r in enumerate(qs) if r['gold'] and (kind == 'all' or r['kind'] == kind)]
+        out[kind] = {'r1': float(np.mean([p < 1 for p in pos])), 'r3': float(np.mean([p < 3 for p in pos])), 'mrr': float(np.mean([1 / (p + 1) for p in pos]))}
+    return out
+
+E_rw = [embed_q(v) if v else np.zeros((0, E_q.shape[1])) for v in REWRITE]
+E_hy = emb.encode(HYDE, normalize_embeddings=True)
+XR = {'no expansion': rankings([[q] for q in Q], [[v] for v in E_q]),
+      'feedback terms': rankings([[q + ' ' + ' '.join(t)] for q, t in zip(Q, PRF)], [[v] for v in E_q]),
+      'multi-query': rankings([[q] + v for q, v in zip(Q, REWRITE)], [[E_q[i]] + list(E_rw[i]) for i in range(len(Q))]),
+      'HyDE': rankings([[q + ' ' + h] for q, h in zip(Q, HYDE)], [[v] for v in E_hy])}
+assert XR['no expansion']['BM25'] == RANK['BM25'] and XR['no expansion']['dense'] == RANK['dense']
+QE = {m: {r: recall(XR[m][r]) for r in XR[m]} for m in XR}
+show = lambda: pd.DataFrame({(r, kd): {m: QE[m][r][kd]['r3'] for m in QE} for r in ('BM25', 'dense', 'hybrid + reranker') for kd in KINDS + ['all']}).round(3)
+show()
+
+# %% [markdown]
+# ## An ontology
+#
+# An ontology is a written-down model of a domain: its **classes** (account, credit card), the **instances** of each
+# class (the five accounts, each with its document code), and the **terms** the documents use with the other words
+# people use for the same thing (cash machine: ATM, cashpoint). `ontology.json` was written by hand from the 18
+# documents and ordinary banking vocabulary. It was not tuned on the test questions.
+#
+# Linking a question to the ontology gives three things: the terms it mentions, the product or document it names, and
+# the class it asks about.
+
+# %%
+onto = json.load(open(DATA + 'ontology.json', encoding='utf-8'))
+def pat(label):                              # whole words, plural allowed; labels in capitals keep their case
+    p = r'(?<![A-Za-z0-9])' + r'[\s-]+'.join(re.escape(w) for w in re.split(r'[\s-]+', label)) + r's?(?![A-Za-z0-9])'
+    return re.compile(p, 0 if label.isupper() or label[:1].isupper() else re.I)
+TERMS = [(c['pref'], [c['pref']] + c['alt'], [pat(l) for l in [c['pref']] + c['alt']]) for c in onto['concepts']]
+INST = [(x, [pat(l) for l in x['labels'] + [x['code']]]) for x in onto['instances']]
+CLASS = sorted(((c, l, pat(l)) for c in onto['classes'] for l in c['labels']), key=lambda t: -len(t[1]))
+
+def instances_of(cls):
+    kids = [c['name'] for c in onto['classes'] if c['parent'] == cls]
+    return [x for x in onto['instances'] if x['class'] == cls] + [x for k in kids for x in instances_of(k)]
+
+def link(q):
+    terms = [(pref, labels) for pref, labels, ps in TERMS if any(p.search(q) for p in ps)]
+    inst = [x for x, ps in INST if any(p.search(q) for p in ps)]
+    cls = next(((c['name'], p.search(q).group(0)) for c, l, p in CLASS if p.search(q)), None)
+    return {'terms': terms, 'instances': inst, 'class': cls}
+
+def synonyms(q):                             # every other label of every term the question mentions
+    return [l for _, labels in link(q)['terms'] for l in labels if not pat(l).search(q)]
+
+for q in (Q[3], Q[5], 'Which business account has the highest monthly fee?'):
+    L = link(q)
+    print('Q:', q); print('   terms:', [t for t, _ in L['terms']], '| adds:', synonyms(q))
+    print('   instance:', [(x['name'], x['code']) for x in L['instances']], '| class:', L['class'],
+          '->', [x['name'] for x in instances_of(L['class'][0])] if L['class'] and not L['instances'] else '', '\n')
+
+# %% [markdown]
+# **Use 1: synonyms.** The other labels of every linked term are added to the question. This is query expansion with
+# a dictionary the bank controls.
+
+# %%
+SYN = [synonyms(q) for q in Q]
+XR['ontology synonyms'] = rankings([[q + ' ' + ' '.join(s)] for q, s in zip(Q, SYN)], [[v] for v in embed_q([q + (' (' + ', '.join(s) + ')' if s else '') for q, s in zip(Q, SYN)])])
+QE['ontology synonyms'] = {r: recall(XR['ontology synonyms'][r]) for r in XR['ontology synonyms']}
+print('questions with at least one linked term:', sum(bool(s) for s, r in zip(SYN, qs) if r['gold']), 'of', len(ANS))
+show()
+
+# %% [markdown]
+# **Use 2: a filter.** When the question names a product or a document code, only the sections of that document
+# are kept. A filter is a hard rule: when the link is wrong, the right section can no longer be found.
+
+# %%
+LINKED = [{x['code'] for x in link(q)['instances']} for q in Q]
+keep = lambda rk, codes: [d for d in rk if kb[d]['code'] in codes] + [d for d in rk if kb[d]['code'] not in codes] if codes else rk
+for base in ('no expansion', 'ontology synonyms'):
+    XR[base + ' + filter'] = {r: [keep(rk, LINKED[i]) for i, rk in enumerate(XR[base][r])] for r in XR[base]}
+    QE[base + ' + filter'] = {r: recall(XR[base + ' + filter'][r]) for r in XR[base]}
+n_link = sum(bool(c) for c, r in zip(LINKED, qs) if r['gold'])
+n_harm = sum(bool(c) and r['gold'].split('#')[0] not in c for c, r in zip(LINKED, qs) if r['gold'])
+print(f'{n_link} of {len(ANS)} answerable questions name a product or a code; for {n_harm} of them the answer is in another document')
+pd.DataFrame({(r, m): {kd: QE[n][r][kd][m] for kd in KINDS + ['all']} for r in ('dense', 'hybrid + reranker')
+              for n in ('no expansion', 'no expansion + filter') for m in ('r1', 'r3')}).round(3).rename(columns={'r1': 'recall@1', 'r3': 'recall@3'})
+
+# %% [markdown]
+# The best retrieval so far, with the strict prompt, on all 225 questions.
+
+# %%
+BEST = max((m for m in XR), key=lambda m: (QE[m]['hybrid + reranker']['all']['r3'], QE[m]['hybrid + reranker']['all']['r1']))
+def answer_with(method):
+    t0 = time.time()
+    a = chat([rag_prompt(i, docs=XR[method]['hybrid + reranker'][i][:3]) for i in range(len(qs))], SYS_STRICT)
+    return a, {'ans': tally(ANS, a[:len(ANS)]), 'una': tally(UNA, a[len(ANS):]), 'secs': time.time() - t0}
+GENX = {}
+if BEST != 'no expansion':
+    A_x, GENX[BEST] = answer_with(BEST)
+for m, g in [('no expansion', GEN['+ strict prompt'])] + list(GENX.items()):
+    print(f"{m:32s} answerable: correct {g['ans']['correct']:.3f} wrong {g['ans']['wrong']:.3f} | unanswerable: abstained {g['una']['abstained']:.3f}")
+
+# %% [markdown]
+# **Use 3: fan-out over a class.** "Which account has the highest daily cash machine limit?" has no single answering
+# section: it needs one section from each of the five accounts. Top-k retrieval returns the sections most like the
+# question, which need not cover every account. The ontology knows the instances of the class, so the question is
+# asked once per instance and the best section of each instance's own document is kept.
+
+# %%
+multi = load('questions_multi.jsonl')
+def rank_text(q):
+    h = fuse([bm25_rank(q), dense_rank(embed_q([q])[0])])
+    sc = rerank.predict([(q, DOCS[d]) for d in h[:20]])
+    return [h[j] for j in np.argsort(-sc)] + h[20:]
+
+def fan_out(q, current=False):
+    cls, phrase = link(q)['class']
+    docs = []
+    for x in instances_of(cls):              # one sub-question per instance, searched in that instance's document
+        sub = q.replace(phrase, x['name'])
+        docs.append(next(d for d in rank_text(sub) if kb[d]['code'] == x['code'] and (kb[d]['status'] == 'current' or not current)))
+    return docs
+
+SYS_PICK = SYS_STRICT + ' When the question asks which product, reply with the name of one product only.'
+SYS_STEPS = ('You answer questions from staff of Northmere Bank. Use only the context. First write one line for each product in the '
+             'context, with its figure. Then write a last line of the form "Answer: <name of one product>".')
+ctx_prompt = lambda q, docs: 'Context:\n' + '\n\n'.join(f"[{IDS[d]}] {kb[d]['doc']}, {kb[d]['section']}\n{kb[d]['text']}" for d in docs) + f'\n\nQuestion: {q}'
+def grade_multi(r, a):
+    a = a.split('Answer:')[-1]               # with the step-by-step prompt, only the last line is graded
+    if any(k.lower() in a.lower() for k in r['answers']) and not any(o.lower() in a.lower() for o in r['others']):
+        return 'correct'
+    return 'abstained' if ABST.search(a) else 'wrong'
+
+plain = [rank_text(r['question']) for r in multi]
+PIPE = {'top 3': [p[:3] for p in plain], 'top n (n = products in the class)': [p[:len(r['gold'])] for p, r in zip(plain, multi)],
+        'ontology fan-out': [fan_out(r['question']) for r in multi],
+        'fan-out, current sections only': [fan_out(r['question'], current=True) for r in multi]}
+MULTI = {}; A_multi = {}
+for pname, system, ntok in (('answer directly', SYS_PICK, 60), ('list the figures, then answer', SYS_STEPS, 200)):
+    MULTI[pname] = {}; A_multi[pname] = {}
+    for name, docs in PIPE.items():
+        A_multi[pname][name] = a = chat([ctx_prompt(r['question'], d) for r, d in zip(multi, docs)], system, max_new_tokens=ntok)
+        g = [grade_multi(r, x) for r, x in zip(multi, a)]
+        cov = [set(r['gold']) <= {IDS[x] for x in d} for r, d in zip(multi, docs)]
+        MULTI[pname][name] = {'covered': float(np.mean(cov)), 'sections': float(np.mean([len(d) for d in docs])),
+                              **{k: float(np.mean([x == k for x in g])) for k in ('correct', 'abstained', 'wrong')},
+                              'correct, covered': int(sum(x == 'correct' and c for x, c in zip(g, cov))), 'n covered': int(sum(cov)),
+                              'correct, not covered': int(sum(x == 'correct' and not c for x, c in zip(g, cov)))}
+print(len(multi), 'comparison questions')
+pd.concat({p: pd.DataFrame(MULTI[p]).T for p in MULTI}).round(3)
+
+# %%
+r = multi[0]
+print('Q:', r['question'], '| accepted:', r['answers'][0])
+for name in PIPE:
+    print(f"\n{name}: {[IDS[d] for d in PIPE[name][0]]}")
+    for p in A_multi:
+        print(f'   {p}:', A_multi[p][name][0].replace('\n', ' / '))
+
+# %% [markdown]
+# With every section in front of it, the model still names the wrong product on most questions. Finding the largest
+# of five figures is arithmetic, which a language model of this size does badly and a line of code does exactly.
+# The fan-out already holds one section per product, so the work can be split: the model reads one section and
+# writes one figure, and code compares the figures.
+
+# %%
+def figure(a):                               # the first number in a reply; "no fee" with no number counts as 0
+    m = re.search(r'\d[\d,]*(?:\.\d+)?', a)
+    if m: return float(m.group(0).replace(',', ''))
+    return 0.0 if re.search(r'\bno\b|\bfree\b|\bnil\b', a, re.I) else None
+LOWEST = re.compile(r'lowest|smallest|least|fastest')
+SYS_ONE = ('You read one section of a Northmere Bank document. Reply with one figure and nothing else: the figure in the '
+           'section that the question compares. If the section says there is no fee, reply 0.')
+docs = PIPE['fan-out, current sections only']
+ask = [(j, x, d) for j, r in enumerate(multi) for x, d in zip(instances_of(r['class']), docs[j])]
+read = chat([f"Section:\n{kb[d]['text']}\n\nQuestion: {multi[j]['question']}\nFigure for the {x['name']}:" for j, x, d in ask], SYS_ONE, max_new_tokens=16)
+FIGS = [[] for _ in multi]
+for (j, x, d), a in zip(ask, read):
+    FIGS[j].append((x['name'], figure(a)))
+def decide(r, figs):
+    vals = [v for _, v in figs]
+    if None in vals: return None
+    best = (min if LOWEST.search(r['question']) else max)(vals)
+    win = [n for n, v in figs if v == best]
+    return win[0] if len(win) == 1 else None
+picked = [decide(r, f) for r, f in zip(multi, FIGS)]
+g = ['abstained' if p is None else 'correct' if p == r['answers'][0] else 'wrong' for p, r in zip(picked, multi)]
+MULTI_CODE = {k: float(np.mean([x == k for x in g])) for k in ('correct', 'abstained', 'wrong')}
+MULTI_CODE['calls'] = len(ask)
+print('Q:', multi[0]['question']); print('figures read:', FIGS[0], '-> code picks', picked[0])
+print(MULTI_CODE)
+
+# %% [build]
+_gold = lambda i: IDS.index(qs[i]['gold'])
+_pos = lambda m, r, i: XR[m][r][i].index(_gold(i)) + 1
+_miss = [i for i, r in enumerate(qs) if r['gold'] and _pos('no expansion', 'BM25', i) > 3]
+_show = _miss[::max(1, len(_miss) // 12)][:12] + [i for i, r in enumerate(qs) if r['kind'] == 'code'][:2]
+ONTO = {'n_classes': len(onto['classes']), 'n_inst': len(onto['instances']), 'n_terms': len(onto['concepts']),
+        'n_labels': sum(1 + len(c['alt']) for c in onto['concepts']) + sum(len(x['labels']) + 1 for x in onto['instances']),
+        'n_syn': sum(bool(s) for s, r in zip(SYN, qs) if r['gold']), 'n_link': n_link, 'n_harm': n_harm,
+        'multi': MULTI, 'n_multi': len(multi), 'sys_steps': SYS_STEPS,
+        'multi_code': MULTI_CODE, 'figs_ex': [FIGS[0], picked[0]], 'sys_one': SYS_ONE,
+        'multi_ex': {'q': multi[0]['question'], 'ans': multi[0]['answers'][0],
+                     'runs': {n: [[IDS[d] for d in PIPE[n][0]]] + [A_multi[p][n][0] for p in A_multi] for n in PIPE}},
+        'link_ex': [{'q': q, 'terms': [t for t, _ in link(q)['terms']], 'adds': synonyms(q), 'inst': [[x['name'], x['code']] for x in link(q)['instances']],
+                     'class': link(q)['class']} for q in (Q[3], Q[5], multi[0]['question'])]}
+QEX = {'rec': QE, 'best': BEST, 'gen': GENX, 'secs': {'rewrite': t_rewrite, 'hyde': t_hyde}, 'n_q': len(Q),
+       'explore': [{'q': Q[i], 'kind': qs[i]['kind'], 'gold': qs[i]['gold'], 'prf': PRF[i], 'rw': REWRITE[i], 'hyde': HYDE[i], 'syn': SYN[i],
+                    'pos': {m: [_pos(m, 'BM25', i), _pos(m, 'dense', i)] for m in ('no expansion', 'feedback terms', 'multi-query', 'HyDE', 'ontology synonyms')}}
+                   for i in _show]}
+
 # %% [build]
 ex_i = [2, 105, 196, 200, 12, 150]
 RES['rag'] = {'next': NEXT, 'next_q': Q0, 'next_start': START, 'n_kb': len(kb), 'n_docs': len({k['code'] for k in kb}), 'n_ans': len(ANS), 'n_una': len(UNA), 'kinds': {k: sum(r['kind'] == k for r in qs) for k in KINDS},
-              'kb_sample': kb[1], 'q_sample': [qs[i] for i in (2, 3, 4, 200)], 'ret': RET, 'chunk': CHUNK, 'gen': GEN, 'llm': LLM, 'n_llm': N_LLM,
+              'kb_sample': kb[1], 'q_sample': [qs[i] for i in (2, 3, 4, 200)], 'ret': RET, 'chunk': CHUNK, 'strat': STRAT, 'figc': FIGC, 'qe': QEX, 'onto': ONTO, 'gen': GEN, 'llm': LLM, 'n_llm': N_LLM,
               'closed_ex': [[qs[i]['question'], A_closed[i], qs[i]['answers']] for i in ex_i],
               'sys_strict': SYS_STRICT, 'prompt_ex': rag_prompt(2, k=2), 'kb_words': sum(len(k['text'].split()) for k in kb),
               'err': pd.crosstab(err['grade'], err['right section retrieved']).reindex(index=['correct', 'abstained', 'wrong'], columns=[False, True], fill_value=0).values.tolist(),

@@ -73,3 +73,39 @@ function esc_(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
   }
   sl.oninput=draw; draw();
 })();
+
+/* ---------- chunk explorer ---------- */
+(function(){
+  const el=document.getElementById('cx-data'); if(!el) return;
+  const D=JSON.parse(el.textContent), $=id=>document.getElementById(id);
+  const BC={whole:'#0E7A55',part:'#B02F3B',none:'#C3CFD5'};
+  function draw(n){
+    const d=D[n];
+    $('cx-v').innerHTML='<b>'+esc_(n)+'</b> &#183; answering sentence <b style="color:'+(d.ok?'#0E7A55':'#B02F3B')+'">'+d.v+
+      '</b> &#183; served over all questions: '+d.served;
+    $('cx-list').innerHTML=d.c.map((c,i)=>'<div class="out xs" style="white-space:normal;margin:0;border-left-color:'+BC[c[1]]+
+      '"><span style="color:#53666F">chunk '+(i+1)+' &#183; '+c[2]+' words</span><br/>'+c[0]+'</div>').join('');
+  }
+  seg_('cx-seg',draw); draw(Object.keys(D)[0]);
+})();
+
+/* ---------- query expansion explorer ---------- */
+(function(){
+  const el=document.getElementById('qx-data'); if(!el) return;
+  const D=JSON.parse(el.textContent), $=id=>document.getElementById(id);
+  let k=0;
+  const cell=p=>'<td style="text-align:right;font-weight:700;color:'+(p<=3?'#0E7A55':'#B02F3B')+'">'+p+'</td>';
+  function draw(){
+    const q=D.q[k];
+    $('qx-q').innerHTML='<b>question '+(k+1)+' of '+D.q.length+'</b> &#183; '+q.kind+' &#183; answer in '+q.gold+'<br/>'+esc_(q.q);
+    $('qx-pos').innerHTML='<table class="d sm free"><tr><th>expansion</th><th>BM25</th><th>dense</th></tr>'+
+      D.m.map(m=>'<tr><td>'+m+'</td>'+cell(q.pos[m][0])+(m==='feedback terms'?'<td style="text-align:right;color:#8FA0A9">'+q.pos[m][1]+'</td>':cell(q.pos[m][1]))+'</tr>').join('')+'</table>';
+    $('qx-prf').innerHTML='+ '+esc_(q.prf.join(', '));
+    $('qx-rw').innerHTML=q.rw.length?q.rw.map(esc_).join('<br/>'):'(none parsed)';
+    $('qx-hy').innerHTML=esc_(q.hyde);
+    $('qx-syn').innerHTML=q.syn.length?'+ '+esc_(q.syn.join(', ')):'no term of the ontology is in this question';
+  }
+  $('qx-prev').onclick=()=>{k=(k+D.q.length-1)%D.q.length;draw();};
+  $('qx-next').onclick=()=>{k=(k+1)%D.q.length;draw();};
+  draw();
+})();

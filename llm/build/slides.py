@@ -39,6 +39,8 @@ end.append(slide('References', 'References', 'References and the notebook',
                  'Everything on the slides can be rerun from the folder.',
                  '<div class="cols"><div class="colstack"><h2 class="s">Papers</h2><div class="refs">'
                  '<p>Lewis et al. (2020). Retrieval-augmented generation for knowledge-intensive NLP tasks. <i>NeurIPS</i>.</p>'
+                 '<p>Gao et al. (2023). Precise zero-shot dense retrieval without relevance labels. <i>ACL</i>.</p>'
+                 '<p>Cormack, Clarke and B&#252;ttcher (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. <i>SIGIR</i>.</p>'
                  '<p>Robertson and Zaragoza (2009). The probabilistic relevance framework: BM25 and beyond. <i>Foundations and Trends in Information Retrieval</i> 3(4).</p>'
                  '<p>Cormack, Clarke and Buettcher (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. <i>SIGIR</i>.</p>'
                  '<p>Hu et al. (2022). LoRA: low-rank adaptation of large language models. <i>ICLR</i>.</p>'
@@ -52,6 +54,8 @@ end.append(slide('References', 'References', 'References and the notebook',
 
 llm/data/kb.jsonl          67 sections of a fictional bank
 llm/data/questions.jsonl   225 questions with answers
+llm/data/ontology.json     classes, instances, terms
+llm/data/questions_multi.jsonl   37 comparison questions
 
 llm/build/make_data.py     writes the knowledge base""", 'xs', '') +
                  '<div class="callout sm">Models: Qwen2.5-1.5B-Instruct and Qwen2.5-0.5B-Instruct (Apache 2.0), bge-small-en-v1.5, ms-marco-MiniLM cross-encoder. All are downloaded by the notebook; no API key is needed.</div>'

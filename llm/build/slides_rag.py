@@ -1,5 +1,6 @@
 """LLM session, part 1: cover, plan, the model, retrieval-augmented generation."""
 from common import *
+import slides_ragx as X
 
 A = []
 add = A.append
@@ -42,7 +43,7 @@ add(f'''
 ''')
 
 # ================================================================ plan
-blocks = [('RAG', 30, BLUE, ['closed book', 'retrieval, four ways', 'chunks and prompts']),
+blocks = [('RAG', 30, BLUE, ['closed book', 'retrieval, four ways', 'chunking strategies', 'query expansion', 'an ontology']),
           ('Evaluation and hallucination', 20, RED, ['grading answers', 'four detectors', 'mitigation, step by step']),
           ('Prompt engineering', 20, PURP, ['structured output', 'wording and examples', 'hidden instructions']),
           ('LoRA and fine-tuning', 20, GREEN, ['what LoRA trains', 'prompt, LoRA or full'])]
@@ -57,7 +58,7 @@ for name, mins, col, items in blocks:
 s += T(1106, 20, '90', 10.5, SOFT, 'end', MONO)
 add(slide('Plan', 'Plan', 'Plan for the 90 minutes',
           'Four blocks on one small model and one fictional bank. Every number comes from the notebook, which needs no API key.',
-          fig(svg(1120, 172, s, 'Session plan'), 'minutes from the start') +
+          fig(svg(1120, 196, s, 'Session plan'), 'minutes from the start') +
           f'<div class="cols nat"><div class="callout"><b>Why a small model.</b> {B15} billion weights fit on a laptop GPU, so every experiment can be rerun in the room. A larger model moves the levels. The way each number is measured stays the same.</div>'
           f'<div class="callout"><b>Why a fictional bank.</b> The model cannot have seen "Northmere Bank" in training. Any correct answer about it has to come from the documents handed to the model.</div></div>'
           '<div class="callout warn sm">The order differs from the printed syllabus: LoRA comes last, because it is compared with the prompting results that precede it.</div>'))
@@ -187,6 +188,7 @@ add(slide('RAG', 'RAG &#183; Example', 'Retrieval, question by question',
           '</div></div>' + jdata('rx-data', {'q': RG['explore'], 'rk': RK})))
 
 # ================================================================ chunk size
+add(X.CH_CONCEPT)
 CH = RG['chunk']
 fixed = [c for c in CH if c['words'] != 'by section']; sec_ = next(c for c in CH if c['words'] == 'by section')
 rows = [[f"{c['words']} words" + (f", {c['overlap']} overlap" if c['overlap'] else ''), c['chunks'], c['context words'], f"<b>{pct(c['served'])}</b>"] for c in fixed]
@@ -194,7 +196,7 @@ rows.append(['<b>one chunk per section</b>', sec_['chunks'], sec_['context words
 bestf = max(fixed, key=lambda c: c['served']); small_ = fixed[0]
 items = [((f"{c['words']}w" + (f"+{c['overlap']}" if c['overlap'] else '')), round(c['served'], 3), BLUE if c['overlap'] == 0 else PURP, f"{c['context words']} words to the model") for c in fixed]
 items.append(('by section', round(sec_['served'], 3), GREEN, f"{sec_['context words']} words to the model"))
-add(slide('RAG', 'RAG &#183; Example', 'Example continued 2',
+add(slide('RAG', 'RAG &#183; Chunking &#183; Example', 'Example',
           f"Chunk size. Each document is cut into windows of a fixed number of words; a question is served if one of the top three chunks holds the whole answering sentence.",
           '<div class="cols"><div class="colstack" style="flex:1.3">' +
           fig(hbars(items, w=640, label_w=110, bar_h=24, gap=9, maxv=1.12, valfmt=lambda v: f'{v:.3f}', label='Questions served by chunk size'),
@@ -204,6 +206,8 @@ add(slide('RAG', 'RAG &#183; Example', 'Example continued 2',
           f'<div class="callout"><b>Large chunks cost context.</b> Three chunks of {fixed[-1]["words"]} words send {fixed[-1]["context words"]} words to the model for a one-line answer, and the model has to find the line.</div>'
           f'<div class="callout good sm"><b>Cut where the author cut.</b> Splitting at section headings serves {pct(sec_["served"])} with {sec_["context words"]} words of context.</div>'
           '</div></div>'))
+
+A.extend(X.CHUNK_X)
 
 # ================================================================ the prompt
 add(slide('RAG', 'RAG &#183; Mechanism', 'Mechanism continued 1',
@@ -222,7 +226,7 @@ short = {'closed book': 'closed book', 'RAG, dense, top 3': 'dense, top 3, plain
          '+ strict prompt': 'reranked, top 3, strict prompt', 'strict, top 1': 'reranked, top 1, strict', 'strict, top 5': 'reranked, top 5, strict',
          'strict, the right section given': 'right section handed over'}
 ORA = GEN['strict, the right section given']
-add(slide('RAG', 'RAG &#183; Example', 'Example continued 3',
+add(slide('RAG', 'RAG &#183; Example', 'Example continued 2',
           f"Seven pipelines on the same questions. With reranked retrieval and the strict prompt the model is correct on {pct(ST['ans']['correct'], 0)} of answerable questions and abstains on {pct(ST['una']['abstained'], 0)} of unanswerable ones.",
           '<div class="cols nat"><div class="colstack">' + fig(stacked([(short[k], GEN[k]['ans']) for k in order], w=560, label_w=240, bar_h=24, gap=9, label='Answerable questions by pipeline'),
               f'{RG["n_ans"]} answerable questions', GLEG) +
@@ -249,6 +253,8 @@ add(slide('RAG', 'RAG &#183; Test', 'Test',
           '<div class="callout sm"><b>Fix the stage that failed.</b> A retrieval miss needs a better index or query. A misread section needs a better prompt or a stronger model. The grade alone does not say which.</div>'
           '</div></div>'))
 
+A.extend(X.QE_X + X.ON_X)
+
 # ================================================================ drawbacks
 add(slide('RAG', 'RAG &#183; Drawbacks', 'Drawbacks',
           'What this knowledge base leaves out, and what a production one has to handle.',
@@ -257,5 +263,4 @@ add(slide('RAG', 'RAG &#183; Drawbacks', 'Drawbacks',
           '<div class="card big o"><h3>Permissions</h3><p>Retrieval must apply the access rights of the person asking. A chunk the user may not read must never enter the prompt, because the model will repeat it.</p></div>'
           '<div class="card big"><h3>Tables and scans</h3><p>Fee tables and scanned forms lose their meaning when flattened to text. They need their own extraction step before indexing.</p></div>'
           '</div>'
-          '<div class="cols nat"><div class="callout"><b>Questions that need several sections.</b> "Which account has the highest cash machine limit?" has no single answering section. Top-3 retrieval cannot see all five product guides.</div>'
-          f'<div class="callout"><b>Cost and delay.</b> Every question now runs an embedding model, a reranker and a prompt of several hundred tokens. On this GPU the {NQ} questions took {ST["secs"]:.0f} seconds with retrieval and {CB["secs"]:.0f} without.</div></div>'))
+          f'<div class="callout"><b>Cost and delay.</b> Every question now runs an embedding model, a reranker and a prompt of several hundred tokens. On this GPU the {NQ} questions took {ST["secs"]:.0f} seconds with retrieval and {CB["secs"]:.0f} without.</div>'))
