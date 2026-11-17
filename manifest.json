@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-17 17:38 UTC",
+ "generated": "2026-11-17 17:58 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -54,8 +54,8 @@
    "folder": "nlp",
    "section": "Day 2 \u00b7 Advanced NLP for finance",
    "kind": "deck",
-   "size": 1103021,
-   "updated": "2026-11-16"
+   "size": 1123598,
+   "updated": "2026-11-17"
   },
   {
    "path": "nlp/advanced_nlp_for_finance.ipynb",
