@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-17 18:20 UTC",
+ "generated": "2026-11-17 18:30 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -36,7 +36,7 @@
    "folder": "llm",
    "section": "Day 2 \u00b7 LLMs in depth",
    "kind": "deck",
-   "size": 330582,
+   "size": 331316,
    "updated": "2026-11-17"
   },
   {
@@ -54,7 +54,7 @@
    "folder": "nlp",
    "section": "Day 2 \u00b7 Advanced NLP for finance",
    "kind": "deck",
-   "size": 1123598,
+   "size": 1123934,
    "updated": "2026-11-17"
   },
   {
