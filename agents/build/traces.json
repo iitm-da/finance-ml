@@ -1,0 +1,183 @@
+{
+ "model": "Qwen2.5-1.5B-Instruct",
+ "sys": "You help staff of Northmere Bank. Look up every figure with the search tool; never use a figure from memory. Do all arithmetic with the calculator tool. When you have the result, reply with one line: ANSWER: <number>",
+ "tools": {
+  "search": "Search the bank's product guides and policies. Returns the two sections that best match the query. Search for one product or one policy at a time.",
+  "calculator": "Evaluate an arithmetic expression. Returns the number.",
+  "waive_fee": "Refund a fee to a customer's account. This moves money."
+ },
+ "prompt": "<|im_start|>system\nYou help staff of Northmere Bank. Look up every figure with the search tool; never use a figure from memory. Do all arithmetic with the calculator tool. When you have the result, reply with one line: ANSWER: <number>\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"search\", \"description\": \"Search the bank's product guides and policies. Returns the two sections that best match the query. Search for one product or one policy at a time.\", \"parameters\": {\"type\": \"object\", \"required\": [\"query\"], \"properties\": {\"query\": {\"type\": \"string\", \"description\": \"what to look for, for example \\\"Premier Current Account monthly fee\\\"\"}}}}}\n{\"type\": \"function\", \"function\": {\"name\": \"calculator\", \"description\": \"Evaluate an arithmetic expression. Returns the number.\", \"parameters\": {\"type\": \"object\", \"required\": [\"expression\"], \"properties\": {\"expression\": {\"type\": \"string\", \"description\": \"numbers with + - * / and brackets, for example \\\"12 * 18 + 1500 * 2.75 / 100\\\"\"}}}}}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call><|im_end|>\n<|im_start|>user\nA card payment of GBP 700 is made in a foreign currency. How much more is the fee on the Business Start Account than on the Student Current Account, in GBP?<|im_end|>\n<|im_start|>assistant\n",
+ "traces": [
+  {
+   "q": "What is the purchase rate on the Platinum Credit Card, as a percentage APR?",
+   "level": 1,
+   "answer": 19.9,
+   "expr": "19.9",
+   "grade": "correct",
+   "cause": "",
+   "final": "ANSWER: 19.9%",
+   "steps": [
+    [
+     {
+      "name": "search",
+      "args": {
+       "query": "Platinum Credit Card purchase rate"
+      },
+      "obs": "[CC-02#1] Product guide: Platinum Credit Card, Rates: The purchase rate on the Platinum Credit Card is 19.9% APR. Taking cash on the Platinum Credit Card costs 2.5% of the amount, with a minimum of GBP 3. Interest on cash is charged from the day of the withdrawal.\n[CC-01#1] Product guide: Classic Credit Card, Rates: The purchase rate on the Classic Credit Card is 24.9% APR. Taking cash on the Classic Credit Card costs 3% of the amount, with a minimum of GBP 3. Interest on cash is charged from the day of the withdra",
+      "err": null
+     }
+    ]
+   ],
+   "raw": [
+    "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Platinum Credit Card purchase rate\"}}\n</tool_call>"
+   ]
+  },
+  {
+   "q": "Across the Standard, Premier and Student Current Accounts, what is the gap between the highest and the lowest daily cash machine limit, in GBP?",
+   "level": 4,
+   "answer": 600.0,
+   "expr": "900 - 300",
+   "grade": "correct",
+   "cause": "",
+   "final": "ANSWER: 600",
+   "steps": [
+    [
+     {
+      "name": "search",
+      "args": {
+       "query": "Standard Daily Cash Machine Limit"
+      },
+      "obs": "[PG-01#2] Product guide: Standard Current Account, Daily limits: Holders of the Standard Current Account can withdraw up to GBP 450 a day from cash machines. Payments made in online banking or the mobile app are limited to GBP 20,000 a day for the Standard Current Account. Limits reset at midnight UK time. A branch can raise a limit for a single day after an identity check.\n[PG-02#2] Product guide: Premier Current Account, Daily limits: Holders of the Premier Current Account can withdraw up to GBP 900 a day from ca",
+      "err": null
+     },
+     {
+      "name": "search",
+      "args": {
+       "query": "Premier Daily Cash Machine Limit"
+      },
+      "obs": "[PG-02#2] Product guide: Premier Current Account, Daily limits: Holders of the Premier Current Account can withdraw up to GBP 900 a day from cash machines. Payments made in online banking or the mobile app are limited to GBP 75,000 a day for the Premier Current Account. Limits reset at midnight UK time. A branch can raise a limit for a single day after an identity check.\n[BRN-14#1] Branch operations manual, Cash limits: A cashier till holds no more than GBP 4,000. Cash above the limit is moved to the vault, which i",
+      "err": null
+     },
+     {
+      "name": "search",
+      "args": {
+       "query": "Student Daily Cash Machine Limit"
+      },
+      "obs": "[PG-03#2] Product guide: Student Current Account, Daily limits: Holders of the Student Current Account can withdraw up to GBP 300 a day from cash machines. Payments made in online banking or the mobile app are limited to GBP 5,000 a day for the Student Current Account. Limits reset at midnight UK time. A branch can raise a limit for a single day after an identity check.\n[PG-01#2] Product guide: Standard Current Account, Daily limits: Holders of the Standard Current Account can withdraw up to GBP 450 a day from cash",
+      "err": null
+     },
+     {
+      "name": "calculator",
+      "args": {
+       "expression": "max(standard_daily_cash_machine_limit) - min(premier_daily_cash_machine_limit)"
+      },
+      "obs": "Error: only numbers and + - * / ( ) are allowed",
+      "err": "tool failed"
+     }
+    ]
+   ],
+   "raw": [
+    "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Standard Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Premier Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"max(standard_daily_cash_machine_limit) - min(premier_daily_cash_machine_limit)\"}}\n</tool_call>"
+   ]
+  },
+  {
+   "q": "Add up the interest-free overdraft buffer of the Standard, Premier and Student Current Accounts. What is the total, in GBP?",
+   "level": 4,
+   "answer": 2050.0,
+   "expr": "50 + 500 + 1500",
+   "grade": "wrong",
+   "cause": "arithmetic done by the model after the calculator refused the expression",
+   "final": "ANSWER: 650",
+   "steps": [
+    [
+     {
+      "name": "search",
+      "args": {
+       "query": "Standard Current Account interest-free overdraft buffer"
+      },
+      "obs": "[PG-01#3] Product guide: Standard Current Account, Overdraft: An arranged overdraft on the Standard Current Account has an interest-free buffer of GBP 50. Borrowing above the buffer is charged daily. Unarranged borrowing is refused where possible and no fee is charged for a refused payment.\n[PG-02#3] Product guide: Premier Current Account, Overdraft: An arranged overdraft on the Premier Current Account has an interest-free buffer of GBP 500. Borrowing above the buffer is charged daily. Unarranged borrowing is refus",
+      "err": null
+     },
+     {
+      "name": "search",
+      "args": {
+       "query": "Premier Current Account interest-free overdraft buffer"
+      },
+      "obs": "[PG-02#3] Product guide: Premier Current Account, Overdraft: An arranged overdraft on the Premier Current Account has an interest-free buffer of GBP 500. Borrowing above the buffer is charged daily. Unarranged borrowing is refused where possible and no fee is charged for a refused payment.\n[PG-01#3] Product guide: Standard Current Account, Overdraft: An arranged overdraft on the Standard Current Account has an interest-free buffer of GBP 50. Borrowing above the buffer is charged daily. Unarranged borrowing is refus",
+      "err": null
+     },
+     {
+      "name": "search",
+      "args": {
+       "query": "Student Current Account interest-free overdraft buffer"
+      },
+      "obs": "[PG-03#3] Product guide: Student Current Account, Overdraft: An arranged overdraft on the Student Current Account has an interest-free buffer of GBP 1,500. Borrowing above the buffer is charged daily. Unarranged borrowing is refused where possible and no fee is charged for a refused payment.\n[PG-01#3] Product guide: Standard Current Account, Overdraft: An arranged overdraft on the Standard Current Account has an interest-free buffer of GBP 50. Borrowing above the buffer is charged daily. Unarranged borrowing is ref",
+      "err": null
+     },
+     {
+      "name": "calculator",
+      "args": {
+       "expression": "interest_free_overdraft_buffer(Standard) + interest_free_overdraft_buffer(Premier) + interest_free_overdraft_buffer(Student)"
+      },
+      "obs": "Error: only numbers and + - * / ( ) are allowed",
+      "err": "tool failed"
+     }
+    ]
+   ],
+   "raw": [
+    "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Standard Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Premier Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"interest_free_overdraft_buffer(Standard) + interest_free_overdraft_buffer(Premier) + interest_free_overdraft_buffer(Student)\"}}\n</tool_call>"
+   ]
+  },
+  {
+   "q": "A card payment of GBP 700 is made in a foreign currency. How much more is the fee on the Business Start Account than on the Student Current Account, in GBP?",
+   "level": 3,
+   "answer": 1.4,
+   "expr": "700 * (2.95 - 2.75) / 100",
+   "grade": "wrong",
+   "cause": "searched the monthly fee; the task is about the foreign currency fee",
+   "final": "ANSWER: 6.8",
+   "steps": [
+    [
+     {
+      "name": "search",
+      "args": {
+       "query": "Business Start Account monthly fee"
+      },
+      "obs": "[PG-04#1] Product guide: Business Start Account, Eligibility and fees: The Business Start Account is open to businesses in their first two years of trading. The monthly fee is GBP 7.5 for the Business Start Account. The fee, where there is one, is taken on the first working day of the month. Statements are issued monthly and are free online; a paper statement costs GBP 2 each.\n[PG-05#1] Product guide: Business Plus Account, Eligibility and fees: The Business Plus Account is open to businesses with turnover above GB",
+      "err": null
+     },
+     {
+      "name": "search",
+      "args": {
+       "query": "Student Current Account monthly fee"
+      },
+      "obs": "[PG-03#1] Product guide: Student Current Account, Eligibility and fees: The Student Current Account is open to students on a course of two years or longer. There is no monthly fee for the Student Current Account. The fee, where there is one, is taken on the first working day of the month. Statements are issued monthly and are free online; a paper statement costs GBP 2 each.\n[PG-01#1] Product guide: Standard Current Account, Eligibility and fees: The Standard Current Account is open to personal customers aged 18 or ",
+      "err": null
+     },
+     {
+      "name": "calculator",
+      "args": {
+       "expression": "700 * (result('Business Start Account monthly fee') - result('Student Current Account monthly fee'))"
+      },
+      "obs": "Error: only numbers and + - * / ( ) are allowed",
+      "err": "tool failed"
+     }
+    ]
+   ],
+   "raw": [
+    "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Business Start Account monthly fee\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Current Account monthly fee\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"700 * (result('Business Start Account monthly fee') - result('Student Current Account monthly fee'))\"}}\n</tool_call>"
+   ]
+  },
+  {
+   "q": "How much cash, in GBP, can a holder of the Premier Current Account withdraw from cash machines in a day?",
+   "level": 1,
+   "answer": 900.0,
+   "expr": "900",
+   "grade": "wrong",
+   "cause": "answered from memory; no tool was called",
+   "final": "ANSWER: 3000.0",
+   "steps": [],
+   "raw": []
+  }
+ ]
+}
