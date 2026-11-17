@@ -233,24 +233,6 @@ add(slide('Guardrails', 'Guardrails &#183; Concept', 'Concept',
     '<div class="callout sm" data-at="7"><b>Limits and a log.</b> A cap on steps, on tokens and on the amount per action. Every call and result is stored, which gives the audit trail.</div>'
     '</div>' + bld(7), 'build'))
 
-# ================================================================ test
-add(slide('Guardrails', 'Guardrails &#183; Test', 'Test',
-    'An agent is tested like any other program that takes actions: on tasks with known outcomes, before and after every change.',
-    '<div class="cols"><div class="colstack" style="flex:1.1"><ol class="n">'
-    '<li><b>Write tasks with known answers.</b> Include the four failures from the recorded runs and at least one task where the right action is to refuse.</li>'
-    '<li><b>Score the outcome.</b> Share of tasks solved, and share of tasks where a write tool was called without cause.</li>'
-    '<li><b>Score the path.</b> Was each tool call valid, was the right tool chosen, how many steps were used against the fewest needed.</li>'
-    '<li><b>Record the cost.</b> Model calls, tokens read and seconds for each solved task.</li>'
-    '<li><b>Rerun the set</b> when the prompt, a tool description or the model changes.</li>'
-    '</ol></div><div class="colstack">' +
-    table(['level', 'what is checked', 'by'],
-          [['outcome', 'final answer or final state of the system', 'code'],
-           ['path', 'tools called, arguments, order, repeats', 'code on the log'],
-           ['tone and policy', 'the reply to the customer', 'a rubric, scored by a model and sampled by staff'],
-           ['production', 'approvals refused, steps per task, cost per task', 'dashboard']], 'd sm free') +
-    '<div class="callout sm"><b>The log is the test data.</b> A run that went wrong in production becomes a task in the set.</div>'
-    '</div></div>'))
-
 # ================================================================ where it fits
 add(slide('Guardrails', 'Guardrails &#183; Example', 'Example',
     'Four tasks in a bank, with the tools an agent would need and the step that stays with a member of staff.',
@@ -261,6 +243,84 @@ add(slide('Guardrails', 'Guardrails &#183; Example', 'Example',
            ['<b>Incident runbook</b>', 'monitoring queries, log search, restart a service', 'read, write', 'approval of each restart; the post-incident review']], 'd free') +
     '<div class="cols nat"><div class="callout sm"><b>What the four share.</b> Many look-ups across systems, a path that depends on what the look-ups return, and a written result that a person reviews.</div>'
     '<div class="callout good sm"><b>Where to begin.</b> Read and draft tools only. The agent prepares the file and a member of staff takes the action.</div></div>'))
+
+# ================================================================ evaluation: concept (build)
+import re
+bx = [(10, 120, 'task', INK), (170, 150, 'search call', PURP), (360, 150, 'result', GREEN), (550, 150, 'calculator call', PURP), (740, 150, 'result', GREEN), (930, 180, 'answer', BLUE)]
+s = ''
+for i, (x, w, lab, col) in enumerate(bx):
+    s += box(x, 78, w, 46, lab, '', col)
+    if i:
+        px, pw = bx[i - 1][0], bx[i - 1][1]
+        s += arrow(px + pw, 101, x - 4, 101)
+def brace(x1, x2, y, col, up=False):
+    d = -8 if up else 8
+    return L(x1, y, x2, y, col, 2.4) + L(x1, y, x1, y - d, col, 2.4) + L(x2, y, x2, y - d, col, 2.4)
+s += G_(1, brace(930, 1110, 140, BLUE) + T(1020, 162, 'Outcome', 14, BLUE, 'middle', BODY, 700) + T(1020, 180, 'right answer, or right', 10.2, SOFT, 'middle', MONO) +
+        T(1020, 194, 'final state of the system', 10.2, SOFT, 'middle', MONO))
+s += G_(2, brace(170, 890, 140, PURP) + T(530, 162, 'Path', 14, PURP, 'middle', BODY, 700) +
+        T(530, 180, 'the right tools · valid arguments · every needed call made · no wasted steps', 10.2, SOFT, 'middle', MONO) +
+        T(530, 194, 'the final figure traced to a tool result', 10.2, SOFT, 'middle', MONO))
+s += G_(3, brace(360, 510, 66, GREEN, True) + brace(740, 890, 66, GREEN, True) + T(625, 50, 'Parts', 14, GREEN, 'middle', BODY, 700) +
+        T(625, 66, 'each tool tested alone', 10.2, SOFT, 'middle', MONO))
+s += G_(4, brace(10, 1110, 22, RED, True) + T(12, 14, 'Whole run', 14, RED, 'start', BODY, 700) +
+        T(1108, 14, 'model calls · tokens · seconds · any write action taken without cause', 10.2, SOFT, 'end', MONO))
+R2 = TR[1]
+add(slide('Evaluation', 'Evaluation &#183; Concept', 'Concept',
+    'A chat answer is scored once, at the end. An agent leaves a log of calls, and each level of that log has its own score.',
+    fig(svg(1120, 202, s, 'Four levels at which a run of an agent is scored'), 'one run of an agent, from the task to the answer') +
+    '<div class="cols3">'
+    f'<div class="callout warn sm" data-at="2"><b>Right for the wrong reason.</b> Recorded run 2 ends on the right number, {R2["answer"]:g}, after the calculator refused its expression. An outcome score passes it. A path score fails it.</div>'
+    '<div class="callout sm" data-at="2"><b>Reference path.</b> For each test task, write down the tool calls a careful member of staff would make. The agent&#8217;s calls are compared with that list.</div>'
+    '<div class="callout sm" data-at="4"><b>Repeats.</b> Run each task k times and report the share solved all k times. A task solved 4 times in 5 fails a customer on the fifth.</div>'
+    '</div>' + bld(4), 'build'))
+
+# ================================================================ evaluation: the recorded runs, scored
+nums_ = lambda t: set(float(x) for x in re.findall(r'\d+(?:\.\d+)?', t.replace(',', '')))
+def score(t):
+    calls = [c for st in t['steps'] for c in st]; ok = [c for c in calls if not c['err']]
+    seen = set(re.findall(r'\[(\S+?#\d+)\]', ' '.join(c['obs'] for c in ok if c['name'] == 'search')))
+    fin = nums_(t['final']); res = nums_(' '.join(c['obs'] for c in ok))
+    return {'ok': t['grade'] == 'correct', 'valid': (len(ok), len(calls)), 'sect': (len(set(t['gold']) & seen), len(t['gold'])),
+            'ground': bool(fin) and fin <= res, 'calls': (len(calls), len(t['gold']) + (t['level'] > 1))}
+SC = [score(t) for t in TR]
+yes = lambda v: f'<b style="color:{GREEN}">yes</b>' if v else f'<b style="color:{RED}">no</b>'
+frac = lambda a, b: f'<span style="color:{GREEN if a == b and b else RED};font-weight:700">{a} of {b}</span>'
+SHORTQ = ['Platinum card purchase rate', 'gap between cash machine limits, three accounts', 'sum of overdraft buffers, three accounts',
+          'difference in foreign currency fee, two accounts', 'Premier cash machine limit']
+rows = [[f'{i + 1}', q, yes(x['ok']), frac(*x['valid']), frac(*x['sect']), yes(x['ground']), f"{x['calls'][0]} / {x['calls'][1]}"] for i, (q, x) in enumerate(zip(SHORTQ, SC))]
+tot = lambda k: (sum(x[k][0] for x in SC), sum(x[k][1] for x in SC))
+rows.append(['', '<b>all five</b>', f'<b>{sum(x["ok"] for x in SC)} of 5</b>', '<b>%d of %d</b>' % tot('valid'), '<b>%d of %d</b>' % tot('sect'),
+             f'<b>{sum(x["ground"] for x in SC)} of 5</b>', '<b>%d / %d</b>' % tot('calls')])
+add(slide('Evaluation', 'Evaluation &#183; Example', 'Example',
+    f'The five recorded runs, scored on the outcome and on four properties of the path. The outcome passes {sum(x["ok"] for x in SC)}; the path passes {sum(x["ok"] and x["ground"] and x["valid"][0] == x["valid"][1] for x in SC)}.',
+    table(['run', 'task', 'outcome right', 'tool calls that ran', 'needed sections retrieved', 'final figure in a tool result', 'tool calls made / needed'], rows, 'd free') +
+    '<div class="cols3">'
+    f'<div class="callout warn sm"><b>Run 2.</b> Right outcome, every section retrieved, and a final figure that no tool returned. The model subtracted in its head, which is the step that failed in run 3.</div>'
+    f'<div class="callout sm"><b>Run 4.</b> Every call it made is valid JSON and two of three ran. The score that catches it is the sections: {SC[3]["sect"][0]} of {SC[3]["sect"][1]} needed.</div>'
+    '<div class="callout good sm"><b>All five columns are code.</b> Each one is a few lines over the log of calls. No second model is needed to score them.</div>'
+    '</div>'))
+
+# ================================================================ evaluation: test
+add(slide('Evaluation', 'Evaluation &#183; Test', 'Test',
+    'Nine scores computed from the log of calls, and the routine that keeps them current.',
+    '<div class="cols"><div class="colstack" style="flex:1.45">' +
+    table(['score', 'how it is computed', 'level'],
+          [['task success', 'tasks with the right answer or final state &#247; tasks', 'outcome'],
+           ['solved every time', 'tasks solved in all k repeats &#247; tasks', 'outcome'],
+           ['tool-call validity', 'calls that parse and run &#247; calls', 'path'],
+           ['tool selection', 'calls that are in the reference path &#247; calls', 'path'],
+           ['needed calls made', 'reference calls the agent made &#247; reference calls', 'path'],
+           ['step efficiency', 'fewest calls needed &#247; calls made', 'path'],
+           ['groundedness', 'final figures found in a tool result &#247; final figures', 'path'],
+           ['unsafe actions', 'write calls made without cause &#247; tasks', 'whole run'],
+           ['cost per solved task', 'tokens read and written &#247; tasks solved', 'whole run']], 'd sm free') +
+    '</div><div class="colstack"><ol class="n">'
+    '<li><b>Write tasks with known answers</b> and a reference path. Include one where the right action is to refuse.</li>'
+    '<li><b>Score from the log</b> with code. Use a model with a rubric only for tone and policy, and have staff sample its verdicts.</li>'
+    '<li><b>Rerun the set</b> when the prompt, a tool description or the model changes.</li>'
+    '<li><b>Add every production failure</b> to the set as a new task.</li>'
+    '</ol></div></div>'))
 
 # ================================================================ summary
 add(slide('Summary', 'Summary', 'Summary',
@@ -274,7 +334,7 @@ add(slide('Summary', 'Summary', 'Summary',
     '<div class="cols3">'
     '<div class="callout"><b>The loop.</b> The model writes a tool call as text, the code runs it and appends the result, and the model is called again until it answers.</div>'
     '<div class="callout"><b>The cost.</b> Error rates multiply across steps and every call rereads the conversation. Where the steps are known in advance, a fixed chain is cheaper and easier to test.</div>'
-    '<div class="callout"><b>The controls.</b> Tools in tiers, approval for anything that writes, limits on steps and amounts, a log of every call, and a task set that is rerun on every change.</div>'
+    '<div class="callout"><b>The controls.</b> Tools in tiers, approval for anything that writes, limits on steps and amounts, and a log of every call. The log is scored on outcome and on path, on a task set rerun at every change.</div>'
     '</div>'))
 
 # ================================================================ references
@@ -286,6 +346,8 @@ add(slide('References', 'References', 'References',
     '<p>Wang et al. (2023). Plan-and-solve prompting. <i>ACL</i>.</p>'
     '<p>Shinn et al. (2023). Reflexion: language agents with verbal reinforcement learning. <i>NeurIPS</i>.</p>'
     '<p>Schluntz and Zhang (2024). Building effective agents. Anthropic.</p>'
+    '<p>Yao et al. (2024). &#964;-bench: a benchmark for tool-agent-user interaction in real-world domains. <i>arXiv</i> 2406.12045.</p>'
+    '<p>Liu et al. (2023). AgentBench: evaluating LLMs as agents. <i>arXiv</i> 2308.03688.</p>'
     '<p>Greshake et al. (2023). Not what you&#8217;ve signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. <i>AISec</i>.</p>'
     '<p>Model Context Protocol specification, modelcontextprotocol.io.</p>'
     '</div></div><div class="colstack"><h2 class="s">On the slides</h2>'

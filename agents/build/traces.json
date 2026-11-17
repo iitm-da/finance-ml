@@ -30,6 +30,9 @@
    ],
    "raw": [
     "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Platinum Credit Card purchase rate\"}}\n</tool_call>"
+   ],
+   "gold": [
+    "CC-02#1"
    ]
   },
   {
@@ -78,6 +81,11 @@
    ],
    "raw": [
     "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Standard Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Premier Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Daily Cash Machine Limit\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"max(standard_daily_cash_machine_limit) - min(premier_daily_cash_machine_limit)\"}}\n</tool_call>"
+   ],
+   "gold": [
+    "PG-01#2",
+    "PG-02#2",
+    "PG-03#2"
    ]
   },
   {
@@ -126,6 +134,11 @@
    ],
    "raw": [
     "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Standard Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Premier Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Current Account interest-free overdraft buffer\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"interest_free_overdraft_buffer(Standard) + interest_free_overdraft_buffer(Premier) + interest_free_overdraft_buffer(Student)\"}}\n</tool_call>"
+   ],
+   "gold": [
+    "PG-01#3",
+    "PG-02#3",
+    "PG-03#3"
    ]
   },
   {
@@ -166,6 +179,10 @@
    ],
    "raw": [
     "<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Business Start Account monthly fee\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"search\", \"arguments\": {\"query\": \"Student Current Account monthly fee\"}}\n</tool_call>\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"700 * (result('Business Start Account monthly fee') - result('Student Current Account monthly fee'))\"}}\n</tool_call>"
+   ],
+   "gold": [
+    "PG-03#4",
+    "PG-04#4"
    ]
   },
   {
@@ -177,7 +194,10 @@
    "cause": "answered from memory; no tool was called",
    "final": "ANSWER: 3000.0",
    "steps": [],
-   "raw": []
+   "raw": [],
+   "gold": [
+    "PG-02#2"
+   ]
   }
  ]
 }
