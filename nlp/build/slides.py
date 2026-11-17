@@ -46,6 +46,7 @@ end.append(slide('References', 'References', 'References and the notebook',
                  '<p>Jain and Wallace (2019). Attention is not explanation. <i>NAACL</i>.</p>'
                  '<p>Rajpurkar, Jia and Liang (2018). Know what you don&#8217;t know: unanswerable questions for SQuAD. <i>ACL</i>.</p>'
                  '<p>Xu et al. (2020). LayoutLM: pre-training of text and layout for document image understanding. <i>KDD</i>.</p>'
+                 '<p>Pfitzmann et al. (2022). DocLayNet. <i>KDD</i>.</p>'
                  '</div></div><div class="colstack"><h2 class="s">In the folder</h2>' +
                  out("""nlp/advanced_nlp_for_finance.ipynb
     every model and every number, executed
