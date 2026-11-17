@@ -105,7 +105,7 @@ add(slide('Hallucination', 'Hallucination &#183; Claim-level faithfulness &#183;
           '</div><div class="colstack">' +
           f'<div class="card sm r"><h3>{esc(ex[0])}</h3><p style="margin-bottom:6px"><b>answer (wrong):</b> {esc(ex[1])}</p>'
           f'<div class="outlbl" style="margin-top:4px">claims written by the model, with the best support among the context sentences</div>{exrows}</div>'
-          f'<div class="callout sm"><b>Two steps.</b> The model splits each answer into claims, {CL["mean_claims"]:.1f} on average. A claim is supported if one context sentence entails it. The {CL["n_abst"]} abstentions make no claim.</div>'
+          f'<div class="callout sm"><b>Two steps.</b> The model splits each answer into claims, {CL["mean_claims"]:.1f} on average. A claim is supported if one context sentence entails it. The {CL["n_abst"]} answers worded as an abstention make no claim.</div>'
           f'<div class="callout warn sm"><b>Precision stays low.</b> {CD[CN[2]]["flagged"]} answers flagged to catch {CD[CN[2]]["caught"]}. A split claim such as the second one above has no sentence to match, whatever the answer.</div>'
           '</div></div>'))
 
@@ -129,7 +129,7 @@ add(slide('Hallucination', 'Hallucination &#183; Token probability &#183; Exampl
                 [[k, f"<b>{d['auc']:.3f}</b>", d['flagged'], f"{d['caught']} of {d['wrong']}", f"{d['precision']:.2f}", f"{d['recall']:.2f}"] for k, d in LD.items()], 'd sm free') +
           '</div><div class="colstack">'
           f'<div class="callout good sm"><b>One forward pass.</b> AUC {LD[LN[0]]["auc"]:.3f} against {SC_["auc"]:.3f} for self-consistency, which took {EV["t_sc"]:.0f} seconds of extra generation, and {MJ["auc"]:.3f} for the judge.</div>'
-          f'<div class="callout sm"><b>The flag rule matters.</b> Flagging when a score is below 0.5: the mean flags {LD[LN[0]]["flagged"]} answers at precision {LD[LN[0]]["precision"]:.2f}; the lowest token flags {LD[LN[1]]["flagged"]} at {LD[LN[1]]["precision"]:.2f}.</div>'
+          f'<div class="callout sm"><b>The flag rule matters.</b> Flagging when the probability is below 0.5: the average over the tokens flags {LD[LN[0]]["flagged"]} answers at precision {LD[LN[0]]["precision"]:.2f}; the lowest token flags {LD[LN[1]]["flagged"]} at {LD[LN[1]]["precision"]:.2f}.</div>'
           f'<div class="callout warn sm"><b>The digits are written with confidence.</b> The lowest probability on a number token has AUC {LD[LN[2]]["auc"]:.3f}. In the wrong answer on the left the doubt sits on the first digit, 3, and the two zeros follow at 1.00.</div>'
           '<div class="callout sm">An API that returns no token probabilities rules this check out.</div>'
           '</div></div>'))
