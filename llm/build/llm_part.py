@@ -839,6 +839,113 @@ for k, v in D.items():
 pd.DataFrame(DET).T.round(3)
 
 # %% [markdown]
+# ## Faithfulness, claim by claim
+#
+# The entailment model above reads three whole sections against the answer in one pass. Two changes make the check
+# finer. First, each sentence of the context is tested alone and the best one counts. Second, the answer is split into
+# separate claims, and an answer is flagged if any one claim has no supporting sentence. An abstention makes no claim.
+
+# %%
+nli = CrossEncoder('cross-encoder/nli-deberta-v3-small', device=DEV)
+lab = [nli.model.config.id2label[k].lower() for k in range(3)]
+sents = lambda t: [x.strip() for x in re.split(r'(?<=[.!?])\s+(?=[A-Z])', t) if x.strip()]
+CSENT = [[x for d in RANK['dense'][i][:3] for x in sents(kb[d]['text'])] for i in range(N)]
+def support(i, claims):
+    """for each claim, the highest entailment probability over the sentences of the retrieved context"""
+    if not claims:
+        return []
+    p = torch.tensor(nli.predict([(x, c) for c in claims for x in CSENT[i]], batch_size=64)).softmax(-1).numpy()[:, lab.index('entailment')]
+    return p.reshape(len(claims), len(CSENT[i])).max(1).tolist()
+
+SYS_CLAIM = ('Split the answer into its separate factual claims. Write each claim as one short, complete sentence that can be read '
+             'without the others. One claim per line. Do not add anything that is not in the answer.')
+raw = chat([f"Question: {qs[i]['question']}\nAnswer: {POOL[i]}" for i in range(N)], SYS_CLAIM, max_new_tokens=120)
+strip = lambda l: re.sub(r'^[\-\*\d\.\)\s]+', '', l).strip()
+CLAIMS = [[] if ABST.search(POOL[i]) else ([strip(l) for l in raw[i].split('\n') if len(strip(l)) > 8][:6] or [POOL[i]]) for i in range(N)]
+SUP = [support(i, c) for i, c in enumerate(CLAIMS)]
+whole = [support(i, [] if ABST.search(POOL[i]) else [POOL[i]]) for i in range(N)]
+D2 = {'entailment, whole context': D['entailment model'],
+      'entailment, sentence by sentence': np.array([1 - min(w) if w else 0.0 for w in whole]),
+      'claims, sentence by sentence': np.array([1 - min(u) if u else 0.0 for u in SUP])}
+del nli
+def detector(v, flag=None):
+    flag = (v > 0.5) if flag is None else flag
+    tp = int((flag & y_wrong).sum())
+    return {'auc': float(roc_auc_score(y_wrong, v)), 'flagged': int(flag.sum()), 'caught': tp, 'wrong': int(y_wrong.sum()),
+            'precision': tp / max(int(flag.sum()), 1), 'recall': tp / int(y_wrong.sum())}
+CLAIM = {'det': {k: detector(v) for k, v in D2.items()}, 'mean_claims': float(np.mean([len(c) for c in CLAIMS if c])),
+         'n_abst': int(sum(not c for c in CLAIMS))}
+i = next(i for i in np.argsort(-D2['claims, sentence by sentence']) if y_wrong[i] and len(CLAIMS[i]) >= 2)
+CLAIM['ex'] = [qs[i]['question'], POOL[i], [[c, float(u)] for c, u in zip(CLAIMS[i], SUP[i])]]
+print(f"{CLAIM['mean_claims']:.2f} claims per answer; {CLAIM['n_abst']} abstentions make no claim\n")
+print('Q:', qs[i]['question'], '\nA:', POOL[i])
+for c, u in zip(CLAIMS[i], SUP[i]):
+    print(f'   support {u:.2f}  {c}')
+pd.DataFrame(CLAIM['det']).T.round(3)
+
+# %% [markdown]
+# ## The model's own probabilities
+#
+# The model assigned a probability to every token of its answer as it wrote it. Those numbers cost one forward pass to
+# read back, against five extra generations for self-consistency. Three scores per answer: the mean log-probability of
+# its tokens, the lowest token probability, and the lowest probability among the tokens that hold a digit.
+
+# %%
+def answer_probs(i):
+    head = ltok.apply_chat_template([{'role': 'system', 'content': SYS_RAG}, {'role': 'user', 'content': rag_prompt(i, 'dense', 3)}],
+                                    tokenize=False, add_generation_prompt=True)
+    a = ltok(head, return_tensors='pt').input_ids; b = ltok(POOL[i], add_special_tokens=False, return_tensors='pt').input_ids
+    with torch.no_grad():
+        lp = llm(torch.cat([a, b], 1).to(DEV)).logits[0, a.shape[1] - 1:-1].float().log_softmax(-1)
+    return [ltok.decode(int(t)) for t in b[0]], lp.gather(1, b[0].to(DEV)[:, None])[:, 0].exp().cpu().numpy()
+
+t0 = time.time()
+TP = [answer_probs(i) for i in range(N)]
+t_lp = time.time() - t0
+digit = lambda p: [x for t, x in zip(*p) if re.search(r'\d', t)]
+LP = {'mean log-probability': np.array([-np.log(p).mean() for _, p in TP]),
+      'lowest token probability': np.array([1 - p.min() for _, p in TP]),
+      'lowest number-token probability': np.array([1 - min(digit(p)) if digit(p) else 0.0 for p in TP])}
+LOGP = {'det': {k: detector(v, (np.exp(-v) < 0.5) if k.startswith('mean') else None) for k, v in LP.items()}, 'secs': t_lp}
+best = LP['lowest number-token probability']
+iw = next(i for i in np.argsort(-best) if y_wrong[i] and len(TP[i][0]) <= 22); ic = next(i for i in np.argsort(best) if G[i] == 'correct' and 8 <= len(TP[i][0]) <= 22 and digit(TP[i]))
+LOGP['ex'] = [{'q': qs[i]['question'], 'grade': G[i], 'tok': TP[i][0], 'p': [float(x) for x in TP[i][1]]} for i in (ic, iw)]
+for e in LOGP['ex']:
+    print(e['grade'], '|', e['q'], '\n   ', ' '.join(f'{t.strip()}:{x:.2f}' for t, x in zip(e['tok'], e['p'])), '\n')
+print(f'{t_lp:.0f} seconds for {N} answers; an answer is flagged when the score is below 0.5')
+pd.DataFrame(LOGP['det']).T.round(3)
+
+# %% [markdown]
+# ## Checking the judge
+#
+# A judge is a classifier, so it gets a confusion matrix of its own. The reference is the exact grade. Cohen's kappa is
+# agreement beyond chance: 0 is chance, 1 is perfect. Three checks: the yes-or-no judge from above, a judge that must
+# first copy the supporting sentence, and whether the yes-or-no judge gives the same verdict when asked again.
+
+# %%
+from sklearn.metrics import cohen_kappa_score
+def agreement(flag):
+    flag = np.asarray(flag, bool)
+    return {'kappa': float(cohen_kappa_score(y_wrong, flag)), 'agree': float((flag == y_wrong).mean()),
+            'tp': int((flag & y_wrong).sum()), 'fp': int((flag & ~y_wrong).sum()), 'fn': int((~flag & y_wrong).sum()), 'tn': int((~flag & ~y_wrong).sum())}
+JPROMPT = [f"Context:\n{CTX[i]}\n\nQuestion: {qs[i]['question']}\nAnswer: {POOL[i]}" for i in range(N)]
+SYS_QUOTE = ('You check an answer against a context. First copy the sentence of the context that states each figure or fact in the answer; '
+             'write NONE if there is no such sentence. Then give the verdict on the last line: SUPPORTED if every figure and fact has a '
+             'sentence, otherwise UNSUPPORTED.')
+J2 = chat(JPROMPT, SYS_QUOTE, max_new_tokens=140)
+flag2 = [('UNSUPPORTED' in j.upper()) or ('SUPPORTED' not in j.upper()) for j in J2]
+again = [chat([p + '\n\nIs every fact in the answer stated in the context? Reply YES or NO.' for p in JPROMPT], max_new_tokens=3, temperature=0.8) for _ in range(3)]
+first = D['model as judge'] > 0.5
+same = np.all([np.array([not a.strip().upper().startswith('YES') for a in r]) == first for r in again], axis=0)
+JUDGE = {'yes or no': agreement(first), 'copy the sentence, then verdict': agreement(flag2), 'stable': float(same.mean()), 'n': N,
+         'ex': J2[int(np.argmax(y_wrong))], 'sys': SYS_QUOTE}
+print(f"the yes-or-no judge repeats its first verdict on all 3 further tries for {JUDGE['stable']:.1%} of answers\n")
+pd.DataFrame({k: v for k, v in JUDGE.items() if isinstance(v, dict)}).T.round(3)
+
+# %% [build]
+RES['eval_more'] = {'claim': CLAIM, 'logp': LOGP, 'judge': JUDGE}
+
+# %% [markdown]
 # ## Mitigation, one step at a time
 #
 # The same 225 questions through five pipelines. The last step applies the number check to the output and replaces
@@ -863,6 +970,38 @@ RES['eval'] = {'pool': {k: G.count(k) for k in ('correct', 'abstained', 'wrong')
                'det': DET, 't_sc': t_sc, 'ladder': LADDER, 'steps': STEPS,
                'judge_yes': float(np.mean([j.strip().upper().startswith('YES') for j in J])),
                'sc_ex': [[qs[i]['question'], POOL[i], [S[k][i] for k in range(5)], G[i]] for i in (np.argsort(-D['self-consistency'])[:2].tolist() + [2])]}
+
+# %% [markdown]
+# ## One score per stage: the RAG triad
+#
+# Three scores that need no reference answer, one for each link between question, context and answer.
+#
+# 1. **Context relevance**: does the retrieved context bear on the question? The reranker's score for the best of the three sections.
+# 2. **Faithfulness**: is the answer supported by the context? The share of the answer's claims with a supporting sentence, from the claim check above.
+# 3. **Answer relevance**: does the answer address the question? The model writes the question that the answer replies to, and that question is compared with the real one by embedding similarity.
+#
+# The test bed has the truth for each: whether the right section was retrieved, and the grade of the answer.
+
+# %%
+raw = [max(rerank.predict([(qs[i]['question'], DOCS[d]) for d in RANK['dense'][i][:3]])) for i in range(N)]
+CR = 1 / (1 + np.exp(-np.array(raw, float)))
+FA = np.array([np.mean([u >= 0.5 for u in SUP[i]]) if SUP[i] else 1.0 for i in range(N)])
+SYS_BACK = 'Write the one question that the following answer replies to. Reply with the question only.'
+back = chat(POOL, SYS_BACK, max_new_tokens=40)
+AR = (emb.encode(back, normalize_embeddings=True) * emb.encode([r['question'] for r in qs], normalize_embeddings=True)).sum(1)
+found = np.array([bool(r['gold']) and IDS.index(r['gold']) in RANK['dense'][i][:3] for i, r in enumerate(qs)])
+group = np.array(['abstained' if g == 'abstained' else 'correct' if g == 'correct' else
+                  ('wrong, right section retrieved' if f else 'wrong, right section missing') for g, f in zip(G, found)])
+GROUPS = ['correct', 'wrong, right section retrieved', 'wrong, right section missing', 'abstained']
+TRIAD = {'groups': {g: {'n': int((group == g).sum()), 'cr': float(CR[group == g].mean()), 'fa': float(FA[group == g].mean()), 'ar': float(AR[group == g].mean())} for g in GROUPS},
+         'auc': {'cr': float(roc_auc_score(found, CR)), 'fa': float(roc_auc_score(~y_wrong, FA)), 'ar': float(roc_auc_score(np.array(G) == 'correct', AR))},
+         'n_found': int(found.sum()), 'ex': [qs[int(np.argmin(AR))]['question'], POOL[int(np.argmin(AR))], back[int(np.argmin(AR))], float(AR.min())]}
+print('AUC of each score against the truth it stands in for:', {k: round(v, 3) for k, v in TRIAD['auc'].items()})
+pd.DataFrame(TRIAD['groups']).T.rename(columns={'cr': 'context relevance', 'fa': 'faithfulness', 'ar': 'answer relevance'}).round(3)
+
+# %% [build]
+RES['eval_more']['triad'] = TRIAD
+json.dump(RES, open('build/m_llm.json', 'w'))
 
 # %% [markdown]
 # # 3. Prompt engineering, measured

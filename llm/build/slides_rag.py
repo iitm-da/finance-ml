@@ -44,7 +44,7 @@ add(f'''
 
 # ================================================================ plan
 blocks = [('RAG', 30, BLUE, ['closed book', 'retrieval, four ways', 'chunking strategies', 'query expansion', 'an ontology']),
-          ('Evaluation and hallucination', 20, RED, ['grading answers', 'four detectors', 'mitigation, step by step']),
+          ('Evaluation and hallucination', 20, RED, ['grading answers', 'four detectors', 'claims, probabilities, a judge', 'mitigation, step by step', 'the RAG triad']),
           ('Prompt engineering', 20, PURP, ['structured output', 'wording and examples', 'hidden instructions']),
           ('LoRA and fine-tuning', 20, GREEN, ['what LoRA trains', 'prompt, LoRA or full'])]
 s = ''; x = 10; wid = 1100; t = 0

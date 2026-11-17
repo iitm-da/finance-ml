@@ -88,6 +88,76 @@ add(slide('Hallucination', 'Hallucination &#183; Example', 'Example continued 1'
           '<div class="cols nat"><div class="callout"><b>Disagreement is the signal.</b> When the number is on the page in front of the model, sampling returns it again. When the model is guessing, each sample guesses differently.</div>'
           '<div class="callout warn sm"><b>Agreement is weaker evidence.</b> A model can be consistently wrong, for instance when it copies the same superseded section five times.</div></div>'))
 
+# ================================================================ finer checks: claim-level faithfulness
+XM = LM['eval_more']; CL, LGP, JD, TRI = XM['claim'], XM['logp'], XM['judge'], XM['triad']
+CD = CL['det']; CN = list(CD)
+cshort = {CN[0]: 'whole context', CN[1]: 'sentence by sentence', CN[2]: 'claims, by sentence'}
+items = [(cshort[k], round(CD[k]['auc'], 3), GREEN if k == CN[2] else BLUE, f"flags {CD[k]['flagged']}, catches {CD[k]['caught']} of {CD[k]['wrong']}") for k in CN]
+ex = CL['ex']
+exrows = ''.join(f'<div style="font-family:var(--mono);font-size:11.5px;padding:4px 0;border-top:1px solid var(--hair)"><b style="color:{GREEN if u >= .5 else RED}">{u:.2f}</b> &#160;{esc(c)}</div>' for c, u in ex[2])
+add(slide('Hallucination', 'Hallucination &#183; Claim-level faithfulness &#183; Example', 'Example',
+          f"The entailment model again, on smaller pieces. Whole context against whole answer: AUC {CD[CN[0]]['auc']:.3f}. Each claim against each context sentence: {CD[CN[2]]['auc']:.3f}.",
+          '<div class="cols"><div class="colstack" style="flex:1.2">' +
+          fig(hbars(items, w=680, label_w=190, bar_h=30, gap=14, maxv=1.5, valfmt=lambda v: f'{v:.3f}', label='AUC of the entailment check at three grain sizes'),
+              f'AUC for flagging the {CD[CN[0]]["wrong"]} wrong answers among {NP}') +
+          table(['check', 'flagged', 'caught', 'precision', 'recall'],
+                [[cshort[k], CD[k]['flagged'], f"{CD[k]['caught']} of {CD[k]['wrong']}", f"{CD[k]['precision']:.2f}", f"<b>{CD[k]['recall']:.2f}</b>"] for k in CN], 'd sm free') +
+          '</div><div class="colstack">' +
+          f'<div class="card sm r"><h3>{esc(ex[0])}</h3><p style="margin-bottom:6px"><b>answer (wrong):</b> {esc(ex[1])}</p>'
+          f'<div class="outlbl" style="margin-top:4px">claims written by the model, with the best support among the context sentences</div>{exrows}</div>'
+          f'<div class="callout sm"><b>Two steps.</b> The model splits each answer into claims, {CL["mean_claims"]:.1f} on average. A claim is supported if one context sentence entails it. The {CL["n_abst"]} abstentions make no claim.</div>'
+          f'<div class="callout warn sm"><b>Precision stays low.</b> {CD[CN[2]]["flagged"]} answers flagged to catch {CD[CN[2]]["caught"]}. A split claim such as the second one above has no sentence to match, whatever the answer.</div>'
+          '</div></div>'))
+
+# ================================================================ finer checks: token probabilities
+LD = LGP['det']; LN = list(LD)
+def strip(e, w=620):
+    s = ''; x = 6
+    for t, pr in zip(e['tok'], e['p']):
+        t = t.strip() or '·'; bw = max(34, len(t) * 8.6 + 14)
+        col = GREEN if pr >= .9 else (AMBER if pr >= .5 else RED)
+        s += Rect(x, 4, bw, 30, '#FFFFFF', col, 1.6) + Rect(x, 30, bw * pr, 4, col) + T(x + bw / 2, 23, t, 12.5, INK, 'middle', MONO, 600) + T(x + bw / 2, 50, f'{pr:.2f}', 10.5, col, 'middle', MONO, 700)
+        x += bw + 4
+    return svg(w, 56, s, 'Probability the model gave each token of its answer')
+e_ok, e_bad = LGP['ex']
+SC_ = DET['self-consistency']; MJ = DET['model as judge']
+add(slide('Hallucination', 'Hallucination &#183; Token probability &#183; Example', 'Example',
+          f"The model gave every token of its answer a probability as it wrote it. The mean log-probability separates wrong answers with AUC {LD[LN[0]]['auc']:.3f}, read back in {LGP['secs']:.0f} seconds for {NP} answers.",
+          '<div class="cols"><div class="colstack" style="flex:1.25">' +
+          fig(strip(e_ok), f'graded correct &#183; {esc(e_ok["q"])}') + fig(strip(e_bad), f'graded wrong &#183; {esc(e_bad["q"])}') +
+          table(['score', 'AUC', 'flagged', 'caught', 'precision', 'recall'],
+                [[k, f"<b>{d['auc']:.3f}</b>", d['flagged'], f"{d['caught']} of {d['wrong']}", f"{d['precision']:.2f}", f"{d['recall']:.2f}"] for k, d in LD.items()], 'd sm free') +
+          '</div><div class="colstack">'
+          f'<div class="callout good sm"><b>One forward pass.</b> AUC {LD[LN[0]]["auc"]:.3f} against {SC_["auc"]:.3f} for self-consistency, which took {EV["t_sc"]:.0f} seconds of extra generation, and {MJ["auc"]:.3f} for the judge.</div>'
+          f'<div class="callout sm"><b>The flag rule matters.</b> Flagging when a score is below 0.5: the mean flags {LD[LN[0]]["flagged"]} answers at precision {LD[LN[0]]["precision"]:.2f}; the lowest token flags {LD[LN[1]]["flagged"]} at {LD[LN[1]]["precision"]:.2f}.</div>'
+          f'<div class="callout warn sm"><b>The digits are written with confidence.</b> The lowest probability on a number token has AUC {LD[LN[2]]["auc"]:.3f}. In the wrong answer on the left the doubt sits on the first digit, 3, and the two zeros follow at 1.00.</div>'
+          '<div class="callout sm">An API that returns no token probabilities rules this check out.</div>'
+          '</div></div>'))
+
+# ================================================================ finer checks: validating the judge
+J1, J2_ = JD['yes or no'], JD['copy the sentence, then verdict']
+def confusion(j, w=420):
+    s = T(210, 14, 'exact grade', 11, SOFT, 'middle', MONO) + T(150, 34, 'wrong', 12, INK, 'middle', MONO, 700) + T(310, 34, 'not wrong', 12, INK, 'middle', MONO, 700)
+    for r, (lab, a, b) in enumerate((('judge: NO', j['tp'], j['fp']), ('judge: YES', j['fn'], j['tn']))):
+        y = 44 + r * 74
+        s += T(64, y + 40, lab, 12, INK, 'end', MONO, 700)
+        for c, (v, good) in enumerate(((a, r == 0), (b, r == 1))):
+            s += Rect(72 + c * 160, y, 154, 68, '#EAF6F0' if good else '#FBECEE', GREEN if good else RED, 1.4) + T(149 + c * 160, y + 44, v, 26, GREEN if good else RED, 'middle', MONO, 700)
+    return svg(w, 198, s, 'Confusion matrix of the judge against the exact grade')
+add(slide('Hallucination', 'Hallucination &#183; Judge validation &#183; Test', 'Test',
+          f"A judge is a classifier and is scored like one. Against the exact grade, the yes-or-no judge agrees on {pct(J1['agree'], 0)} of {JD['n']} answers, with Cohen&#8217;s kappa {J1['kappa']:.2f}.",
+          '<div class="cols"><div class="colstack">' +
+          fig(confusion(J1), 'the yes-or-no judge &#183; NO means &#8220;some fact in the answer is absent from the context&#8221;') +
+          table(['judge', 'agreement', 'kappa', 'flagged'],
+                [['yes or no', pct(J1['agree'], 0), f"<b>{J1['kappa']:.2f}</b>", J1['tp'] + J1['fp']],
+                 ['copy the sentence, then verdict', pct(J2_['agree'], 0), f"<b>{J2_['kappa']:.2f}</b>", J2_['tp'] + J2_['fp']]], 'd sm free') +
+          '</div><div class="colstack">'
+          '<div class="callout sm"><b>Kappa</b> is agreement beyond what chance would give: 0 is chance, 1 is perfect. Most answers are right, so a judge that says YES to everything already agrees on ' + pct((J1['fp'] + J1['tn']) / JD['n'], 0) + '.</div>'
+          f'<div class="callout warn sm"><b>A longer rubric made it worse.</b> Asked to copy the supporting sentence before the verdict, this model flags {J2_["tp"] + J2_["fp"]} of {JD["n"]} answers. Kappa {J2_["kappa"]:.2f}.</div>'
+          f'<div class="callout warn sm"><b>Asked again, it changes its mind.</b> Sampled three more times at temperature 0.8, the yes-or-no judge repeats its first verdict all three times on {pct(JD["stable"], 0)} of answers.</div>'
+          '<div class="callout good sm"><b>Before a judge scores anything,</b> grade a few hundred answers by hand or by rule, report kappa against them, and run the judge at temperature 0.</div>'
+          '</div></div>'))
+
 # ================================================================ mitigation ladder
 short = {'closed book': 'closed book', 'RAG, dense, top 3': '+ dense retrieval', 'RAG, hybrid + reranker, top 3': '+ hybrid and reranker',
          '+ strict prompt': '+ strict prompt', '+ number check on the output': '+ number check on the output'}
@@ -112,4 +182,42 @@ add(slide('Hallucination', 'Hallucination &#183; Drawbacks', 'Drawbacks',
           '<div class="callout warn"><b>Abstention has a price.</b> A system that refuses whenever it is unsure is never wrong and soon unused. The share of answerable questions it refuses belongs on the same report as the error rate.</div>'
           '<div class="callout"><b>A number check passes a wrong number that is on the page.</b> It tests whether the figure came from the context, and has no view on whether it is the right figure.</div>'
           '<div class="callout sm"><b>No step reaches zero.</b> For answers that move money or go to a customer, the last guard is a person who can see the cited section.</div>'
+          '</div></div>'))
+
+# ================================================================ RAG triad: concept (build)
+Pq, Pc, Pa = (280, 40), (90, 250), (470, 250)
+def node(p, lab, sub, col):
+    return Rect(p[0] - 80, p[1] - 26, 160, 52, '#FFFFFF', HAIR, 1) + Rect(p[0] - 80, p[1] - 26, 160, 4, col) + T(p[0], p[1] + 2, lab, 14, INK, 'middle', BODY, 700) + T(p[0], p[1] + 18, sub, 10, SOFT, 'middle', MONO)
+s = node(Pq, 'question', 'from the member of staff', INK) + node(Pc, 'context', 'the retrieved sections', BLUE) + node(Pa, 'answer', 'written by the model', PURP)
+s += G_(1, L(Pq[0] - 50, Pq[1] + 28, Pc[0] + 20, Pc[1] - 28, BLUE, 2.4) + T(118, 140, 'context relevance', 12.5, BLUE, 'middle', BODY, 700) + T(118, 156, 'retrieval', 10, SOFT, 'middle', MONO))
+s += G_(2, L(Pc[0] + 82, Pc[1], Pa[0] - 82, Pa[1], GREEN, 2.4) + T(280, 240, 'faithfulness', 12.5, GREEN, 'middle', BODY, 700) + T(280, 268, 'generation', 10, SOFT, 'middle', MONO))
+s += G_(3, L(Pq[0] + 50, Pq[1] + 28, Pa[0] - 20, Pa[1] - 28, AMBER, 2.4) + T(444, 140, 'answer relevance', 12.5, AMBER, 'middle', BODY, 700) + T(444, 156, 'the whole pipeline', 10, SOFT, 'middle', MONO))
+add(slide('Evaluation', 'Evaluation &#183; RAG triad &#183; Concept', 'Concept',
+          'Three scores, one for each link between question, context and answer. None needs a reference answer, so they can run on live traffic.',
+          '<div class="cols"><div class="colstack">' + fig(svg(560, 286, s, 'The RAG triad: question, context, answer'), 'which stage each score watches') +
+          '</div><div class="colstack">'
+          '<div class="card sm" data-at="1"><h3>Context relevance</h3><p>Does the retrieved context bear on the question? Here: the reranker&#8217;s score for the best of the three sections.</p></div>'
+          '<div class="card sm g" data-at="2"><h3>Faithfulness</h3><p>Is the answer supported by the context? Here: the share of the answer&#8217;s claims that a context sentence entails.</p></div>'
+          '<div class="card sm o" data-at="3"><h3>Answer relevance</h3><p>Does the answer address the question? Here: the model writes the question the answer replies to, and it is compared with the real one by embedding similarity.</p></div>'
+          '<div class="callout sm" data-at="3">Each score is a model&#8217;s opinion. On the test bed the truth is known, so each can be checked.</div>'
+          '</div></div>' + bld(3), 'build'))
+
+# ================================================================ RAG triad: example
+TA = TRI['auc']; TG = TRI['groups']
+items = [('context relevance', round(TA['cr'], 3), BLUE, 'against: right section in the top 3'),
+         ('faithfulness', round(TA['fa'], 3), GREEN, 'against: answer not graded wrong'),
+         ('answer relevance', round(TA['ar'], 3), AMBER, 'against: answer graded correct')]
+gm = TG['wrong, right section missing']; gr = TG['wrong, right section retrieved']; gc = TG['correct']
+tx = TRI['ex']
+add(slide('Evaluation', 'Evaluation &#183; RAG triad &#183; Example', 'Example',
+          f"The triad on the {NP} test-bed answers. Context relevance and faithfulness track the truth (AUC {TA['cr']:.2f} and {TA['fa']:.2f}). Answer relevance does not ({TA['ar']:.2f}).",
+          '<div class="cols"><div class="colstack" style="flex:1.15">' +
+          fig(hbars(items, w=660, label_w=170, bar_h=30, gap=14, maxv=1.75, valfmt=lambda v: f'{v:.3f}', label='AUC of each triad score against the truth it stands in for'), 'AUC of each score against the truth it stands in for &#183; 0.5 is a coin toss') +
+          table(['answers', 'n', 'context relevance', 'faithfulness', 'answer relevance'],
+                [[g, d['n'], f"{d['cr']:.2f}", f"{d['fa']:.2f}", f"{d['ar']:.2f}"] for g, d in TG.items()], 'd sm free') +
+          '</div><div class="colstack">'
+          f'<div class="callout good sm"><b>The pair locates the fault.</b> Wrong with the right section missing: context relevance {gm["cr"]:.2f}, faithfulness {gm["fa"]:.2f}. Wrong with the section present: {gr["cr"]:.2f} and {gr["fa"]:.2f}. Correct: {gc["cr"]:.2f} and {gc["fa"]:.2f}.</div>'
+          f'<div class="callout warn sm"><b>Answer relevance is flat.</b> {gc["ar"]:.2f} for correct answers and {gm["ar"]:.2f} for wrong ones. A wrong daily limit is still an answer about the daily limit.</div>'
+          f'<div class="callout sm"><b>Its lowest score:</b> the answer &#8220;{esc(tx[1])}&#8221; led the model to write back &#8220;{esc(tx[2])}&#8221;.</div>'
+          f'<div class="callout sm"><b>Faithfulness is strict.</b> Correct answers average {gc["fa"]:.2f}, since split claims fail to find a sentence. Use it to watch for changes over time.</div>'
           '</div></div>'))
