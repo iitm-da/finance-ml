@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-17 14:20 UTC",
+ "generated": "2026-11-17 15:52 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -27,7 +27,7 @@
    "folder": "llm",
    "section": "Day 2 \u00b7 LLMs in depth",
    "kind": "deck",
-   "size": 303847,
+   "size": 304502,
    "updated": "2026-11-17"
   },
   {
@@ -36,7 +36,7 @@
    "folder": "llm",
    "section": "Day 2 \u00b7 LLMs in depth",
    "kind": "notebook",
-   "size": 151231,
+   "size": 156940,
    "updated": "2026-11-17"
   },
   {
