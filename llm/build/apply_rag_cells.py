@@ -32,7 +32,7 @@ chunk = block('# ## Chunking strategies', '# ## Retrieval and generation togethe
 qexp = block('# ## Query expansion', 'ex_i = ')
 stub = nbformat.v4.new_code_cell("SYS_PLAIN = 'You answer questions from staff of Northmere Bank. Answer in one short sentence.'\n"
                                  "GEN = json.load(open('build/m_llm.json'))['rag']['gen']")
-dump = nbformat.v4.new_code_cell("json.dump({'strat': STRAT, 'figc': FIGC, 'qe': QEX, 'onto': ONTO}, open('build/_ragx.json', 'w'))")
+dump = nbformat.v4.new_code_cell("json.dump({'strat': STRAT, 'late': LATE, 'figc': FIGC, 'qe': QEX, 'onto': ONTO}, open('build/_ragx.json', 'w'))")
 setup = [code('import os, sys, urllib.request'), code('import json, re, time, warnings'), code('def load_llm(name)'), code('kb, qs = load('),
          code('nrm = lambda s'), stub, code('from rank_bm25 import'), code('full = {}')]
 tmp = nbformat.v4.new_notebook(cells=setup + chunk + [code('def rag_prompt(')] + qexp + [dump])
@@ -69,4 +69,4 @@ M = json.load(open('build/m_llm.json'))
 M['rag'].update(json.load(open('build/_ragx.json')))
 json.dump(M, open('build/m_llm.json', 'w'))
 os.remove('build/_ragx.json')
-print('notebook now has', len(nb.cells), 'cells; m_llm.json rag has', [k for k in ('strat', 'figc', 'qe', 'onto') if k in M['rag']])
+print('notebook now has', len(nb.cells), 'cells; m_llm.json rag has', [k for k in ('strat', 'late', 'figc', 'qe', 'onto') if k in M['rag']])

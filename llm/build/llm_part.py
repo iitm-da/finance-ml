@@ -339,6 +339,62 @@ for name in ('fixed, 40 words', 'sentence, up to 40 words', 'by section + header
             print('   |', t)
     print()
 
+# %% [markdown]
+# ## Late chunking
+#
+# Every strategy above cuts first and embeds each chunk alone, so a chunk's vector knows nothing of the rest of the
+# document. Late chunking turns that round: the whole document goes through the embedding model once, every token
+# gets a vector that has seen the whole document, and a chunk's vector is the average of the token vectors inside it.
+# The chunks handed to the model are unchanged.
+#
+# It needs an embedding model that averages token vectors, so this comparison uses `e5-small-v2` for both rows: the
+# same sentence chunks, embedded alone and embedded late. The document's title and code are its first line; they
+# take part in the document pass and belong to no chunk.
+
+# %%
+from transformers import AutoModel
+E5 = 'intfloat/e5-small-v2'
+etok = AutoTokenizer.from_pretrained(E5); emod = AutoModel.from_pretrained(E5).to(DEV).eval()
+unit = lambda v: v / np.linalg.norm(v)
+
+def token_vectors(text):
+    x = etok(text, return_tensors='pt', return_offsets_mapping=True, truncation=True, max_length=512)
+    off = x.pop('offset_mapping')[0].numpy()
+    with torch.no_grad():
+        h = emod(**x.to(DEV)).last_hidden_state[0].float().cpu().numpy()
+    real = off[:, 1] > off[:, 0]                              # drop the special tokens
+    return h[real], off[real]
+alone = lambda text: unit(token_vectors(text)[0].mean(0))    # mean pooling, as e5 was trained
+
+def windows(code, limit=480):                 # whole sections, grouped so that each group fits the model's 512 tokens
+    out, cur = [], []
+    for sec in SECS[code]:
+        us = [u for _, h, ss in cur + [sec] for u in [h + '.'] + ss]
+        if cur and len(etok(' '.join(us))['input_ids']) > limit:
+            out.append(cur); cur = []
+        cur.append(sec)
+    return out + [cur]
+
+L_chunks, L_alone, L_late = [], [], []
+for c in SECS:
+    for win in windows(c):
+        ch = pack([u for _, h, ss in win for u in [h + '.'] + ss], 40)
+        text = f'passage: {HEAD[c]}. '; start = []
+        for t in ch:
+            start.append(len(text)); text += t + ' '
+        H, off = token_vectors(text)
+        assert off[-1, 1] >= len(text) - 2, 'the window was truncated'
+        for t, a in zip(ch, start):
+            inside = (off[:, 0] >= a) & (off[:, 0] < a + len(t))
+            L_chunks.append(t); L_alone.append(alone('passage: ' + t)); L_late.append(unit(H[inside].mean(0)))
+E5_q = np.array([alone('query: ' + qs[i]['question']) for i in ans_i])
+LATE = []
+for name, E in (('each chunk embedded alone', np.array(L_alone)), ('late chunking', np.array(L_late))):
+    hit = np.array([any(nrm(qs[i]['evidence']) in nrm(L_chunks[d]) for d in np.argsort(-(E @ E5_q[n]))[:3]) for n, i in enumerate(ans_i)])
+    LATE.append({'embedding': name, 'chunks': len(L_chunks), 'served': float(hit.mean()), **{kd: float(hit[kind_of == kd].mean()) for kd in KINDS}})
+del emod
+pd.DataFrame(LATE).round(3)
+
 # %% [build]
 def spans(ch, code):                        # where each chunk of one document starts and ends, in words
     w = ' '.join(units(code)).split(); out = []; a = 0
@@ -688,7 +744,7 @@ QEX = {'rec': QE, 'best': BEST, 'gen': GENX, 'secs': {'rewrite': t_rewrite, 'hyd
 # %% [build]
 ex_i = [2, 105, 196, 200, 12, 150]
 RES['rag'] = {'next': NEXT, 'next_q': Q0, 'next_start': START, 'n_kb': len(kb), 'n_docs': len({k['code'] for k in kb}), 'n_ans': len(ANS), 'n_una': len(UNA), 'kinds': {k: sum(r['kind'] == k for r in qs) for k in KINDS},
-              'kb_sample': kb[1], 'q_sample': [qs[i] for i in (2, 3, 4, 200)], 'ret': RET, 'chunk': CHUNK, 'strat': STRAT, 'figc': FIGC, 'qe': QEX, 'onto': ONTO, 'gen': GEN, 'llm': LLM, 'n_llm': N_LLM,
+              'kb_sample': kb[1], 'q_sample': [qs[i] for i in (2, 3, 4, 200)], 'ret': RET, 'chunk': CHUNK, 'strat': STRAT, 'late': LATE, 'figc': FIGC, 'qe': QEX, 'onto': ONTO, 'gen': GEN, 'llm': LLM, 'n_llm': N_LLM,
               'closed_ex': [[qs[i]['question'], A_closed[i], qs[i]['answers']] for i in ex_i],
               'sys_strict': SYS_STRICT, 'prompt_ex': rag_prompt(2, k=2), 'kb_words': sum(len(k['text'].split()) for k in kb),
               'err': pd.crosstab(err['grade'], err['right section retrieved']).reindex(index=['correct', 'abstained', 'wrong'], columns=[False, True], fill_value=0).values.tolist(),

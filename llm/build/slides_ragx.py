@@ -2,6 +2,7 @@
 from common import *
 
 ST_, FC, QX, ON = RG['strat'], RG['figc'], RG['qe'], RG['onto']
+LT = RG['late']
 REC = QX['rec']; NA = RG['n_ans']
 SV = {s['strategy']: s for s in ST_}
 r3 = lambda m, r, k='all': REC[m][r][k]['r3']
@@ -49,10 +50,11 @@ CH_CONCEPT = slide('RAG', 'RAG &#183; Chunking &#183; Concept', 'Concept',
     fig(svg(1140, FH, s, 'One document cut by six chunking strategies'),
         f'{FC["head"]} &#183; dark blocks are headings, dashed lines are section breaks, the green band is one answering sentence',
         'A red mark is a cut that falls inside the answering sentence.') +
-    '<div class="cols nat">'
+    '<div class="cols3">'
     '<div class="card sm" data-at="7"><h3>Add a header</h3><p>Write the document title and code at the top of every chunk before it is embedded. A chunk from the middle of a guide then still says which product it describes.</p></div>'
     '<div class="card sm g" data-at="8"><h3>Small to big</h3><p>Index single sentences, which match a question closely. Hand the model the whole section that the matched sentence came from.</p></div>'
-    '</div>' + bld(8), 'build')
+    '<div class="card sm o" data-at="9"><h3>Late chunking</h3><p>Embed the whole document once, then average the token vectors inside each chunk. The chunk&#8217;s vector has seen the rest of the document.</p></div>'
+    '</div>' + bld(9), 'build')
 
 # ================================================================ chunking: strategies measured
 SHORT = {'fixed, 40 words': 'fixed 40', 'fixed, 40 words, 10 overlap': 'fixed 40 + 10', 'sentence, up to 40 words': 'sentence', 'semantic': 'semantic',
@@ -64,7 +66,7 @@ items = [(SHORT[x['strategy']], round(x['served'], 3), COL(x['strategy']),
 FX, SE, SM, SEC, SECH, S2B = (SV[k] for k in ('fixed, 40 words', 'sentence, up to 40 words', 'semantic', 'by section', 'by section + header',
                                              'small to big: sentence found, section returned'))
 CH_EXAMPLE = slide('RAG', 'RAG &#183; Chunking &#183; Example', 'Example continued 1',
-    f"Nine strategies, dense retrieval, top 3. Fixed 40-word windows serve {pct(FX['served'])} of the {NA} answerable questions; a sentence index that returns sections serves {pct(S2B['served'])}.",
+    f"Dense retrieval, top 3. Fixed 40-word windows serve {pct(FX['served'])} of the {NA} answerable questions; a sentence index that returns sections serves {pct(S2B['served'])}.",
     '<div class="cols"><div class="colstack" style="flex:1.45">' +
     fig(hbars(items, w=700, label_w=150, bar_h=21, gap=8, maxv=2.3, valfmt=f3, label='Questions served by chunking strategy'),
         'share of answerable questions served &#183; whole = the answering sentence is uncut in some chunk') +
@@ -73,6 +75,7 @@ CH_EXAMPLE = slide('RAG', 'RAG &#183; Chunking &#183; Example', 'Example continu
     f'<div class="callout sm"><b>Semantic cuts.</b> {pct(SM["served"])} served against {pct(SE["served"])} for plain sentence packing, at the price of embedding every sentence first.</div>'
     f'<div class="callout sm"><b>The header.</b> Section chunks serve {round(SEC["served"] * NA)} questions without it and {round(SECH["served"] * NA)} with it.</div>'
     f'<div class="callout good sm"><b>Small to big.</b> {S2B["chunks"]} one-sentence entries in the index, {S2B["context words"]:.0f} words handed to the model, {pct(S2B["served"])} served.</div>'
+    f'<div class="callout sm"><b>Late chunking.</b> The same sentence chunks under e5-small: {round(LT[0]["served"] * NA)} questions served embedded alone, {round(LT[1]["served"] * NA)} embedded late. It pays when a chunk depends on text outside it, such as a product named only in the heading; these product guides repeat the name in the sentence.</div>'
     '</div></div>')
 
 # ================================================================ chunking: widget

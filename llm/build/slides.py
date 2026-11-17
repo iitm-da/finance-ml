@@ -39,6 +39,7 @@ end.append(slide('References', 'References', 'References and the notebook',
                  'Everything on the slides can be rerun from the folder.',
                  '<div class="cols"><div class="colstack"><h2 class="s">Papers</h2><div class="refs">'
                  '<p>Lewis et al. (2020). Retrieval-augmented generation for knowledge-intensive NLP tasks. <i>NeurIPS</i>.</p>'
+                 '<p>G&#252;nther et al. (2024). Late chunking: contextual chunk embeddings using long-context embedding models. <i>arXiv</i> 2409.04701.</p>'
                  '<p>Gao et al. (2023). Precise zero-shot dense retrieval without relevance labels. <i>ACL</i>.</p>'
                  '<p>Cormack, Clarke and B&#252;ttcher (2009). Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. <i>SIGIR</i>.</p>'
                  '<p>Robertson and Zaragoza (2009). The probabilistic relevance framework: BM25 and beyond. <i>Foundations and Trends in Information Retrieval</i> 3(4).</p>'
