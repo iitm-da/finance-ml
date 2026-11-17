@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-17 17:35 UTC",
+ "generated": "2026-11-17 17:38 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -27,7 +27,7 @@
    "folder": "agents",
    "section": "Agents",
    "kind": "deck",
-   "size": 87970,
+   "size": 98459,
    "updated": "2026-11-17"
   },
   {
