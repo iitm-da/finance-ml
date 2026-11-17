@@ -148,7 +148,7 @@ add(slide('Prompting', 'Prompting &#183; Verdict', 'Verdict',
           'Four measurements, four habits.',
           '<div class="cols4">'
           f'<div class="card"><h3>State the format</h3><p>Valid JSON went from {pct(SO[PN[0]]["valid"], 0)} to {pct(SO[PN[1]]["valid"], 0)} when the keys were named. Parse the reply in code and retry on failure.</p></div>'
-          f'<div class="card"><h3>Define the terms</h3><p>Fields right went from {pct(SO[PN[1]]["all"], 0)} to {pct(SO[PN[3]]["all"], 0)} with one example and three definitions.</p></div>'
+          f'<div class="card"><h3>Show a worked example</h3><p>Fields right went from {pct(SO[PN[1]]["all"], 0)} to {pct(SO[PN[2]]["all"], 0)} with one worked example. Three definitions on top left it at {pct(SO[PN[3]]["all"], 0)}.</p></div>'
           f'<div class="card g"><h3>Choose the examples</h3><p>{kmax} nearest examples scored {FEW["nearest"][kmax]:.3f} against {FEW["random"][kmax]:.3f} for {kmax} random ones.</p></div>'
           f'<div class="card o"><h3>Measure the wording</h3><p>Six equivalent instructions spread over {hi - lo:.3f} of macro-F1. Keep a question set and rerun it on every edit.</p></div>'
           '</div>'

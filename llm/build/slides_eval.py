@@ -130,7 +130,7 @@ add(slide('Hallucination', 'Hallucination &#183; Token probability &#183; Exampl
           '</div><div class="colstack">'
           f'<div class="callout good sm"><b>One forward pass.</b> AUC {LD[LN[0]]["auc"]:.3f} against {SC_["auc"]:.3f} for self-consistency, which took {EV["t_sc"]:.0f} seconds of extra generation, and {MJ["auc"]:.3f} for the judge.</div>'
           f'<div class="callout sm"><b>The flag rule matters.</b> Flagging when the probability is below 0.5: the average over the tokens flags {LD[LN[0]]["flagged"]} answers at precision {LD[LN[0]]["precision"]:.2f}; the lowest token flags {LD[LN[1]]["flagged"]} at {LD[LN[1]]["precision"]:.2f}.</div>'
-          f'<div class="callout warn sm"><b>The digits are written with confidence.</b> The lowest probability on a number token has AUC {LD[LN[2]]["auc"]:.3f}. In the wrong answer on the left the doubt sits on the first digit, 3, and the two zeros follow at 1.00.</div>'
+          f'<div class="callout warn sm"><b>The digits are written with confidence.</b> The lowest probability on a number token has AUC {LD[LN[2]]["auc"]:.3f}. In the wrong answer, the lower strip, the doubt sits on the first digit, 3, and the two zeros follow at 1.00.</div>'
           '<div class="callout sm">An API that returns no token probabilities rules this check out.</div>'
           '</div></div>'))
 

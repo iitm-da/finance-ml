@@ -33,7 +33,7 @@ end.append(slide('Summary', 'Summary', 'What the notebook measured',
                  tile(f"sentiment, 67M encoder + LoRA ({L8['trainable'] / L8['total']:.1%} of weights)", f"{L8['f1']:.3f}", 'ok') +
                  '</div>'
                  '<div class="cols nat"><div class="callout"><b>Facts come from documents.</b> Retrieval supplies them and a strict prompt keeps the model to them. A check outside the model is the backstop; the number check caught no further error on this run. Each stage has its own score.</div>'
-                 '<div class="callout"><b>Skills come from prompts and training.</b> A format, a definition and a chosen example go a long way. With thousands of labels and a fixed task, a small adapter on a small model goes further.</div></div>'))
+                 '<div class="callout"><b>Skills come from prompts and training.</b> A format and a worked example go a long way. With thousands of labels and a fixed task, a small adapter on a small model goes further.</div></div>'))
 
 end.append(slide('References', 'References', 'References and the notebook',
                  'Everything on the slides can be rerun from the folder.',
@@ -60,7 +60,7 @@ llm/data/ontology.json     classes, instances, terms
 llm/data/questions_multi.jsonl   37 comparison questions
 
 llm/build/make_data.py     writes the knowledge base""", 'xs', '') +
-                 '<div class="callout sm">Models: Qwen2.5-1.5B-Instruct and Qwen2.5-0.5B-Instruct (Apache 2.0), bge-small-en-v1.5, ms-marco-MiniLM cross-encoder. All are downloaded by the notebook; no API key is needed.</div>'
+                 '<div class="callout sm">Models: Qwen2.5-1.5B-Instruct and Qwen2.5-0.5B-Instruct (Apache 2.0), DistilBERT, bge-small-en-v1.5, e5-small-v2, ms-marco-MiniLM cross-encoder. All are downloaded by the notebook; no API key is needed.</div>'
                  '<div class="callout sm">The notebook opens in Colab and runs on the free T4 GPU.</div>'
                  '<div class="callout good sm"><b>Questions?</b></div>'
                  '</div></div>'))

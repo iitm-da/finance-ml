@@ -140,5 +140,5 @@ add(slide('Adaptation', 'Adaptation &#183; Verdict', 'Verdict',
                  ['few labels, task changes often', 'prompt, with chosen examples'],
                  ['thousands of labels, fixed task', 'LoRA on a small model'],
                  ['one task at very high volume', 'fine-tune a small encoder']], 'd sm free') +
-          '<div class="callout sm"><b>Labels outweigh size here.</b> The comparison is a 67-million-weight encoder trained on labels against a 1.5-billion-weight model that was only prompted.</div>'
+          '<div class="callout sm"><b>Labels outweigh size here.</b> The comparison is a 67-million-weight encoder trained on labels against a 1.5-billion-weight model that was only prompted. Zero-shot here is the first of the six instructions; the best of them scored ' + f"{PP['best of six instructions']:.3f}" + '.</div>'
           '</div></div>'))

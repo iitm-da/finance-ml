@@ -27,8 +27,8 @@ end.append(slide('Summary', 'Summary', 'What the notebook measured',
                  '</div>'
                  '<div class="outlbl">entities and documents</div>'
                  '<div class="kv">' +
-                 tile('NER on narratives, general model', f"{NE['m']['general_genre']['narrative']['f1']:.3f}", 'bad') +
-                 tile('NER on narratives, fine-tuned', f"{NE['m']['ft_genre']['narrative']['f1']:.3f}", 'ok') +
+                 tile('NER on narratives, general model, 3 types', f"{NE['m']['general_genre']['narrative']['f1']:.3f}", 'bad') +
+                 tile('NER on narratives, fine-tuned, 6 types', f"{NE['m']['ft_genre']['narrative']['f1']:.3f}", 'ok') +
                  tile('loan fields right, rules', pct(mean(IE['m']['rules'])), 'b') +
                  tile('loan fields right, QA model', pct(mean(IE['m']['qa'])), 'ok') +
                  '</div>'
