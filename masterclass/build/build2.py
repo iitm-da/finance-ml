@@ -69,6 +69,23 @@ css2 = """
 .en h3{font-size:34px;font-weight:600;margin-bottom:12px!important}
 .en p{font-size:25px;line-height:1.32}
 .en p.who{font-size:22px;color:var(--muted);margin-top:16px!important;padding-top:14px;border-top:1px solid var(--line)}
+.uc{background:var(--soft);border-radius:16px;padding:30px 30px 26px;height:510px;display:flex;flex-direction:column}
+.uc .dg{display:flex;align-items:center;justify-content:space-between;gap:8px;height:120px;margin-bottom:26px}
+.uc .io{flex:1;background:#fff;border-radius:10px;box-shadow:0 3px 10px rgba(14,19,48,.07);height:84px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:21px;font-weight:600;line-height:1.2;padding:0 10px}
+.uc .mc{flex:none;width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600}
+.uc .ar{flex:none;width:0;height:0;border:8px solid transparent;border-left:11px solid #B9BED6;border-right:0}
+.uc .un{font-size:33px;font-weight:600;line-height:1.15}
+.uc .ud{font-size:25px;line-height:1.35;color:var(--muted);margin-top:12px!important}
+.uc .mt{margin-top:auto;border-top:1px solid #D9DCE8;padding-top:16px}
+.uc .mt p{display:flex;justify-content:space-between;align-items:center;font-size:23px;padding:5px 0}
+.me i{display:inline-block;width:18px;height:18px;border-radius:50%;border:2px solid #B9BED6;margin-left:8px}
+.me i.on{background:var(--ink);border-color:var(--ink)}.me.r i.on{background:var(--red);border-color:var(--red)}
+.hh{font-size:24px;font-weight:600;color:var(--muted);text-align:center;padding-bottom:10px}
+.hn{font-size:27px;font-weight:600;align-self:center}
+.hc{height:74px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.ph{font-size:24px;font-weight:600;line-height:1.2;height:74px;border-bottom:2px solid var(--ink);margin-bottom:16px!important}
+.pb{background:var(--bluesoft);border-radius:12px;padding:16px 16px;font-size:22px;line-height:1.28;font-weight:500;margin-bottom:12px;min-height:150px}
+.pb.none{background:#fff;border:2px dashed #C9CEE3;color:var(--faint);font-weight:400}
 .blank{border-bottom:2px solid var(--ink);height:112px;display:flex;align-items:flex-end;padding-bottom:10px;font-size:28px;font-weight:600}
 .blank span{font-weight:400;color:var(--faint);margin-left:16px;font-size:24px}
 """
@@ -300,8 +317,145 @@ S = f"""
   <div class="foot"><span>Sources: NAM India Q2 FY27 release and investor presentation (Oct 2026); NAM India Annual Report 2025-26</span><span class="pn"></span></div>
 </section>
 """
+# ---------------------------------------------------------------- additions for the 30-slide version
+MOD = {"llm": ("LLM", "var(--blue)", "#fff"), "vlm": ("VLM", "var(--red)", "#fff"), "slm": ("SLM", "var(--yellow)", "var(--ink)")}
+
+
+def meter(n):
+    return "".join(f'<i class="{"on" if k < n else ""}"></i>' for k in range(3))
+
+
+def uslide(fn, items):
+    cards = ""
+    for i, (name, desc, model, inp, out, vol, risk) in enumerate(items):
+        lab, bg, fg = MOD[model]
+        cards += f"""<div class="uc a" style="--d:{.2 + i * .15:.2f}s">
+      <div class="dg"><span class="io">{inp}</span><b class="ar"></b><span class="mc" style="background:{bg};color:{fg}">{lab}</span><b class="ar"></b><span class="io">{out}</span></div>
+      <p class="un">{name}</p><p class="ud">{desc}</p>
+      <div class="mt"><p>Volume<span class="me">{meter(vol)}</span></p><p>Cost of a wrong output<span class="me r">{meter(risk)}</span></p></div></div>"""
+    return f"""
+<section class="slide" data-sec="The functions">
+  <h2 class="title">{fn}: three places to start</h2>
+  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px">{cards}</div>
+  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
+</section>"""
+
+
+def divider(num, title, sub):
+    return f"""
+<section class="slide blue" data-sec="">
+  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">{num}</p>
+  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">{title}</h2>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">{sub}</p>
+</section>"""
+
+
+USE = [
+ [("Concall summaries", "A one-page summary of each earnings call, with the quotes it rests on", "llm", "Transcript", "Summary", 3, 1),
+  ("Financial spreading", "Tables lifted from annual reports straight into the analyst's model", "vlm", "Report pages", "Model inputs", 2, 2),
+  ("Peer comparisons", "A first comparison table across several companies' filings", "llm", "Filings", "Comparison", 2, 2)],
+ [("Morning brief", "Overnight news and filings on every holding, before the market opens", "llm", "News, filings", "Brief", 3, 1),
+  ("Meeting notes", "Notes from management meetings turned into a structured record", "llm", "Raw notes", "Record", 2, 1),
+  ("Rationale records", "A draft of the investment rationale for the file, from the manager's notes", "llm", "Notes", "Rationale", 2, 2)],
+ [("Form and KYC extraction", "Application forms and identity proofs turned into checked fields", "vlm", "Scans", "Fields", 3, 2),
+  ("Mandates and cheques", "Bank mandates and cancelled cheques read and matched to the folio", "vlm", "Images", "Bank details", 3, 2),
+  ("Reconciliation breaks", "A suggested cause for each break, from the entries and the mail trail", "slm", "Break list", "Likely cause", 2, 1)],
+ [("Circular mapping", "Each new circular split into obligations and matched to policies", "llm", "Circular", "Gap list", 1, 2),
+  ("Marketing pre-check", "Drafts screened for return claims and missing disclaimers before review", "slm", "Draft", "Flags", 2, 2),
+  ("Message surveillance", "Staff messages sorted so reviewers see the few that matter", "slm", "Messages", "Alerts", 3, 2)],
+ [("Distributor assistant", "Answers from approved documents, with the page cited", "llm", "Query", "Cited answer", 3, 2),
+  ("RFP and questionnaire drafts", "First drafts of institutional RFPs and due-diligence forms", "llm", "Questions", "Draft reply", 1, 2),
+  ("Meeting preparation", "A one-page brief on the client's holdings and past conversations", "llm", "CRM, holdings", "Brief", 2, 1)],
+ [("Fund commentary", "Monthly commentary drafted from portfolio data and approved facts", "llm", "Portfolio data", "Commentary", 2, 3),
+  ("Regional-language versions", "The same approved text in Hindi and the main regional languages", "llm", "English text", "Nine languages", 2, 3),
+  ("Factsheet checks", "The published factsheet compared line by line with the source data", "vlm", "Factsheet", "Mismatches", 2, 1)],
+ [("Request tagging", "Every email and call tagged by type, language and urgency", "slm", "Email, call", "Tags", 3, 1),
+  ("Reply drafts", "A draft reply from folio data and policy, for the agent to approve", "llm", "Request", "Draft reply", 3, 2),
+  ("Voice in regional languages", "Spoken answers to routine questions in the investor's language", "slm", "Speech", "Spoken reply", 3, 3)],
+]
+
+# heat grid: steps and use cases on the function slides, counted by model type
+HN = ["Research", "Fund management", "Operations", "Risk and compliance", "Sales", "Marketing", "Investor service"]
+heat = ""
+for i in range(7):
+    c = {"slm": 0, "vlm": 0, "llm": 0}
+    for kind, _ in F[i][2]:
+        if kind in c: c[kind] += 1
+    for u in USE[i]:
+        c[u[2]] += 1
+    cells = ""
+    for k in ("slm", "vlm", "llm"):
+        v = c[k]
+        bg = ["#F4F6FB", "#D6DCFF", "#9FAEFF", "#5F78FF", "#2B4BFF", "#1B33C9"][min(v, 5)]
+        fg = "#fff" if v >= 3 else "var(--ink)"
+        cells += f'<div class="hc a" style="background:{bg};color:{fg};--d:{.2 + i * .07:.2f}s">{v if v else ""}</div>'
+    heat += f'<p class="hn a" style="--d:{.2 + i * .07:.2f}s">{HN[i]}</p>{cells}'
+HEAT = f"""
+<section class="slide" data-sec="The functions">
+  <h2 class="title">Large models lead in research, fund management, sales and marketing; small and vision models in operations and service</h2>
+  <div class="abs" style="left:120px;top:262px;width:1120px;display:grid;grid-template-columns:340px repeat(3,1fr);gap:6px;align-items:stretch">
+    <p></p><p class="hh">Small model</p><p class="hh">Vision model</p><p class="hh">Large model</p>
+    {heat}
+  </div>
+  <div class="abs" style="left:1320px;top:300px;width:480px">
+    <div class="a" style="--d:.8s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600">One platform, not seven</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Every function draws on the same three model types, so the gateway and controls are built once.</p></div>
+    <div class="a" style="--d:1s;border-top:2px solid var(--ink);padding-top:18px;margin-top:34px"><p style="font-size:30px;font-weight:600">Different owners</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">What differs by function is the process, the test cases and the person who approves.</p></div>
+  </div>
+  <div class="foot"><span>Each cell counts the steps and starting use cases shown for that function on the earlier slides</span><span class="pn"></span></div>
+</section>
+"""
+
+_pub = [("Research", ["Nippon GPT, used by research staff"]), ("Fund management", []), ("Operations", []), ("Risk and compliance", []),
+        ("Sales", ["Propensity models: &#8377;5,000 cr of incremental gross sales in FY26", "Nippon GPT, used by sales staff"]),
+        ("Marketing", ["Website nudges and a strategy for AI search", "AI-made regional videos, Gujarati pilot"]),
+        ("Investor service", ["Transactions on WhatsApp", "Voice and vernacular, in progress"])]
+cols = ""
+for i, (fn, items) in enumerate(_pub):
+    tiles = "".join(f'<div class="pb a" style="--d:{.4 + i * .08:.2f}s">{t}</div>' for t in items) or f'<div class="pb none a" style="--d:{.4 + i * .08:.2f}s">Nothing published yet</div>'
+    cols += f'<div><p class="ph a" style="--d:{.2 + i * .06:.2f}s">{fn}</p>{tiles}</div>'
+NIPPON = f"""
+<section class="slide" data-sec="The map">
+  <h2 class="title">Nippon India's published AI work sits mostly in sales, marketing and service</h2>
+  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(7,1fr);gap:16px">{cols}</div>
+  <div class="abs a" style="left:120px;top:800px;width:1680px;background:var(--soft);border-radius:14px;padding:26px 40px;display:flex;align-items:center;gap:36px;--d:1.1s">
+    <p class="big" style="font-size:56px;color:var(--blue);white-space:nowrap">~2.5 crore</p>
+    <p class="body" style="font-size:27px">customers are already covered by AI and ML initiatives. The document-heavy functions in the middle are where language models add something new.</p>
+  </div>
+  <div class="foot"><span>From the NAM India Annual Report 2025-26 and Q2 FY27 presentation only; work not in public documents is not shown</span><span class="pn"></span></div>
+</section>
+"""
+
+_ph = [("Weeks 1&#8211;2", 2, "Baseline", "Pick one process. Record today's cost, turnaround time and error rate.", "var(--ink)", "#fff"),
+       ("Weeks 3&#8211;6", 4, "Build and test", "Collect 200&#8211;500 solved cases. Try two or three models against them.", "var(--blue)", "#fff"),
+       ("Weeks 7&#8211;10", 4, "Run in shadow", "The model works alongside people; nothing it produces is used yet.", "#8FA0FF", "var(--ink)"),
+       ("Weeks 11&#8211;13", 3, "Go live with approval", "A person approves every output. Report the numbers to the leadership team.", "var(--yellow)", "var(--ink)")]
+x = 120; bars = ""
+for i, (wk, n, name, desc, bg, fg) in enumerate(_ph):
+    w = 1680 * n / 13
+    bars += f'<div class="gbar" style="left:{x:.0f}px;top:330px;width:{w - 10:.0f}px;height:84px;background:{bg};color:{fg};font-size:28px;font-weight:600;--d:{.3 + i * .25:.2f}s">{name}</div>'
+    bars += f'<p class="abs a k" style="left:{x:.0f}px;top:282px;--d:{.3 + i * .25:.2f}s">{wk}</p>'
+    bars += f'<p class="abs a body" style="left:{x:.0f}px;top:440px;width:{w - 40:.0f}px;font-size:26px;--d:{.5 + i * .25:.2f}s">{desc}</p>'
+    x += w
+PLAN = f"""
+<section class="slide" data-sec="Choosing">
+  <h2 class="title">A thirteen-week plan takes one process in one function from choice to live use</h2>
+  {bars}
+  <div class="abs" style="left:120px;top:660px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:1.4s;border-top:2px solid var(--ink);padding-top:20px"><p style="font-size:30px;font-weight:600">The function head</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">owns the process, the baseline and the decision to go live</p></div>
+    <div class="a" style="--d:1.5s;border-top:2px solid var(--ink);padding-top:20px"><p style="font-size:30px;font-weight:600">The platform team</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">supplies the models, the gateway and the logs</p></div>
+    <div class="a" style="--d:1.6s;border-top:2px solid var(--ink);padding-top:20px"><p style="font-size:30px;font-weight:600">Risk and compliance</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">review the shadow-run results before anything reaches an investor</p></div>
+  </div>
+  <div class="foot"><span>The timings are a planning guide. Shadow testing before launch is among the practices in SEBI's June 2025 draft.</span><span class="pn"></span></div>
+</section>
+"""
+DIV_FN = divider("01", "Function by function", "For each function: the work with language models, what it looks like, and three places to start")
+DIV_AG = divider("02", "From assistants to agents", "How the same three models are chained into agents, and how much autonomy to give them")
+DIV_CH = divider("03", "Choosing where to start", "Which processes to pick first, what each function head brings, and a thirteen-week plan")
+S += NIPPON + DIV_FN
+
 for i, f in enumerate(F):
     S += fslide(4 + i, *f, ART[i])
+    S += uslide(f[0].split(":")[0], USE[i])
 
 S += f"""
 <!-- 11 ENABLING -->
@@ -321,6 +475,7 @@ S += f"""
   <div class="foot"><span></span><span class="pn"></span></div>
 </section>
 
+{HEAT}{DIV_AG}
 <!-- AGENTS A1 -->
 <section class="slide" data-sec="Agents">
   <h2 class="title">An agent chains the steps a function does today, with the three models sharing the work</h2>
@@ -352,6 +507,7 @@ S += f"""
   <div class="foot"><span>The rule is our recommendation. Sources: EY (Sept 2025); Mercer (May 2026)</span><span class="pn"></span></div>
 </section>
 
+{DIV_CH}
 <!-- 12 WHERE TO START -->
 <section class="slide" data-sec="Choosing">
   <h2 class="title">Start where volume is high and a wrong output stays inside the company</h2>
@@ -385,6 +541,7 @@ S += f"""
   <div class="foot"><span>Source: Mercer, AI in asset management survey of 131 managers (May 2026)</span><span class="pn"></span></div>
 </section>
 
+{PLAN}
 <!-- 14 EXERCISE -->
 <section class="slide" data-sec="Exercise">
   <h2 class="title">Exercise: describe one process from your function in five lines</h2>
