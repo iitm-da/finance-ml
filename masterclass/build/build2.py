@@ -210,6 +210,37 @@ S += f"""
   <div class="foot"><span></span><span class="pn"></span></div>
 </section>
 
+<!-- AGENTS A1 -->
+<section class="slide" data-sec="Agents">
+  <h2 class="title">An agent chains the steps a function does today, with the three models sharing the work</h2>
+  <table class="t tight" style="left:120px;top:240px;width:1680px;font-size:24px;line-height:1.25">
+    <tr><th style="width:15%">Function</th><th style="width:16%">Agent</th><th>What it does from start to finish</th><th style="width:6%;text-align:center;padding-right:0">Small</th><th style="width:6%;text-align:center;padding-right:0">Vision</th><th style="width:6%;text-align:center;padding-right:0">Large</th><th style="width:14%;padding-left:24px">Who approves</th></tr>
+    <tr><td>Research</td><td style="font-weight:600">Earnings-season agent</td><td>Collects the filing and transcript when results come out, pulls the tables, updates the draft note</td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Analyst</td></tr>
+    <tr><td>Fund management</td><td style="font-weight:600">Morning-brief agent</td><td>Watches overnight news on holdings, checks scheme limits, prepares the brief</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Fund manager</td></tr>
+    <tr><td>Operations</td><td style="font-weight:600">Onboarding agent</td><td>Reads the form and proofs, checks KYC, asks the investor for what is missing</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Operations staff</td></tr>
+    <tr><td>Risk and compliance</td><td style="font-weight:600">Circular agent</td><td>Spots a new circular, splits it into obligations, maps them to policies, opens tasks</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Compliance officer</td></tr>
+    <tr><td>Sales</td><td style="font-weight:600">Distributor-desk agent</td><td>Answers the query from approved documents, logs it, schedules the follow-up</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Relationship manager</td></tr>
+    <tr><td>Marketing</td><td style="font-weight:600">Factsheet agent</td><td>Pulls portfolio data, drafts commentary, translates it, runs the code check</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Compliance</td></tr>
+    <tr><td>Investor service</td><td style="font-weight:600">Service agent</td><td>Tags the request, reads any attachment, fetches folio status, drafts the reply</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Service agent</td></tr>
+    </table>
+  <div class="abs a" style="left:120px;top:880px;width:1680px;--d:1.2s"><p class="body" style="font-size:27px"><b>The pattern repeats:</b> a small model handles the volume, a vision model reads documents where there are any, a large model plans and drafts, and a named person approves.</p></div>
+  <div class="foot"><span>Illustrative designs; the model mix follows the function slides before this one</span><span class="pn"></span></div>
+</section>
+
+<!-- AGENTS A2 -->
+<section class="slide" data-sec="Agents">
+  <h2 class="title">Agents earn autonomy in three levels, and most AMC work belongs at the first two</h2>
+  <div class="abs a" style="left:120px;top:560px;width:540px;height:290px;background:var(--bluesoft);border-radius:14px 14px 0 0;padding:26px 30px;--d:.2s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 1</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Drafts</p><p style="font-size:25px;line-height:1.3;color:var(--muted);margin-top:10px!important">The model prepares; a person does everything after</p></div>
+  <div class="abs a" style="left:680px;top:470px;width:540px;height:380px;background:#C9D3FF;border-radius:14px 14px 0 0;padding:26px 30px;--d:.4s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 2</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts after approval</p><p style="font-size:25px;line-height:1.3;color:var(--ink2);margin-top:10px!important">The agent prepares the action; a person approves each one</p></div>
+  <div class="abs a" style="left:1240px;top:320px;width:560px;height:530px;background:var(--blue);color:#fff;border-radius:14px 14px 0 0;padding:26px 30px;--d:.6s"><p style="font-size:24px;font-weight:600;color:var(--yellow)">Level 3</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts within limits</p><p style="font-size:25px;line-height:1.3;color:rgba(255,255,255,.85);margin-top:10px!important">The agent completes routine cases alone, inside set limits, with every action logged and sampled</p></div>
+  <div class="abs" style="left:120px;top:850px;width:1680px;height:2px;background:var(--ink)"></div>
+  <p class="abs a" style="left:150px;top:776px;width:480px;font-size:23px;line-height:1.3;--d:.8s"><b>Fits:</b> research notes, commentary, rationale records</p>
+  <p class="abs a" style="left:710px;top:740px;width:480px;font-size:23px;line-height:1.3;--d:.9s"><b>Fits:</b> onboarding exceptions, distributor and investor replies</p>
+  <p class="abs a" style="left:1270px;top:740px;width:500px;font-size:23px;line-height:1.3;color:#fff;--d:1s"><b>Fits:</b> tagging and routing requests, opening compliance tasks, internal look-ups</p>
+  <div class="abs a" style="left:120px;top:270px;width:1040px;--d:1.1s"><p class="body" style="font-size:28px"><b>A working rule:</b> anything that reaches an investor or the order book stays at level 2 or below.</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:14px">Today 7% of asset managers have deployed agents and 5% give AI any autonomous authority in investing.</p></div>
+  <div class="foot"><span>The rule is our recommendation. Sources: EY (Sept 2025); Mercer (May 2026)</span><span class="pn"></span></div>
+</section>
+
 <!-- 12 WHERE TO START -->
 <section class="slide" data-sec="Choosing">
   <h2 class="title">Start where volume is high and a wrong output stays inside the company</h2>

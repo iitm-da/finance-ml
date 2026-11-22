@@ -275,6 +275,77 @@
   <div class="foot"><span>Sources: NVIDIA (2025); Gartner (April 2025); SEBI consultation paper on AI/ML (June 2025)</span><span class="pn"></span></div>
 </section>
 
+<!-- AGENT 1: LOOP -->
+<section class="slide" data-sec="Agents">
+  <h2 class="title">An agent is a model working in a loop with tools, and the three models take different roles</h2>
+  <svg class="abs a" style="left:120px;top:270px;--d:.2s" width="620" height="560" viewBox="0 0 620 560" aria-hidden="true">
+    <path id="loop" d="M310,80 A200,200 0 1 1 309.9,80" fill="none" stroke="#C9CEE3" stroke-width="4"/>
+    <g fill="#8A90B0"><path d="M-10,-9 L10,0 L-10,9z" transform="translate(451,139) rotate(45)"/><path d="M-10,-9 L10,0 L-10,9z" transform="translate(451,421) rotate(135)"/><path d="M-10,-9 L10,0 L-10,9z" transform="translate(169,421) rotate(225)"/><path d="M-10,-9 L10,0 L-10,9z" transform="translate(169,139) rotate(315)"/></g>
+    <circle r="11" fill="#0E1330"><animateMotion dur="6s" repeatCount="indefinite"><mpath href="#loop"/></animateMotion></circle>
+    <text x="310" y="270" text-anchor="middle" font-size="24" fill="#5D6488" font-family="Geist,Arial">Goal</text>
+    <text x="310" y="304" text-anchor="middle" font-size="22" font-weight="600" fill="#0E1330" font-family="Geist,Arial">open a SIP</text>
+    <text x="310" y="332" text-anchor="middle" font-size="22" font-weight="600" fill="#0E1330" font-family="Geist,Arial">for an investor</text>
+  </svg>
+  <div class="box a" style="left:310px;top:300px;width:240px;height:100px;background:var(--bluesoft);padding:14px 20px;--d:.3s"><h3 style="font-size:27px">Plan</h3><p style="font-size:21px">decide the next step</p></div>
+  <div class="box a" style="left:520px;top:500px;width:240px;height:100px;background:var(--yellowsoft);padding:14px 20px;--d:.45s"><h3 style="font-size:27px">Act</h3><p style="font-size:21px">call a tool or system</p></div>
+  <div class="box a" style="left:310px;top:700px;width:240px;height:100px;background:var(--redsoft);padding:14px 20px;--d:.6s"><h3 style="font-size:27px">Read</h3><p style="font-size:21px">take in what came back</p></div>
+  <div class="box a" style="left:100px;top:500px;width:240px;height:100px;background:var(--bluesoft);padding:14px 20px;--d:.75s"><h3 style="font-size:27px">Check</h3><p style="font-size:21px">done, retry, or ask a person</p></div>
+  <div class="abs" style="left:880px;top:270px;width:920px">
+    <div class="role a" style="--d:.5s"><span style="background:var(--blue)"></span><div><p>Large model: the planner</p><p>Breaks the goal into steps, chooses what to do next, and deals with the case nobody expected.</p></div></div>
+    <div class="role a" style="--d:.65s"><span style="background:var(--yellow)"></span><div><p>Small models: the workers</p><p>Do the narrow steps that repeat thousands of times: pick the tool, fill in its fields, classify the reply.</p></div></div>
+    <div class="role a" style="--d:.8s"><span style="background:var(--red)"></span><div><p>Vision model: the eyes</p><p>Reads whatever comes back as a page, a scan or a screen, and turns it into fields the others can use.</p></div></div>
+  </div>
+  <div class="abs a" style="left:880px;top:770px;width:920px;background:var(--soft);border-radius:14px;padding:24px 34px;--d:1s"><p class="body" style="font-size:26px"><b>Most steps in an agent are narrow and repeated.</b> NVIDIA's researchers argue these belong on small models, at 10&#8211;30x lower serving cost.</p></div>
+  <div class="foot"><span>Source: NVIDIA, Small Language Models are the Future of Agentic AI (2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- AGENT 2: TRACE -->
+<section class="slide" data-sec="Agents">
+  <h2 class="title">One onboarding agent uses all three models, and a person approves before the record is final</h2>
+  <div class="fl" style="top:270px;width:1680px"><p class="lab a" style="--d:.2s">One run, step by step</p><div class="row" style="gap:28px">
+    <div class="st slm a" style="--d:.3s;min-height:230px"><b>1 &#183; Small model</b>Sorts the incoming mail: a new SIP application</div>
+    <div class="st vlm a" style="--d:.45s;min-height:230px"><b>2 &#183; Vision model</b>Reads the form, the PAN card and the cancelled cheque</div>
+    <div class="st rule a" style="--d:.6s;min-height:230px"><b>3 &#183; Tool</b>Looks up KYC status and verifies the bank account</div>
+    <div class="st llm a" style="--d:.75s;min-height:230px"><b>4 &#183; Large model</b>Sees the signature is unclear and decides to ask for it again</div>
+    <div class="st slm a" style="--d:.9s;min-height:230px"><b>5 &#183; Small model</b>Writes to the investor in Hindi asking for a fresh signature</div>
+    <div class="st hum a" style="--d:1.05s;min-height:230px"><b>6 &#183; Person</b>Staff approve the message and, later, the final record</div>
+  </div></div>
+  <div class="abs" style="left:120px;top:640px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:56px">1 of 6</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">steps needed the large model; the rest ran on small models, a vision model and ordinary systems</p></div>
+    <div class="a" style="--d:1.3s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:56px">3 systems</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">touched: the mailbox, the KYC registry and the bank check, each through a tool with its own permission</p></div>
+    <div class="a" style="--d:1.4s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:56px">1 checkpoint</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">before anything reaches the investor or the registrar</p></div>
+  </div>
+  <div class="foot"><span>Illustrative run, to show how the work divides</span><span class="pn"></span></div>
+</section>
+
+<!-- AGENT 3: COMPOUNDING -->
+<section class="slide" data-sec="Agents">
+  <h2 class="title">Errors compound: at 95% per step, a ten-step agent finishes correctly 60% of the time</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.15s">Chance the whole run is correct, by number of steps</p>
+  <svg class="abs" style="left:100px;top:320px" width="920" height="480" viewBox="-20 0 920 480" role="img" aria-label="Three curves falling with the number of steps, for 99, 95 and 90 percent accuracy per step">
+    <line x1="60" y1="420" x2="680" y2="420" stroke="#0E1330" stroke-width="2"/>
+    <line x1="60" y1="40" x2="680" y2="40" stroke="#E2E5F0"/><line x1="60" y1="230" x2="680" y2="230" stroke="#E2E5F0"/>
+    <line x1="353.7" y1="40" x2="353.7" y2="420" stroke="#8A90B0" stroke-dasharray="6 6"/>
+    <g font-size="22" fill="#8A90B0" font-family="Geist,Arial"><text x="48" y="47" text-anchor="end">100%</text><text x="48" y="237" text-anchor="end">50%</text><text x="48" y="427" text-anchor="end">0%</text>
+    <text x="60" y="456">1 step</text><text x="353.7" y="456" text-anchor="middle">10 steps</text><text x="680" y="456" text-anchor="end">20 steps</text></g>
+    <path class="draw" style="--len:900;--d:.4s" pathLength="900" d="M60.0,43.8L92.6,47.6L125.3,51.3L157.9,55.0L190.5,58.6L223.2,62.2L255.8,65.8L288.4,69.4L321.1,72.9L353.7,76.3L386.3,79.8L418.9,83.2L451.6,86.5L484.2,89.9L516.8,93.2L549.5,96.4L582.1,99.7L614.7,102.9L647.4,106.1L680.0,109.2" fill="none" stroke="#2B4BFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="draw" style="--len:900;--d:.7s" pathLength="900" d="M60.0,59.0L92.6,77.1L125.3,94.2L157.9,110.5L190.5,126.0L223.2,140.7L255.8,154.6L288.4,167.9L321.1,180.5L353.7,192.5L386.3,203.9L418.9,214.7L451.6,224.9L484.2,234.7L516.8,243.9L549.5,252.8L582.1,261.1L614.7,269.1L647.4,276.6L680.0,283.8" fill="none" stroke="#E0A800" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="draw" style="--len:900;--d:1s" pathLength="900" d="M60.0,78.0L92.6,112.2L125.3,143.0L157.9,170.7L190.5,195.6L223.2,218.1L255.8,238.2L288.4,256.4L321.1,272.8L353.7,287.5L386.3,300.8L418.9,312.7L451.6,323.4L484.2,333.1L516.8,341.8L549.5,349.6L582.1,356.6L614.7,363.0L647.4,368.7L680.0,373.8" fill="none" stroke="#E8382D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="353.7" cy="192.5" r="9" fill="#fff" stroke="#0E1330" stroke-width="3"/>
+    <g font-size="23" font-weight="600" fill="#0E1330" font-family="Geist,Arial"><text x="694" y="117">99% a step: 82%</text><text x="694" y="292">95%: 36%</text><text x="694" y="382">90%: 12%</text><text x="368" y="182">60%</text></g>
+  </svg>
+  <div class="abs" style="left:1040px;top:270px;width:760px">
+    <p class="a" style="--d:.5s;font-size:34px;font-weight:600;border-top:4px solid var(--ink);padding-top:22px">So every agent gets five controls</p>
+    <p class="li a" style="--d:.6s"><b>Short chains:</b> fewer steps, each one tested on its own</p>
+    <p class="li a" style="--d:.7s"><b>Read-only by default:</b> each tool has its own permission</p>
+    <p class="li a" style="--d:.8s"><b>Limits on actions:</b> amounts, counts and retries are capped</p>
+    <p class="li a" style="--d:.9s"><b>A person before the investor:</b> approval on anything external</p>
+    <p class="li a" style="--d:1s"><b>Full logs and a tested kill switch</b></p>
+  </div>
+  <div class="abs a" style="left:120px;top:850px;width:1680px;background:var(--soft);border-radius:14px;padding:24px 40px;--d:1.3s"><p class="body" style="font-size:27px"><b>The industry is cautious:</b> 7% of asset managers have deployed AI agents (EY), and 5% give AI any autonomous authority in investing (Mercer).</p></div>
+  <div class="foot"><span>Curves: per-step accuracy raised to the number of steps, assuming independent steps. Sources: EY (2025); Mercer (2026)</span><span class="pn"></span></div>
+</section>
+
 <!-- 10 LANDSCAPE -->
 <section class="slide" data-sec="The models">
   <h2 class="title">The model market is now five categories; choose on evidence from your own work</h2>
