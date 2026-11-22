@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-17 18:35 UTC",
+ "generated": "2026-11-22 11:43 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -47,6 +47,24 @@
    "kind": "notebook",
    "size": 180538,
    "updated": "2026-11-17"
+  },
+  {
+   "path": "masterclass/ai_across_business_functions.html",
+   "name": "ai_across_business_functions.html",
+   "folder": "masterclass",
+   "section": "CXO masterclass \u00b7 Language models in asset management",
+   "kind": "deck",
+   "size": 52965,
+   "updated": "2026-11-22"
+  },
+  {
+   "path": "masterclass/llm_vlm_slm_for_amc.html",
+   "name": "llm_vlm_slm_for_amc.html",
+   "folder": "masterclass",
+   "section": "CXO masterclass \u00b7 Language models in asset management",
+   "kind": "deck",
+   "size": 80567,
+   "updated": "2026-11-22"
   },
   {
    "path": "nlp/advanced_nlp_for_finance.html",
