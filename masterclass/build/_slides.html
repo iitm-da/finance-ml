@@ -1,0 +1,549 @@
+<!-- 1 COVER -->
+<section class="slide dark" data-sec="">
+  <canvas id="cv" class="abs" style="left:0;top:0;width:1920px;height:1080px" width="1920" height="1080" aria-hidden="true"></canvas>
+  <div class="abs" style="left:120px;top:0;bottom:0;width:4px;background:var(--yellow)"></div>
+  <p class="abs a" style="left:170px;top:300px;font-size:28px;font-weight:500;color:var(--yellow);--d:.1s">AI Masterclass for CXOs</p>
+  <h1 class="abs a" style="left:166px;top:350px;width:1000px;font-size:132px;font-weight:600;letter-spacing:-.045em;line-height:1;--d:.2s">Language is<br>the ledger</h1>
+  <p class="abs a" style="left:170px;top:660px;width:900px;font-size:38px;line-height:1.35;font-weight:300;color:rgba(255,255,255,.82);--d:.35s">How large, vision and small language models change the economics of asset management</p>
+  <p class="abs a" style="left:170px;top:910px;font-size:26px;color:rgba(255,255,255,.6);--d:.5s">Dr. Arun Ayyar</p>
+</section>
+
+<!-- 2 EXEC SUMMARY -->
+<section class="slide" data-sec="Executive summary">
+  <h2 class="title">Five things the leadership team should take from this session</h2>
+  <div class="abs" style="left:120px;top:260px;width:1680px">
+    <div class="a" style="--d:.2s;display:grid;grid-template-columns:90px 900px 1fr;align-items:baseline;padding:22px 0;border-top:2px solid var(--ink)">
+      <span class="big" style="font-size:44px;color:var(--blue)">1</span><p style="font-size:32px;font-weight:600;line-height:1.3">Asset management is a language business, and language models work directly on that cost base.</p><p class="k">AI could take 25&#8211;40% of a manager's cost base (McKinsey)</p></div>
+    <div class="a" style="--d:.3s;display:grid;grid-template-columns:90px 900px 1fr;align-items:baseline;padding:22px 0;border-top:1px solid var(--line)">
+      <span class="big" style="font-size:44px;color:var(--blue)">2</span><p style="font-size:32px;font-weight:600;line-height:1.3">The winning design is a portfolio: small models for volume, vision models for documents, large models for judgement.</p><p class="k">A 7B model is 10&#8211;30x cheaper to serve than a 70&#8211;175B model</p></div>
+    <div class="a" style="--d:.4s;display:grid;grid-template-columns:90px 900px 1fr;align-items:baseline;padding:22px 0;border-top:1px solid var(--line)">
+      <span class="big" style="font-size:44px;color:var(--blue)">3</span><p style="font-size:32px;font-weight:600;line-height:1.3">Most managers now use AI in investing, but few can show a return from it.</p><p class="k">55% use it in an investment process; 8% report better returns (Mercer)</p></div>
+    <div class="a" style="--d:.5s;display:grid;grid-template-columns:90px 900px 1fr;align-items:baseline;padding:22px 0;border-top:1px solid var(--line)">
+      <span class="big" style="font-size:44px;color:var(--blue)">4</span><p style="font-size:32px;font-weight:600;line-height:1.3">In India the scale is in investors and languages, which is where small and Indian-language models fit.</p><p class="k">28.78 crore folios; 5% of households prefer English content</p></div>
+    <div class="a" style="--d:.6s;display:grid;grid-template-columns:90px 900px 1fr;align-items:baseline;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+      <span class="big" style="font-size:44px;color:var(--blue)">5</span><p style="font-size:32px;font-weight:600;line-height:1.3">SEBI holds the AMC solely responsible for what its AI tools produce, bought or built.</p><p class="k">In force since February 2025; detailed guidelines expected soon</p></div>
+  </div>
+  <div class="foot"><span>Sources: McKinsey (2025); NVIDIA (2025); Mercer (2026); AMFI (Oct 2026); SEBI Investor Survey 2025; SEBI</span><span class="pn"></span></div>
+</section>
+
+<!-- 3 SCALE -->
+<section class="slide" data-sec="The opportunity">
+  <h2 class="title">Each Nippon India employee already serves about 20,000 investors</h2>
+  <div class="abs a" style="left:120px;top:262px;display:flex;align-items:center;gap:16px;--d:.2s">
+    <span style="display:inline-block;width:26px;height:26px;border-radius:5px;background:var(--blue)"></span><p style="font-size:28px;font-weight:600">1 employee</p>
+    <span style="display:inline-block;width:8px;height:8px;background:#9AA3CC;margin-left:36px"></span><p style="font-size:28px;font-weight:600">1 investor</p>
+  </div>
+  <canvas id="dots" class="abs" style="left:120px;top:330px;width:1000px;height:500px" width="1000" height="500" role="img" aria-label="Grid of 19,885 dots, one per investor served by a single employee"></canvas>
+  <p class="abs a k" style="left:120px;top:856px;width:1000px;--d:1.6s">19,885 dots: 24.3 million unique investors divided by 1,222 employees</p>
+  <div class="abs" style="left:1220px;top:262px;width:580px">
+    <div class="a" style="--d:.4s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:60px">24.3 million</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">unique investors, more than 1 in 3 of the industry's</p></div>
+    <div class="a" style="--d:.55s;border-top:2px solid var(--ink);padding-top:18px;margin-top:30px"><p class="big" style="font-size:60px">78%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of new purchases and SIPs are digital, about 50 every minute</p></div>
+    <div class="a" style="--d:.7s;border-top:2px solid var(--ink);padding-top:18px;margin-top:30px"><p class="big" style="font-size:60px">28.78 crore</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">industry folios, with nearly 10 crore SIP accounts contributing</p></div>
+    <p class="a body" style="--d:.9s;font-size:28px;font-weight:600;margin-top:34px">Transactions are already digital. The reading, writing and answering around them is not.</p>
+  </div>
+  <div class="foot"><span>Sources: NAM India Q2 FY27 release and investor presentation (Oct 2026); AMFI Monthly Note (Oct 2026). Ratio is our calculation.</span><span class="pn"></span></div>
+</section>
+
+<!-- 4 VALUE CHAIN -->
+<section class="slide" data-sec="The opportunity">
+  <h2 class="title">At every step of an AMC, people read documents and write other documents</h2>
+  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(6,1fr);gap:0">
+    <div class="chev first a" style="--d:.15s">Research</div>
+    <div class="chev a" style="--d:.25s">Fund management</div>
+    <div class="chev a" style="--d:.35s">Operations</div>
+    <div class="chev a" style="--d:.45s">Compliance, risk</div>
+    <div class="chev a" style="--d:.55s">Distribution</div>
+    <div class="chev a" style="--d:.65s">Investor service</div>
+  </div>
+  <div class="abs" style="left:120px;top:386px;width:1680px;display:grid;grid-template-columns:repeat(6,1fr);gap:0">
+    <div class="vc a" style="--d:.3s"><p class="k">Reads</p><p>Annual reports, concall transcripts, broker notes</p><p class="k">Writes</p><p>Research notes, model updates</p><p class="tags"><span class="tag t-llm">LLM</span> <span class="tag t-vlm">VLM</span></p></div>
+    <div class="vc a" style="--d:.4s"><p class="k">Reads</p><p>Mandates, scheme limits, market news</p><p class="k">Writes</p><p>Investment rationale, trade records</p><p class="tags"><span class="tag t-llm">LLM</span></p></div>
+    <div class="vc a" style="--d:.5s"><p class="k">Reads</p><p>Application forms, KYC proofs, bank mandates</p><p class="k">Writes</p><p>Clean records for the registrar</p><p class="tags"><span class="tag t-vlm">VLM</span> <span class="tag t-slm">SLM</span></p></div>
+    <div class="vc a" style="--d:.6s"><p class="k">Reads</p><p>SEBI circulars, scheme documents, staff messages</p><p class="k">Writes</p><p>Policy changes, alerts, filings</p><p class="tags"><span class="tag t-llm">LLM</span> <span class="tag t-slm">SLM</span></p></div>
+    <div class="vc a" style="--d:.7s"><p class="k">Reads</p><p>Distributor queries, RFPs, portfolio data</p><p class="k">Writes</p><p>Factsheets, commentary, regional content</p><p class="tags"><span class="tag t-llm">LLM</span></p></div>
+    <div class="vc a" style="--d:.8s"><p class="k">Reads</p><p>Emails, calls, chats, complaints</p><p class="k">Writes</p><p>Replies, service requests</p><p class="tags"><span class="tag t-slm">SLM</span> <span class="tag t-llm">LLM</span></p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:850px;width:1680px;background:var(--soft);border-radius:14px;padding:26px 40px;display:flex;align-items:center;gap:36px;--d:1s">
+    <p class="big" style="font-size:60px;color:var(--blue);white-space:nowrap">60&#8211;70%</p>
+    <p class="body" style="font-size:28px">of an analyst's time goes to reading filings, according to BCG. That reading is the work language models take first.</p>
+  </div>
+  <div class="foot"><span>LLM = large language model; VLM = vision-language model; SLM = small language model. Source: BCG (July 2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 5 SQUEEZE -->
+<section class="slide" data-sec="The opportunity">
+  <h2 class="title">Costs have outgrown revenue for 15 years; AI could take 25&#8211;40% of the cost base</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.2s">Global asset managers, indexed to 100, over 15 years</p>
+  <svg class="abs" style="left:120px;top:320px" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Line chart: cost grows 5.4% a year to an index of 220, revenue grows 5.1% a year to 211">
+    <line x1="60" x2="700" y1="440" y2="440" stroke="#0E1330" stroke-width="2"/>
+    <line x1="60" x2="700" y1="306.7" y2="306.7" stroke="#E2E5F0"/><line x1="60" x2="700" y1="173.3" y2="173.3" stroke="#E2E5F0"/><line x1="60" x2="700" y1="40" y2="40" stroke="#E2E5F0"/>
+    <text x="48" y="447" text-anchor="end" font-size="22" fill="#8A90B0">100</text><text x="48" y="313" text-anchor="end" font-size="22" fill="#8A90B0">150</text><text x="48" y="180" text-anchor="end" font-size="22" fill="#8A90B0">200</text><text x="48" y="47" text-anchor="end" font-size="22" fill="#8A90B0">250</text>
+    <text x="60" y="478" font-size="22" fill="#8A90B0">Year 0</text><text x="700" y="478" text-anchor="end" font-size="22" fill="#8A90B0">Year 15</text>
+    <path id="revp" class="draw" style="--len:1000;--d:.4s" pathLength="1000" fill="none" stroke="#2B4BFF" stroke-width="5" stroke-linecap="round" d=""/>
+    <path id="costp" class="draw" style="--len:1000;--d:.7s" pathLength="1000" fill="none" stroke="#E8382D" stroke-width="5" stroke-linecap="round" d=""/>
+    <circle cx="700" cy="144" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="700" cy="120" r="8" fill="#E8382D" stroke="#fff" stroke-width="2"/>
+  </svg>
+  <p class="abs a" style="left:835px;top:398px;font-size:24px;font-weight:600;line-height:1.2;--d:2s"><span class="key" style="background:var(--red);margin-right:8px"></span>Cost 220<br><span style="font-weight:400;color:var(--muted)">+5.4% a year</span></p>
+  <p class="abs a" style="left:835px;top:474px;font-size:24px;font-weight:600;line-height:1.2;--d:1.8s"><span class="key" style="background:var(--blue);margin-right:8px"></span>Revenue 211<br><span style="font-weight:400;color:var(--muted)">+5.1% a year</span></p>
+  <div class="abs" style="left:1080px;top:270px;width:720px">
+    <p class="a k" style="--d:.5s">Share of a manager's cost base AI could capture</p>
+    <div class="a" style="--d:.6s;position:relative;height:72px;margin-top:18px;background:var(--soft);border-radius:8px;overflow:hidden">
+      <div class="bar" style="--w:180px;height:72px;background:var(--blue);border-radius:8px 0 0 8px;--d:.8s"></div>
+      <div class="bar" style="left:182px;--w:106px;height:72px;border-radius:0;--d:1.5s;background:repeating-linear-gradient(135deg,#2B4BFF 0 6px,#8FA0FF 6px 12px)"></div>
+    </div>
+    <div class="a" style="--d:1.6s;position:relative;height:40px;margin-top:8px;font-size:24px;color:var(--muted)"><span style="position:absolute;left:0">0%</span><span style="position:absolute;left:152px;color:var(--ink);font-weight:600">25%</span><span style="position:absolute;left:262px;color:var(--ink);font-weight:600">40%</span><span style="position:absolute;right:0">100%</span></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p class="big" style="font-size:52px">1&#8211;3% a year</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">fee compression across the industry</p></div>
+    <div class="a" style="--d:1.05s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p class="big" style="font-size:52px">80%+</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of recent revenue growth came from market performance, not new business</p></div>
+  </div>
+  <div class="foot"><span>Sources: BCG (July 2026) and BCG Global Asset Management Report 2026; McKinsey (July 2025), potential for a $500B manager</span><span class="pn"></span></div>
+</section>
+
+<!-- 6 DIVIDER -->
+<section class="slide blue" data-sec="">
+  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">01</p>
+  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">The three model types</h2>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">What LLMs, VLMs and SLMs do, what they cost, and how leading firms combine them</p>
+</section>
+
+<!-- 7 COMPARISON -->
+<section class="slide" data-sec="The models">
+  <h2 class="title">Three model types, three different jobs and cost profiles</h2>
+  <div class="abs" style="left:120px;top:226px;width:1680px;display:grid;grid-template-columns:300px 1fr 1fr 1fr;align-items:center;height:200px">
+    <p class="a k" style="--d:.2s;align-self:end;padding-bottom:14px;font-size:22px;line-height:1.3">Circle area in proportion<br>to parameter count</p>
+    <div class="a" style="--d:.25s;display:flex;align-items:center;gap:22px;height:200px"><svg width="184" height="184" viewBox="0 0 184 184" aria-hidden="true"><circle cx="92" cy="92" r="90" fill="#2B4BFF"/></svg><p style="font-size:24px;color:var(--muted)">~300 billion</p></div>
+    <div class="a" style="--d:.35s;display:flex;align-items:center;gap:22px;height:200px"><svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true"><circle cx="29" cy="29" r="28.5" fill="#E8382D"/></svg><p style="font-size:24px;color:var(--muted)">~30 billion</p></div>
+    <div class="a" style="--d:.45s;display:flex;align-items:center;gap:22px;height:200px"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13.7" fill="#FFC800"/></svg><p style="font-size:24px;color:var(--muted)">~7 billion</p></div>
+  </div>
+  <table class="t tight" style="left:120px;top:436px;width:1680px;font-size:26px">
+    <tr><th style="width:300px"></th><th style="width:460px">Large language model</th><th style="width:460px">Vision-language model</th><th>Small language model</th></tr>
+    <tr><td>Reads</td><td>Text</td><td>Text plus scans, tables, charts, IDs</td><td>Text, usually one narrow task</td></tr>
+    <tr><td>Runs</td><td>Mostly vendor cloud</td><td>Cloud or on-premise</td><td>On-premise, private cloud, even devices</td></tr>
+    <tr><td>Cost per task</td><td>Highest</td><td>Medium to high</td><td>10&#8211;30x cheaper to serve</td></tr>
+    <tr><td>Best at</td><td>Reasoning, drafting, summarising</td><td>Turning documents into data</td><td>Classify, extract, route at volume</td></tr>
+    <tr><td>Main weakness</td><td>Cost, latency, confident errors</td><td>Noisy scans, long files, handwriting</td><td>Narrow outside its task</td></tr>
+    <tr><td>AMC example</td><td>Research note from filings and concalls</td><td>KYC pack, annual-report tables</td><td>Email triage, complaint tagging</td></tr>
+  </table>
+  <div class="foot"><span>Sizes are typical, not exact. Source for serving cost: NVIDIA, Small Language Models are the Future of Agentic AI (2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- 8 VLM DOCUMENT -->
+<section class="slide" data-sec="The models">
+  <h2 class="title">A vision model turns a scanned form into fields that a system can check</h2>
+  <div class="abs a" style="left:150px;top:262px;width:500px;height:640px;background:#FBFAF6;border:1px solid #D9DCE8;box-shadow:0 10px 30px rgba(14,19,48,.12);transform:rotate(-1.3deg);--d:.2s">
+    <svg width="500" height="640" viewBox="0 0 500 640" aria-hidden="true" font-family="Geist,Arial,sans-serif">
+      <rect x="36" y="30" width="250" height="16" rx="3" fill="#3A4166"/><rect x="36" y="56" width="170" height="10" rx="3" fill="#B9BED6"/>
+      <g fill="#8A90B0" font-size="15"><text x="36" y="118">Name of first holder</text><text x="36" y="208">PAN</text><text x="36" y="298">Bank account number</text><text x="36" y="388">IFSC</text><text x="36" y="478">Signature</text></g>
+      <g fill="#1A2152" font-size="25" font-family="'Courier New',monospace" font-weight="700"><text x="44" y="152">A SHARMA</text><text x="44" y="242">ABCDE1234F</text><text x="44" y="332">0012 3456 7890</text><text x="44" y="422">SBIN0001234</text></g>
+      <path d="M52,520 c20,-34 34,22 52,-8 s26,-30 44,4 30,-26 50,2" fill="none" stroke="#1A2152" stroke-width="2.5" opacity=".45"/>
+      <g fill="none" stroke="#E8382D" stroke-width="2.5"><rect x="34" y="126" width="300" height="38" rx="4"/><rect x="34" y="216" width="300" height="38" rx="4"/><rect x="34" y="306" width="300" height="38" rx="4"/><rect x="34" y="396" width="300" height="38" rx="4"/><rect x="34" y="486" width="300" height="50" rx="4" stroke-dasharray="7 5"/></g>
+      <g fill="#B9BED6"><rect x="36" y="572" width="420" height="8" rx="3"/><rect x="36" y="590" width="360" height="8" rx="3"/><rect x="36" y="608" width="390" height="8" rx="3"/></g>
+    </svg>
+  </div>
+  <svg class="abs a" style="left:0;top:0;--d:.6s" width="1920" height="1080" aria-hidden="true"><g stroke="#E8382D" stroke-width="2" stroke-dasharray="6 6" fill="none">
+    <line x1="500" y1="402" x2="800" y2="402"/><line x1="502" y1="492" x2="800" y2="492"/><line x1="504" y1="582" x2="800" y2="582"/><line x1="506" y1="672" x2="800" y2="672"/><line x1="508" y1="768" x2="800" y2="768"/></g></svg>
+  <div class="abs" style="left:810px;top:290px;width:990px">
+    <div class="a" style="--d:.5s;display:grid;grid-template-columns:230px 330px 1fr;font-size:24px;font-weight:600;color:var(--muted);padding-bottom:14px;border-bottom:2px solid var(--ink)"><span>Field</span><span>Value read</span><span>Automatic check</span></div>
+    <div class="fr a" style="--d:.7s"><span class="f1">Name</span><span class="f2">A SHARMA</span><span><i class="ok"></i>Matches KYC record</span></div>
+    <div class="fr a" style="--d:.85s"><span class="f1">PAN</span><span class="f2">ABCDE1234F</span><span><i class="ok"></i>Format valid</span></div>
+    <div class="fr a" style="--d:1s"><span class="f1">Bank account</span><span class="f2">001234567890</span><span><i class="ok"></i>Matches bank proof</span></div>
+    <div class="fr a" style="--d:1.15s"><span class="f1">IFSC</span><span class="f2">SBIN0001234</span><span><i class="ok"></i>Branch exists</span></div>
+    <div class="fr a" style="--d:1.3s"><span class="f1">Signature</span><span class="f2" style="color:var(--muted);font-family:inherit;font-weight:400">Low confidence</span><span style="color:#B8231A;font-weight:600"><i class="no"></i>Sent to a person</span></div>
+  </div>
+  <div class="abs a" style="left:810px;top:820px;width:990px;display:flex;gap:32px;align-items:center;--d:1.5s">
+    <p class="big" style="font-size:60px;color:var(--blue)">92.2%</p>
+    <p class="body" style="font-size:26px;color:var(--muted)">accuracy on tables from audited financial reports for a fine-tuned 7B vision model, ahead of GPT-4o in the same study</p>
+  </div>
+  <div class="foot"><span>Illustrative form with dummy data. Source for accuracy: arXiv 2508.05669 (Aug 2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- 9 ARCHITECTURE -->
+<section class="slide" data-sec="The models">
+  <h2 class="title">Leading firms route each task to the smallest model that can do it safely</h2>
+  <svg class="abs a" style="left:0;top:0;--d:.3s" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true">
+    <defs>
+      <path id="r1" d="M360,505 L710,505 C770,505 760,365 820,365 L1160,365 C1220,365 1210,505 1270,505 L1580,505"/>
+      <path id="r2" d="M360,505 L710,505 L820,515 L1160,515 L1270,505 L1580,505"/>
+      <path id="r3" d="M360,505 L710,505 C770,505 760,665 820,665 L1160,665 C1220,665 1210,505 1270,505 L1580,505"/>
+    </defs>
+    <use href="#r1" fill="none" stroke="#FFE9A3" stroke-width="10"/>
+    <use href="#r2" fill="none" stroke="#F7C9C5" stroke-width="6"/>
+    <use href="#r3" fill="none" stroke="#C9D3FF" stroke-width="4"/>
+    <g id="flow"></g>
+  </svg>
+  <div class="box a" style="left:120px;top:435px;width:240px;height:140px;background:var(--soft);--d:.2s"><h3>Work in</h3><p>emails, forms, filings</p></div>
+  <div class="box a" style="left:430px;top:405px;width:280px;height:200px;background:var(--ink);color:#fff;--d:.25s"><h3>AI gateway</h3><p style="color:rgba(255,255,255,.7)">policy, logging, routing, cost control</p></div>
+  <div class="box a" style="left:820px;top:310px;width:340px;height:110px;background:var(--yellowsoft);--d:.35s"><h3>Small models</h3><p>bulk of volume</p></div>
+  <div class="box a" style="left:820px;top:460px;width:340px;height:110px;background:var(--redsoft);--d:.4s"><h3>Vision models</h3><p>documents and images</p></div>
+  <div class="box a" style="left:820px;top:610px;width:340px;height:110px;background:var(--bluesoft);--d:.45s"><h3>Large models</h3><p>complex, open-ended cases</p></div>
+  <div class="box a" style="left:1270px;top:425px;width:260px;height:160px;background:var(--soft);--d:.5s"><h3>Human approval</h3><p>investor-facing and dealing output</p></div>
+  <div class="box a" style="left:1580px;top:435px;width:220px;height:140px;background:var(--soft);--d:.55s"><h3>Core systems</h3><p>registrar, CRM, order system</p></div>
+  <div class="abs" style="left:120px;top:790px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:.7s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">10&#8211;30x</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">lower serving cost for a 7B model than a 70&#8211;175B model</p></div>
+    <div class="a" style="--d:.8s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">3x</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">more use of small task-specific models than general LLMs by 2027</p></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">One log</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">of every input and output, which SEBI's 2025 draft asks firms to keep for five years</p></div>
+  </div>
+  <div class="foot"><span>Sources: NVIDIA (2025); Gartner (April 2025); SEBI consultation paper on AI/ML (June 2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- 10 LANDSCAPE -->
+<section class="slide" data-sec="The models">
+  <h2 class="title">The model market is now five categories; choose on evidence from your own work</h2>
+  <table class="t" style="left:120px;top:250px;width:1680px;font-size:26px">
+    <tr><th style="width:21%">Category</th><th style="width:34%">Examples, November 2026</th><th style="width:26%">Typical AMC use</th><th>Watch</th></tr>
+    <tr><td>Frontier closed models</td><td>OpenAI GPT-6.2, Anthropic Claude Opus 5.5, Google Gemini 4</td><td>Research synthesis, drafting, complex documents</td><td>Data terms, cost at scale</td></tr>
+    <tr><td>Large open-weight</td><td>Qwen 3.8, Mistral Large 4, DeepSeek V4</td><td>Self-hosted research and staff assistants</td><td>GPU estate, origin, licence</td></tr>
+    <tr><td>Small open models</td><td>Gemma 4, Phi-4, Qwen 3.5 4B and 9B</td><td>Classify, extract and route service requests</td><td>Fine-tuning and testing</td></tr>
+    <tr><td>Vision and document</td><td>Frontier multimodal models; Qwen-VL, PaddleOCR-VL</td><td>KYC packs, forms, annual-report tables</td><td>Accuracy on noisy scans</td></tr>
+    <tr><td>Indian models</td><td>Sarvam-30B and 105B, BharatGen Param2</td><td>Regional-language service, voice, content</td><td>Younger ecosystem</td></tr>
+  </table>
+  <p class="abs a body" style="left:120px;top:880px;width:1680px;font-size:28px;--d:.9s"><b>Choose on five tests:</b> accuracy on 200&#8211;500 of your own cases, cost per completed task, where the data goes, licence terms and the exit route.</p>
+  <div class="foot"><span>Sources: model provider documentation and releases, as of November 2026. Names change every few months.</span><span class="pn"></span></div>
+</section>
+
+<!-- 11 DIVIDER -->
+<section class="slide blue" data-sec="">
+  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">02</p>
+  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">The evidence</h2>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">What global and Indian asset managers have deployed, and what it has returned</p>
+</section>
+
+<!-- 12 GLOBAL MANAGERS -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">At the leading investment firms, nearly every investment professional now uses AI</h2>
+  <p class="abs a k" style="left:120px;top:262px;--d:.15s">Share of the target group using the firm's AI tools</p>
+  <p class="abs a k" style="left:1150px;top:262px;--d:.15s">Reported result</p>
+  <div class="abs" style="left:120px;top:318px;width:1680px">
+    <div class="ar a" style="--d:.2s"><div class="an"><b>Norges Bank Investment Management</b><span>all 680 employees, daily</span></div><div class="at"><div class="bar" style="--w:560px;background:var(--blue);--d:.4s"></div></div><p class="av num">100%</p><p class="ax">Trading costs down 30% over 2023&#8211;25, worth NOK 4.8 billion; productivity up over 20%</p></div>
+    <div class="ar a" style="--d:.3s"><div class="an"><b>Morgan Stanley Wealth</b><span>financial advisor teams</span></div><div class="at"><div class="bar" style="--w:549px;background:var(--blue);--d:.55s"></div></div><p class="av num">98%</p><p class="ax">Advisors' access to the firm's 100,000 research documents rose from 20% to 80%</p></div>
+    <div class="ar a" style="--d:.4s"><div class="an"><b>Balyasny Asset Management</b><span>about 180 investment teams</span></div><div class="at"><div class="bar" style="--w:532px;background:var(--blue);--d:.7s"></div></div><p class="av num">95%</p><p class="ax">One macro analysis cut from two days to about 30 minutes</p></div>
+    <div class="ar a" style="--d:.5s"><div class="an"><b>J.P. Morgan Asset Management</b><span>about 750 investment professionals, weekly</span></div><div class="at"><div class="bar" style="--w:420px;background:var(--blue);--d:.85s"></div></div><p class="av num">70&#8211;80%</p><p class="ax">Usage of the Spectrum IQ platform up fivefold in 2026</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:846px;width:1680px;background:var(--soft);border-radius:14px;padding:24px 40px;--d:1.3s"><p class="body" style="font-size:27px"><b>Schroders</b> reports 3,500 people using its AI tools every week and a self-reported saving of two and a half hours a week each.</p></div>
+  <div class="foot"><span>Sources: NBIM Storting hearing (May 2026); OpenAI case studies (vendor-published); Paperjam (Oct 2026); Schroders (June 2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- 13 SURVEY -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">Most managers now use AI in investing; very few can show a return from it yet</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.15s">Share of 131 asset managers surveyed by Mercer, 2026</p>
+  <div class="abs" style="left:120px;top:330px;width:1100px">
+    <div class="sr a" style="--d:.2s"><p>Plan to increase their use of AI</p><div class="track" style="position:relative;width:900px"><div class="bar" style="--w:819px;background:#C9CEE3;--d:.4s"></div></div><b class="num">91%</b></div>
+    <div class="sr a" style="--d:.3s"><p>Use AI in at least one investment process</p><div class="track" style="position:relative;width:900px"><div class="bar" style="--w:495px;background:#C9CEE3;--d:.55s"></div></div><b class="num">55%</b></div>
+    <div class="sr a" style="--d:.4s"><p>Report a measurable improvement in returns</p><div class="track" style="position:relative;width:900px"><div class="bar" style="--w:72px;background:var(--blue);--d:.7s"></div></div><b class="num" style="color:var(--blue)">8%</b></div>
+    <div class="sr a" style="--d:.5s"><p>Give AI autonomous or semi-autonomous authority</p><div class="track" style="position:relative;width:900px"><div class="bar" style="--w:45px;background:var(--blue);--d:.85s"></div></div><b class="num" style="color:var(--blue)">5%</b></div>
+  </div>
+  <div class="abs" style="left:1320px;top:300px;width:480px">
+    <div class="a" style="--d:.6s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:56px">69%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">name data quality as a barrier; 59% name regulation</p></div>
+    <div class="a" style="--d:.75s;border-top:2px solid var(--ink);padding-top:18px;margin-top:32px"><p class="big" style="font-size:56px">~27%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of wealth and asset managers in EY's survey report substantial business impact</p></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:32px"><p class="big" style="font-size:56px">7%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of asset managers have deployed AI agents</p></div>
+  </div>
+  <div class="foot"><span>Sources: Mercer, AI in asset management survey (May 2026, covers AI broadly); EY wealth and asset management survey (Sept 2025)</span><span class="pn"></span></div>
+</section>
+
+<!-- 14 NIPPON + INDIA -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">Nippon India already reports AI-led sales; the industry is now adding language models</h2>
+  <div class="abs a" style="left:120px;top:262px;width:700px;height:570px;background:var(--ink);color:#fff;border-radius:16px;padding:40px 44px;--d:.2s">
+    <p style="font-size:26px;font-weight:500;color:var(--yellow)">Nippon India, as published</p>
+    <p class="big" style="font-size:104px;margin-top:22px">&#8377;5,000 cr</p>
+    <p style="font-size:28px;line-height:1.35;margin-top:14px;color:rgba(255,255,255,.85)">incremental gross sales in FY26 from machine-learning propensity campaigns</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:40px;border-top:1px solid rgba(255,255,255,.25);padding-top:26px">
+      <div><p class="big" style="font-size:52px">~2.5 cr</p><p style="font-size:24px;line-height:1.3;margin-top:8px;color:rgba(255,255,255,.7)">customers covered by AI and ML initiatives</p></div>
+      <div><p class="big" style="font-size:52px">Nippon GPT</p><p style="font-size:24px;line-height:1.3;margin-top:8px;color:rgba(255,255,255,.7)">in use across employees, sales and research</p></div>
+    </div>
+  </div>
+  <table class="t" style="left:890px;top:262px;width:910px;font-size:26px">
+    <tr><th style="width:30%">Elsewhere in India</th><th>What the language model does</th></tr>
+    <tr><td>Kotak AMC</td><td>Sorts investor email and drafts replies in English and Hinglish; a research platform runs on a private cloud</td></tr>
+    <tr><td>CAMS</td><td>CAMSLens turns SEBI circulars into department-level summaries, FAQs and tests</td></tr>
+    <tr><td>KFintech</td><td>ARYA takes lump-sum and SIP orders in conversation; a rule engine handles compliance</td></tr>
+    <tr><td>Aditya Birla Sun Life AMC</td><td>MyMutualFundGPT answers investor queries across about 7.9 million folios</td></tr>
+  </table>
+  <div class="foot"><span>Sources: NAM India Annual Report 2025-26; Microsoft (vendor); Business Today; Cafemutual; IANS</span><span class="pn"></span></div>
+</section>
+
+<!-- 15 LANGUAGE -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">Only 5% of Indian households want investor content in English</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.15s">Preferred language for investor content, 53,357 households</p>
+  <div class="abs a" style="left:120px;top:322px;width:1680px;height:96px;display:flex;gap:3px;--d:.25s">
+    <div class="seg" style="flex:47;background:var(--blue);color:#fff;border-radius:8px 0 0 8px"><b>47%</b> Hindi</div>
+    <div class="seg" style="flex:47;background:var(--ink);color:#fff"><b>47%</b> Regional languages</div>
+    <div class="seg" style="flex:5;background:var(--yellow);color:var(--ink);border-radius:0 8px 8px 0;padding:0;justify-content:center"><b style="margin:0">5%</b></div>
+  </div>
+  <p class="abs a" style="left:1620px;top:428px;width:180px;text-align:right;font-size:24px;color:var(--muted);--d:.4s">English</p>
+  <p class="abs a k" style="left:120px;top:500px;--d:.4s">Share preferring the state language, by state</p>
+  <div class="abs" style="left:120px;top:552px;width:1000px">
+    <div class="lr a" style="--d:.45s"><p>Tamil Nadu</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:602px;height:34px;background:var(--ink);--d:.6s"></div></div><b class="num">94%</b></div>
+    <div class="lr a" style="--d:.5s"><p>Telugu states</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:589px;height:34px;background:var(--ink);--d:.7s"></div></div><b class="num">92%</b></div>
+    <div class="lr a" style="--d:.55s"><p>Karnataka</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:570px;height:34px;background:var(--ink);--d:.8s"></div></div><b class="num">89%</b></div>
+    <div class="lr a" style="--d:.6s"><p>West Bengal</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:531px;height:34px;background:var(--ink);--d:.9s"></div></div><b class="num">83%</b></div>
+    <div class="lr a" style="--d:.65s"><p>Gujarat</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:518px;height:34px;background:var(--ink);--d:1s"></div></div><b class="num">81%</b></div>
+    <div class="lr a" style="--d:.7s"><p>Maharashtra</p><div class="track" style="position:relative;width:640px;height:34px"><div class="bar" style="--w:474px;height:34px;background:var(--ink);--d:1.1s"></div></div><b class="num">74%</b></div>
+  </div>
+  <div class="abs" style="left:1240px;top:520px;width:560px">
+    <div class="a" style="--d:.8s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:52px">20.7%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of Nippon India's AUM comes from beyond the top 30 cities, against 18.8% for the industry</p></div>
+    <div class="a" style="--d:.95s;border-top:2px solid var(--ink);padding-top:18px;margin-top:30px"><p class="body" style="font-size:27px"><b>SEBI itself</b> ran a multilingual AI calling pilot with Sarvam in 2026 and signed an agreement with BHASHINI for speech and translation.</p></div>
+  </div>
+  <div class="foot"><span>Sources: SEBI Investor Survey 2025 (Jan 2026), Table 11.1; NAM India Q2 FY27 release; Business Today (Feb 2026); CRN Asia (2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 16 OCBC -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">On KYC files at OCBC, pipeline design added up to 32 points of accuracy and let 8B models beat a 27B one</h2>
+  <div class="abs" style="left:120px;top:300px;width:1180px">
+    <p class="a k" style="--d:.15s;margin-bottom:26px"><span class="key" style="background:#C9CEE3"></span>Whole PDF sent to the model&nbsp;&nbsp;&nbsp;&nbsp;<span class="key" style="background:var(--blue)"></span>Retrieval pipeline with OCR and page selection</p>
+  </div>
+  <p class="abs a" style="left:120px;top:380px;font-size:28px;font-weight:600;--d:.2s">MiniCPM-o 2.6 (~8B)</p>
+  <div class="track" style="left:120px;top:428px;width:1000px"><div class="bar" style="--w:554px;background:#C9CEE3;--d:.3s"></div></div>
+  <p class="abs a num" style="left:1140px;top:430px;font-size:30px;font-weight:600;color:var(--muted);--d:1.3s">55.4%</p>
+  <div class="track" style="left:120px;top:482px;width:1000px"><div class="bar" style="--w:873px;background:var(--blue);--d:.5s"></div></div>
+  <p class="abs a num" style="left:1140px;top:484px;font-size:30px;font-weight:600;color:var(--blue);--d:1.5s">87.3%</p>
+  <p class="abs a" style="left:120px;top:570px;font-size:28px;font-weight:600;--d:.3s">Qwen3-VL (8B)</p>
+  <div class="track" style="left:120px;top:618px;width:1000px"><div class="bar" style="--w:559px;background:#C9CEE3;--d:.6s"></div></div>
+  <p class="abs a num" style="left:1140px;top:620px;font-size:30px;font-weight:600;color:var(--muted);--d:1.6s">55.9%</p>
+  <div class="track" style="left:120px;top:672px;width:1000px"><div class="bar" style="--w:853px;background:var(--blue);--d:.8s"></div></div>
+  <p class="abs a num" style="left:1140px;top:674px;font-size:30px;font-weight:600;color:var(--blue);--d:1.8s">85.3%</p>
+  <p class="abs a" style="left:120px;top:760px;font-size:28px;font-weight:600;--d:.4s">Gemma 3 (27B)</p>
+  <div class="track" style="left:120px;top:808px;width:1000px"><div class="bar" style="--w:476px;background:#C9CEE3;--d:.9s"></div></div>
+  <p class="abs a num" style="left:1140px;top:810px;font-size:30px;font-weight:600;color:var(--muted);--d:1.9s">47.6%</p>
+  <div class="track" style="left:120px;top:862px;width:1000px"><div class="bar" style="--w:730px;background:var(--blue);--d:1.1s"></div></div>
+  <p class="abs a num" style="left:1140px;top:864px;font-size:30px;font-weight:600;color:var(--blue);--d:2.1s">73.0%</p>
+  <div class="abs" style="left:1380px;top:380px;width:420px">
+    <div class="a" style="--d:.6s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:56px">120</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">production KYC files, ~3,000 scanned pages, four languages</p></div>
+    <div class="a" style="--d:.8s;border-top:2px solid var(--ink);padding-top:18px;margin-top:36px"><p class="big" style="font-size:56px">~70%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">fewer pages sent to the model; latency unchanged</p></div>
+    <div class="a" style="--d:1s;border-top:2px solid var(--ink);padding-top:18px;margin-top:36px"><p class="big" style="font-size:56px">#1 lever</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">finding the right page, not a bigger model</p></div>
+  </div>
+  <div class="foot"><span>Field-level extraction accuracy, PaddleOCR configurations. Source: OCBC, multistage KYC extraction pipeline (2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 17 WHERE VALUE LANDS -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">BCG expects the largest capacity gains in RFPs, client coverage and research</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.15s">Capacity per person with AI, as a multiple of today</p>
+  <div class="abs" style="left:440px;top:330px;width:900px;height:360px">
+    <div class="abs" style="left:0;top:0;width:1px;height:330px;background:var(--ink)"></div>
+    <div class="abs" style="left:300px;top:0;width:1px;height:330px;background:var(--line)"></div>
+    <div class="abs" style="left:600px;top:0;width:1px;height:330px;background:var(--line)"></div>
+    <div class="abs" style="left:900px;top:0;width:1px;height:330px;background:var(--line)"></div>
+    <p class="abs k" style="left:-12px;top:340px;font-size:22px">1x</p><p class="abs k" style="left:288px;top:340px;font-size:22px">4x</p><p class="abs k" style="left:588px;top:340px;font-size:22px">7x</p><p class="abs k" style="left:882px;top:340px;font-size:22px">10x</p>
+    <div class="gbar" style="left:400px;top:30px;width:500px;height:56px;background:var(--blue);color:#fff;--d:.4s;border-radius:6px"></div>
+    <div class="gbar" style="left:200px;top:137px;width:200px;height:56px;background:var(--blue);--d:.6s;border-radius:6px"></div>
+    <div class="gbar" style="left:100px;top:244px;width:300px;height:56px;background:var(--blue);--d:.8s;border-radius:6px"></div>
+  </div>
+  <p class="abs a" style="left:120px;top:372px;font-size:28px;font-weight:600;--d:.3s">RFP responses</p>
+  <p class="abs a" style="left:120px;top:479px;font-size:28px;font-weight:600;--d:.5s">Clients per manager</p>
+  <p class="abs a" style="left:120px;top:586px;font-size:28px;font-weight:600;--d:.7s">Research coverage</p>
+  <p class="abs a num" style="left:1358px;top:370px;font-size:30px;font-weight:600;--d:1.3s">5&#8211;10x</p>
+  <p class="abs a num" style="left:858px;top:477px;font-size:30px;font-weight:600;--d:1.5s">3&#8211;5x</p>
+  <p class="abs a num" style="left:858px;top:584px;font-size:30px;font-weight:600;--d:1.7s">2&#8211;5x</p>
+  <div class="abs" style="left:120px;top:770px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">50&#8211;70%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">fewer trade errors</p></div>
+    <div class="a" style="--d:1s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">55&#8211;65%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">more capacity in operations</p></div>
+    <div class="a" style="--d:1.1s;border-top:2px solid var(--ink);padding-top:20px"><p class="big" style="font-size:52px">0.5&#8211;1% of AUM</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">extra net inflows a year from AI-supported distribution</p></div>
+  </div>
+  <div class="foot"><span>These are BCG estimates of potential, not reported results. Sources: BCG executive perspective (July 2026); BCG (Aug 2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 18 KLARNA vs ALLIANZ -->
+<section class="slide" data-sec="The evidence">
+  <h2 class="title">Automation pays when the process is redesigned around people, not when people are removed first</h2>
+  <div class="abs" style="left:120px;top:290px;width:800px">
+    <div class="a" style="--d:.2s;display:flex;align-items:center;gap:16px"><span class="key" style="background:var(--red);margin:0"></span><p style="font-size:36px;font-weight:600">Klarna: cut first</p></div>
+    <div class="a" style="--d:.3s;margin-top:34px;border-left:2px solid var(--line);padding-left:32px">
+      <p class="k">February 2024</p><p class="body" style="margin-top:6px">AI assistant handles 2.3 million chats in month one; company claims the work of 700 agents and freezes hiring</p>
+      <p class="k" style="margin-top:30px">2025</p><p class="body" style="margin-top:6px">CEO says quality fell; human agents hired back into a hybrid model</p>
+    </div>
+  </div>
+  <div class="abs" style="left:1000px;top:290px;width:800px">
+    <div class="a" style="--d:.4s;display:flex;align-items:center;gap:16px"><span class="key" style="background:var(--blue);margin:0"></span><p style="font-size:36px;font-weight:600">Allianz: redesign first</p></div>
+    <div class="a" style="--d:.5s;margin-top:34px;border-left:2px solid var(--line);padding-left:32px">
+      <p class="k">July 2025</p><p class="body" style="margin-top:6px">Agentic AI processes small food-spoilage claims after catastrophes; people approve every payout</p>
+      <p class="k" style="margin-top:30px">Result</p><p class="body" style="margin-top:6px">About 80% faster processing and settlement; claims experts freed for complex cases</p>
+    </div>
+  </div>
+  <div class="abs a" style="left:120px;top:800px;width:1680px;background:var(--soft);border-radius:14px;padding:30px 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;--d:.8s">
+    <p class="body" style="font-size:28px"><b>Automate</b> the routine and narrow</p>
+    <p class="body" style="font-size:28px"><b>Keep people</b> on judgement and exceptions</p>
+    <p class="body" style="font-size:28px"><b>Measure</b> quality and complaints, not only cost</p>
+  </div>
+  <div class="foot"><span>Investor service faces the same choice. Sources: Entrepreneur; Maginative (2025); Emerj (Allianz Project Nemo)</span><span class="pn"></span></div>
+</section>
+
+<!-- 19 DIVIDER -->
+<section class="slide blue" data-sec="">
+  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">03</p>
+  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">Economics, risk and regulation</h2>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">Why model cost no longer decides the business case, what can go wrong, and what SEBI expects</p>
+</section>
+
+<!-- 20 COST -->
+<section class="slide" data-sec="Economics">
+  <h2 class="title">Model prices have fallen 280x in two years; architecture now sets the cost per task</h2>
+  <svg class="abs" style="left:120px;top:290px" width="1100" height="600" viewBox="0 0 1100 600" aria-hidden="true">
+    <line x1="80" x2="1080" y1="80" y2="80" stroke="#E2E5F0"/><line x1="80" x2="1080" y1="220" y2="220" stroke="#E2E5F0"/>
+    <line x1="80" x2="1080" y1="360" y2="360" stroke="#E2E5F0"/><line x1="80" x2="1080" y1="500" y2="500" stroke="#0E1330" stroke-width="2"/>
+    <path class="draw" style="--len:1400;--d:.4s" pathLength="1400" d="M100,80 C260,360 470,470 1060,490" fill="none" stroke="#2B4BFF" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="100" cy="80" r="12" fill="#0E1330"/>
+    <circle cx="1060" cy="490" r="12" fill="#2B4BFF"/>
+  </svg>
+  <p class="abs a big num" style="left:250px;top:262px;font-size:64px;--d:.3s">$20</p>
+  <p class="abs a k" style="left:380px;top:284px;--d:.3s">Nov 2022</p>
+  <p class="abs a big num" style="left:960px;top:650px;width:240px;text-align:right;font-size:64px;color:var(--blue);--d:1.9s">$0.07</p>
+  <p class="abs a k" style="left:960px;top:725px;width:240px;text-align:right;--d:1.9s">Oct 2024</p>
+  <p class="abs a k" style="left:200px;top:810px;--d:.5s">Price per million tokens for GPT-3.5-level performance</p>
+  <div class="abs" style="left:1320px;top:300px;width:480px">
+    <div class="a" style="--d:.5s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:56px">~10x a year</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">price fall at fixed capability ("LLMflation")</p></div>
+    <div class="a" style="--d:.7s;border-top:2px solid var(--ink);padding-top:18px;margin-top:34px"><p class="big" style="font-size:56px">25x</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">gap between one vendor's flagship and fastest tier: $5 vs $0.20 per million input tokens</p></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:34px"><p class="body" style="font-size:28px;font-weight:600">So the question shifts from "which model" to "which mix, at what cost per completed task".</p></div>
+  </div>
+  <div class="foot"><span>Sources: Stanford AI Index 2025; Andreessen Horowitz and vendor pricing via PYMNTS (2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 21 RETURNS -->
+<section class="slide" data-sec="Economics">
+  <h2 class="title">Technology spending alone has not bought productivity; redesigned workflows have</h2>
+  <svg class="abs a" style="left:120px;top:290px;--d:.2s" width="520" height="520" viewBox="0 0 520 520" id="g95" aria-hidden="true"></svg>
+  <div class="abs a" style="left:700px;top:290px;width:460px;--d:.4s">
+    <p class="big num" style="font-size:120px"><span data-count="95" data-suffix="%">0%</span></p>
+    <p class="body" style="margin-top:14px">of organisations in MIT's 2025 study saw no measurable P&amp;L impact from generative AI</p>
+    <p class="body" style="margin-top:22px;color:var(--muted);font-size:26px">Only 5% of custom enterprise tools reached production</p>
+  </div>
+  <div class="abs" style="left:1260px;top:290px;width:540px">
+    <p class="a k" style="--d:.5s;margin-bottom:14px">In asset management</p>
+    <div class="a" style="--d:.6s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:52px">1.3%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of the variation in managers' productivity is explained by their technology spend</p></div>
+    <div class="a" style="--d:.75s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p class="big" style="font-size:52px">60&#8211;80%</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">of technology budgets go to running existing systems</p></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p class="big" style="font-size:52px">8.9% a year</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">growth in technology spend over five years</p></div>
+  </div>
+  <div class="foot"><span>Sources: MIT NANDA, The GenAI Divide (July 2025); McKinsey (July 2025, North America and Europe) via Markets Media</span><span class="pn"></span></div>
+</section>
+
+<!-- 22 RISKS -->
+<section class="slide" data-sec="Risk">
+  <h2 class="title">Every material AI risk at an AMC has a known control and a named owner</h2>
+  <table class="t" style="left:120px;top:250px;width:1680px;font-size:25px;line-height:1.28">
+    <tr><th style="width:17%">Risk</th><th style="width:32%">What it looks like</th><th style="width:36%">Control</th><th>Owner</th></tr>
+    <tr><td>Wrong numbers</td><td>A reply or factsheet states a return or holding the model made up</td><td>Figures come from the system of record, never from the model; evaluation sets before launch</td><td>CMO, CTO</td></tr>
+    <tr><td>Overstated AI claims</td><td>SEC fined two advisers $400,000 in 2024 for false AI claims</td><td>Every public AI claim matched to the model inventory</td><td>CCO</td></tr>
+    <tr><td>Unlicensed advice</td><td>A chatbot recommends a scheme without checking suitability</td><td>Assistant limited to information; hand-off to a registered person</td><td>CCO, Sales head</td></tr>
+    <tr><td>Portfolio leakage</td><td>Staff paste holdings or pending orders into public tools</td><td>One governed gateway; self-hosted small models for dealing data</td><td>CTO, CISO</td></tr>
+    <tr><td>Unchecked research</td><td>The widely cited "GPT-4 beats analysts" paper was withdrawn</td><td>Every claim linked to its source filing; analyst signs off</td><td>CIO</td></tr>
+    <tr><td>Vendor dependence</td><td>A provider changes price, terms or behaviour</td><td>Several models behind one gateway; exit plan</td><td>CTO, CFO</td></tr>
+  </table>
+  <div class="foot"><span>CIO = chief investment officer. Sources: SEC press release 2024-36; arXiv 2407.17866 (withdrawn)</span><span class="pn"></span></div>
+</section>
+
+<!-- 23 SEBI REGULATION -->
+<section class="slide" data-sec="Regulation">
+  <h2 class="title">SEBI already holds the AMC responsible for its AI; detailed guidelines are still to come</h2>
+  <div class="abs" style="left:120px;top:300px;width:1680px;height:4px;background:var(--line)"></div>
+  <div class="abs" style="left:120px;top:300px;height:4px;background:var(--ink);width:0" id="tlfill"></div>
+  <div class="abs" style="left:120px;top:250px;width:1680px;display:grid;grid-template-columns:repeat(5,1fr);gap:32px">
+    <div class="a" style="--d:.3s"><p class="k">May 2019</p><div class="tdot" style="background:var(--ink)"></div><p class="th">Quarterly reporting</p><p class="tb">AMCs report every AI and ML system to AMFI each quarter</p></div>
+    <div class="a" style="--d:.5s"><p class="k">February 2025</p><div class="tdot" style="background:var(--ink)"></div><p class="th">Sole responsibility</p><p class="tb">For investor data, the tool's output and legal compliance, whether built or bought</p></div>
+    <div class="a" style="--d:.7s"><p class="k">June 2025</p><div class="tdot" style="background:var(--ink)"></div><p class="th">Draft AI guidelines</p><p class="tb">Five principles, lighter rules for internal-only tools</p></div>
+    <div class="a" style="--d:.9s"><p class="k">November 2026</p><div class="tdot" style="background:var(--red)"></div><p class="th">Final rules signalled</p><p class="tb">Chairman says guidelines on disclosure, accountability and human oversight will come soon</p></div>
+    <div class="a" style="--d:1.1s"><p class="k">April&#8211;May 2027</p><div class="tdot" style="background:#fff;border:4px solid var(--red)"></div><p class="th">Two more deadlines</p><p class="tb">Common advertisement code; main data protection obligations</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:640px;width:1680px;background:var(--soft);border-radius:14px;padding:30px 40px;--d:1.3s">
+    <p style="font-size:28px;font-weight:600;margin-bottom:18px">What the June 2025 draft asks a firm to have in place</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px 40px">
+      <p class="body" style="font-size:26px">A named senior manager and a skilled team</p>
+      <p class="body" style="font-size:26px">Vendor models treated as the firm's own</p>
+      <p class="body" style="font-size:26px">Investors told where AI affects them</p>
+      <p class="body" style="font-size:26px">Testing before launch and monitoring after</p>
+      <p class="body" style="font-size:26px">Inputs and outputs kept for five years</p>
+      <p class="body" style="font-size:26px">Checks for fairness and bias</p>
+    </div>
+  </div>
+  <div class="foot"><span>Sources: SEBI circular (May 2019), board memo (Dec 2024), consultation paper (June 2025); MediaNama (Nov 2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- 24 DIVIDER -->
+<section class="slide blue" data-sec="">
+  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">04</p>
+  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">The leadership agenda</h2>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">A decision rule, a twelve-month plan, the questions to own and the numbers to track</p>
+</section>
+
+<!-- 25 DECISION RULE -->
+<section class="slide" data-sec="Leadership agenda">
+  <h2 class="title">Five questions decide which model, if any, a process needs</h2>
+  <div class="abs" style="left:120px;top:250px;width:1680px">
+    <div class="a" style="--d:.2s;display:grid;grid-template-columns:90px 1fr 380px;align-items:center;padding:26px 0;border-top:2px solid var(--ink)"><span class="big" style="font-size:44px;color:var(--blue)">1</span><p style="font-size:32px;font-weight:500">Is there a measurable pain, with a named owner and a baseline?</p><p style="font-size:28px;font-weight:600">If not, stop</p></div>
+    <div class="a" style="--d:.3s;display:grid;grid-template-columns:90px 1fr 380px;align-items:center;padding:26px 0;border-top:1px solid var(--line)"><span class="big" style="font-size:44px;color:var(--blue)">2</span><p style="font-size:32px;font-weight:500">Does the input include scans, images, tables or forms?</p><p><span class="tag t-vlm" style="font-size:26px">Vision model</span></p></div>
+    <div class="a" style="--d:.4s;display:grid;grid-template-columns:90px 1fr 380px;align-items:center;padding:26px 0;border-top:1px solid var(--line)"><span class="big" style="font-size:44px;color:var(--blue)">3</span><p style="font-size:32px;font-weight:500">Is the task narrow, repetitive and high-volume?</p><p><span class="tag t-slm" style="font-size:26px">Small model</span></p></div>
+    <div class="a" style="--d:.5s;display:grid;grid-template-columns:90px 1fr 380px;align-items:center;padding:26px 0;border-top:1px solid var(--line)"><span class="big" style="font-size:44px;color:var(--blue)">4</span><p style="font-size:32px;font-weight:500">Does it need reasoning or drafting across many sources?</p><p><span class="tag t-llm" style="font-size:26px">Large model + your documents</span></p></div>
+    <div class="a" style="--d:.6s;display:grid;grid-template-columns:90px 1fr 380px;align-items:center;padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><span class="big" style="font-size:44px;color:var(--blue)">5</span><p style="font-size:32px;font-weight:500">Does the output reach an investor, a regulator or the order book?</p><p style="font-size:28px;font-weight:600;color:var(--red)">Human approves</p></div>
+  </div>
+  <div class="foot"><span>Human approval follows the accountability SEBI has placed on regulated entities since February 2025</span><span class="pn"></span></div>
+</section>
+
+<!-- 26 ROADMAP -->
+<section class="slide" data-sec="Leadership agenda">
+  <h2 class="title">A twelve-month plan in four workstreams, with three board gates</h2>
+  <div class="abs" style="left:440px;top:260px;width:1360px;display:grid;grid-template-columns:repeat(4,1fr)">
+    <p class="k">0&#8211;3 months</p><p class="k">3&#8211;6 months</p><p class="k">6&#8211;9 months</p><p class="k">9&#8211;12 months</p>
+  </div>
+  <div class="abs" style="left:440px;top:310px;width:1360px;height:2px;background:var(--ink)"></div>
+  <div class="abs" style="left:780px;top:310px;width:1px;height:560px;background:var(--line)"></div>
+  <div class="abs" style="left:1120px;top:310px;width:1px;height:560px;background:var(--line)"></div>
+  <div class="abs" style="left:1460px;top:310px;width:1px;height:560px;background:var(--line)"></div>
+  <p class="abs" style="left:120px;top:356px;font-size:28px;font-weight:600">Governance</p>
+  <p class="abs" style="left:120px;top:486px;font-size:28px;font-weight:600">Platform</p>
+  <p class="abs" style="left:120px;top:616px;font-size:28px;font-weight:600">Use cases</p>
+  <p class="abs" style="left:120px;top:746px;font-size:28px;font-weight:600">People</p>
+  <div class="gbar" style="left:440px;top:340px;width:330px;background:var(--ink);color:#fff;--d:.3s">AI policy, inventory</div>
+  <div class="gbar" style="left:790px;top:340px;width:1010px;background:var(--bluesoft);color:#1B33C9;--d:.5s">Independent testing, investor disclosures, board reviews</div>
+  <div class="gbar" style="left:440px;top:470px;width:330px;background:var(--ink);color:#fff;--d:.4s">AI gateway</div>
+  <div class="gbar" style="left:790px;top:470px;width:670px;background:var(--bluesoft);color:#1B33C9;--d:.6s">Evaluation sets, small-model hosting</div>
+  <div class="gbar" style="left:1470px;top:470px;width:330px;background:var(--bluesoft);color:#1B33C9;--d:.8s">Agent guardrails</div>
+  <div class="gbar" style="left:440px;top:600px;width:330px;background:var(--ink);color:#fff;--d:.5s">Pick 2&#8211;3 lighthouses</div>
+  <div class="gbar" style="left:790px;top:600px;width:330px;background:var(--blue);color:#fff;--d:.7s">Live, human review</div>
+  <div class="gbar" style="left:1130px;top:600px;width:670px;background:var(--blue);color:#fff;--d:.9s">Scale to 10+ processes</div>
+  <div class="gbar" style="left:440px;top:730px;width:330px;background:var(--ink);color:#fff;--d:.6s">Board sessions</div>
+  <div class="gbar" style="left:790px;top:730px;width:1010px;background:var(--yellowsoft);color:#7A5B00;--d:.8s">Role redesign, AI evaluator roles, team skills</div>
+  <div class="abs a" style="left:766px;top:872px;width:28px;height:28px;background:var(--red);transform:rotate(45deg);--d:1.1s"></div>
+  <div class="abs a" style="left:1106px;top:872px;width:28px;height:28px;background:var(--red);transform:rotate(45deg);--d:1.2s"></div>
+  <div class="abs a" style="left:1786px;top:872px;width:28px;height:28px;background:var(--red);transform:rotate(45deg);--d:1.3s"></div>
+  <p class="abs a k" style="left:600px;top:920px;width:360px;text-align:center;color:var(--ink);--d:1.1s">Owners named, policy approved</p>
+  <p class="abs a k" style="left:950px;top:920px;width:340px;text-align:center;color:var(--ink);--d:1.2s">Value reported to the board</p>
+  <p class="abs a k" style="left:1460px;top:920px;width:340px;text-align:right;color:var(--ink);--d:1.3s">Unit-cost targets met</p>
+</section>
+
+<!-- 27 CXO QUESTIONS -->
+<section class="slide" data-sec="Leadership agenda">
+  <h2 class="title">One question each member of the leadership team should own</h2>
+  <table class="t" style="left:120px;top:240px;width:1680px;font-size:28px;line-height:1.3">
+    <tr><th style="width:24%">Role</th><th>The question</th></tr>
+    <tr><td>CEO</td><td>Which three processes will we redesign this year, and who owns each outcome?</td></tr>
+    <tr><td>Chief investment officer</td><td>Which parts of research can a model draft, and how does an analyst verify each claim?</td></tr>
+    <tr><td>CFO</td><td>What does one completed task cost before and after, including human review?</td></tr>
+    <tr><td>CTO</td><td>Can we switch models next quarter without rebuilding, and is our data ready?</td></tr>
+    <tr><td>Risk and compliance</td><td>Which models reach investors, how are they tested, and what do we report to AMFI?</td></tr>
+    <tr><td>COO</td><td>Where do exceptions, rework and document handling pile up today?</td></tr>
+    <tr><td>Sales and marketing</td><td>How do we serve investors in their own language within the advertisement code?</td></tr>
+  </table>
+  <div class="foot"><span></span><span class="pn"></span></div>
+</section>
+
+<!-- 28 KPIs -->
+<section class="slide" data-sec="Leadership agenda">
+  <h2 class="title">What the board dashboard should track from day one</h2>
+  <div class="abs" style="left:120px;top:270px;width:1680px;display:grid;grid-template-columns:repeat(4,1fr);gap:40px">
+    <div class="a" style="--d:.2s;border-top:4px solid var(--ink);padding-top:24px"><p style="font-size:36px;font-weight:600">Adoption</p><p class="body" style="font-size:27px;margin-top:22px">Weekly active users as a share of eligible staff</p><p class="body" style="font-size:27px;margin-top:18px">Share of service requests and documents handled with AI</p></div>
+    <div class="a" style="--d:.3s;border-top:4px solid var(--blue);padding-top:24px"><p style="font-size:36px;font-weight:600">Value</p><p class="body" style="font-size:27px;margin-top:22px">Cost per completed task, including review</p><p class="body" style="font-size:27px;margin-top:18px">Turnaround time per request</p><p class="body" style="font-size:27px;margin-top:18px">Companies covered per analyst</p></div>
+    <div class="a" style="--d:.4s;border-top:4px solid var(--yellow);padding-top:24px"><p style="font-size:36px;font-weight:600">Quality</p><p class="body" style="font-size:27px;margin-top:22px">Accuracy on a fixed evaluation set, every release</p><p class="body" style="font-size:27px;margin-top:18px">First-time-right rate</p><p class="body" style="font-size:27px;margin-top:18px">Complaints on AI-handled journeys</p></div>
+    <div class="a" style="--d:.5s;border-top:4px solid var(--red);padding-top:24px"><p style="font-size:36px;font-weight:600">Risk</p><p class="body" style="font-size:27px;margin-top:22px">Incidents and overrides per 1,000 tasks</p><p class="body" style="font-size:27px;margin-top:18px">Investor communications corrected after release</p><p class="body" style="font-size:27px;margin-top:18px">AI systems with a named owner</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:840px;width:1680px;--d:.7s"><p class="lead" style="font-size:30px;color:var(--muted)">One row per lighthouse process: baseline, current, target, owner.</p></div>
+  <div class="foot"><span></span><span class="pn"></span></div>
+</section>
+
+<!-- 29 CLOSE -->
+<section class="slide dark" data-sec="">
+  <div class="abs" style="left:120px;top:0;bottom:0;width:4px;background:var(--yellow)"></div>
+  <h2 class="abs a" style="left:166px;top:330px;width:1720px;font-size:84px;font-weight:600;letter-spacing:-.04em;line-height:1.08;--d:.15s">Start with a process and its cost.<br><span style="color:rgba(255,255,255,.55)">Then choose the smallest model that does it safely.</span></h2>
+  <p class="abs a" style="left:170px;top:800px;font-size:30px;color:rgba(255,255,255,.7);--d:.5s">Thank you. Questions and discussion.</p>
+</section>
+

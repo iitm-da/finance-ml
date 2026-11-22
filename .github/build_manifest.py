@@ -22,6 +22,7 @@ SECTION_TITLES = {
     ".": "Day 1 · Time series forecasting · generative models",
     "nlp": "Day 2 · Advanced NLP for finance",
     "llm": "Day 2 · LLMs in depth",
+    "masterclass": "CXO masterclass · Language models in asset management",
     "intro": "Introduction · pandas",
     "data cleaning": "Data cleaning",
     "data-cleaning": "Data cleaning",

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Language is the ledger: a CXO briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#E4E7F1; --chrome:#0E1330;
+  --ink:#0E1330; --ink2:#1A2152; --muted:#5D6488; --faint:#8A90B0; --line:#E2E5F0; --bg:#FFFFFF; --soft:#F4F6FB;
+  --blue:#2B4BFF; --bluesoft:#E8ECFF; --red:#E8382D; --redsoft:#FDE9E7; --yellow:#FFC800; --yellowsoft:#FFF6D1;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#05060D;--chrome:#E4E7F1}}
+:root[data-theme="dark"]{--page:#05060D;--chrome:#E4E7F1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--page);overflow:hidden;font-family:'Geist',system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;font-feature-settings:"ss01"}
+#viewport{position:relative;width:100%;height:100%;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--s,.5));transform-origin:50% 50%;overflow:hidden;box-shadow:0 24px 70px rgba(14,19,48,.16)}
+.slide{position:absolute;inset:0;overflow:hidden;visibility:hidden;opacity:0;background:var(--bg);transition:opacity .5s ease,visibility 0s linear .5s}
+.slide.active{visibility:visible;opacity:1;transition:opacity .5s ease}
+.slide p,.slide h1,.slide h2,.slide h3{margin:0}
+.abs{position:absolute}
+.dark{background:var(--ink);color:#fff}
+.blue{background:var(--blue);color:#fff}
+
+/* type */
+.title{position:absolute;left:120px;top:96px;width:1640px;font-size:58px;font-weight:600;line-height:1.1;letter-spacing:-.028em}
+.body{font-size:30px;line-height:1.4;font-weight:400}
+.lead{font-size:34px;line-height:1.38;font-weight:400}
+.k{font-size:26px;font-weight:500;color:var(--muted);line-height:1.3}
+.big{font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+.foot{position:absolute;left:120px;right:120px;bottom:44px;display:flex;justify-content:space-between;align-items:center;font-size:24px;color:var(--faint)}
+.dark .foot,.blue .foot{color:rgba(255,255,255,.55)}
+.key{display:inline-block;width:18px;height:18px;border-radius:4px;vertical-align:-1px;margin-right:12px}
+
+/* entrance */
+.a{opacity:0;transform:translateY(14px)}
+.slide.active .a{animation:in .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,.15s)}
+@keyframes in{to{opacity:1;transform:none}}
+.slide.active .title{animation:in .7s cubic-bezier(.2,.7,.2,1) both}
+.title{opacity:0;transform:translateY(14px)}
+
+/* table */
+table.t{position:absolute;border-collapse:collapse;font-size:27px;line-height:1.32}
+table.t th{text-align:left;font-weight:600;font-size:24px;color:var(--muted);padding:0 28px 16px 0;border-bottom:2px solid var(--ink)}
+table.t td{padding:18px 28px 18px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.t td:first-child{font-weight:600}
+table.t.tight td{padding:11px 24px 11px 0}
+table.t tr{opacity:0}
+.slide.active table.t tr{animation:in .55s ease both}
+.slide.active table.t tr:nth-child(1){animation-delay:.15s}.slide.active table.t tr:nth-child(2){animation-delay:.25s}
+.slide.active table.t tr:nth-child(3){animation-delay:.35s}.slide.active table.t tr:nth-child(4){animation-delay:.45s}
+.slide.active table.t tr:nth-child(5){animation-delay:.55s}.slide.active table.t tr:nth-child(6){animation-delay:.65s}
+.slide.active table.t tr:nth-child(7){animation-delay:.75s}.slide.active table.t tr:nth-child(8){animation-delay:.85s}
+.slide.active table.t tr:nth-child(9){animation-delay:.95s}.slide.active table.t tr:nth-child(10){animation-delay:1.05s}
+.slide.active table.t tr:nth-child(11){animation-delay:1.15s}
+.tag{display:inline-block;font-size:22px;font-weight:600;padding:4px 14px;border-radius:999px;white-space:nowrap}
+.t-llm{background:var(--bluesoft);color:#1B33C9}.t-vlm{background:var(--redsoft);color:#B8231A}.t-slm{background:var(--yellowsoft);color:#7A5B00}
+
+/* bars */
+.track{position:absolute;height:44px;background:var(--soft);border-radius:6px}
+.bar{position:absolute;left:0;top:0;height:44px;border-radius:6px;width:0}
+.slide.active .bar{animation:grow 1.4s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,.4s)}
+@keyframes grow{to{width:var(--w)}}
+
+/* draw */
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.slide.active .draw{animation:dr 1.8s cubic-bezier(.5,0,.2,1) both;animation-delay:var(--d,.4s)}
+@keyframes dr{to{stroke-dashoffset:0}}
+
+/* gantt */
+.gbar{position:absolute;height:64px;border-radius:8px;display:flex;align-items:center;padding:0 20px;font-size:24px;font-weight:500;white-space:nowrap;overflow:hidden;clip-path:inset(0 100% 0 0)}
+.slide.active .gbar{animation:wipe 1s cubic-bezier(.3,.7,.2,1) both;animation-delay:var(--d,.4s)}
+@keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+
+/* diagram boxes */
+.box{position:absolute;border-radius:14px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.box h3{font-size:30px;font-weight:600;letter-spacing:-.01em;line-height:1.15}
+.box p{font-size:24px;line-height:1.3;color:var(--muted)}
+
+/* chrome */
+#progress{position:fixed;left:0;top:env(safe-area-inset-top,0px);height:4px;background:var(--chrome);width:0;transition:width .45s ease;z-index:5}
+#nav{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;z-index:6}
+#nav button{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--chrome);background:transparent;color:var(--chrome);font:600 18px/1 'Geist',Arial,sans-serif;cursor:pointer;opacity:.4}
+#nav button:hover,#nav button:focus-visible{opacity:1;outline:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport">
+<div id="stage">
+
