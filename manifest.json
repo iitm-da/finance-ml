@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-22 15:51 UTC",
+ "generated": "2026-11-22 15:56 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -9,7 +9,7 @@
    "folder": ".",
    "section": "Time series forecasting \u00b7 generative models",
    "kind": "deck",
-   "size": 1173915,
+   "size": 1173887,
    "updated": "2026-11-22"
   },
   {
@@ -27,7 +27,7 @@
    "folder": "agents",
    "section": "Agents",
    "kind": "deck",
-   "size": 99527,
+   "size": 99499,
    "updated": "2026-11-22"
   },
   {
@@ -36,7 +36,7 @@
    "folder": "llm",
    "section": "LLMs in depth",
    "kind": "deck",
-   "size": 332516,
+   "size": 332488,
    "updated": "2026-11-22"
   },
   {
@@ -72,7 +72,7 @@
    "folder": "nlp",
    "section": "Advanced NLP for finance",
    "kind": "deck",
-   "size": 1125020,
+   "size": 1124992,
    "updated": "2026-11-22"
   },
   {
