@@ -58,6 +58,8 @@ nav = ('<div id="nav"><button id="prev" aria-label="Previous slide">&#8249;</but
        '<button id="next" aria-label="Next slide">&#8250;</button></div>\n'
        '<div id="hint">&#8592; &#8594; navigate &#183; F fullscreen &#183; P print</div>\n')
 html = head + css + '</head>\n' + body + nav + '<script>\n' + mech + widgets + '\n</script>\n</body>\n</html>\n'
+from retheme import retheme
+html = retheme(html)   # CXO-masterclass theme
 open(OUT, 'w', encoding='utf-8').write(html)
 
 # every <script> block that is code must parse
