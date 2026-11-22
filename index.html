@@ -200,10 +200,10 @@ const KIND_LABEL = {deck:'Slides', demo:'Demo', notebook:'Colab', pdf:'PDF'};
    is appended afterwards, alphabetically. Keys are folder paths. */
 const FOLDER_ORDER = ['.', 'nlp', 'llm', 'agents', 'masterclass'];
 const SECTION_TITLES = {
-  '.'            : 'Day 1 · Time series forecasting · generative models',
-  'nlp'          : 'Day 2 · Advanced NLP for finance',
-  'llm'          : 'Day 2 · LLMs in depth',
-  'agents'       : 'Day 2 · Agentic AI',
+  '.'            : 'Time series forecasting · generative models',
+  'nlp'          : 'Advanced NLP for finance',
+  'llm'          : 'LLMs in depth',
+  'agents'       : 'Agentic AI',
   'masterclass'  : 'CXO masterclass · Language models in asset management',
   'intro'        : 'Introduction · pandas',
   'data cleaning': 'Data cleaning · regular expressions',
@@ -255,7 +255,7 @@ function topicName(it){
   // that folder wasn't folded into a parent above.
   const own = key === (it.folder || '.').replace(/\/+$/,'');
   return (own && it.section) || SECTION_TITLES[key] ||
-         (key === '.' ? 'Day 1 · Time series forecasting · generative models'
+         (key === '.' ? 'Time series forecasting · generative models'
                       : key.replace(/[-_\/]+/g,' ').replace(/\b([a-z])/g,(m,c)=>c.toUpperCase()));
 }
 

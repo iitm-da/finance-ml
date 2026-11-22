@@ -19,9 +19,9 @@ DEMO_RE = re.compile(r"^\d\d ")
 # Optional: nicer names for folders. Anything not listed falls back to the
 # folder name with dashes/underscores turned into spaces and title-cased.
 SECTION_TITLES = {
-    ".": "Day 1 · Time series forecasting · generative models",
-    "nlp": "Day 2 · Advanced NLP for finance",
-    "llm": "Day 2 · LLMs in depth",
+    ".": "Time series forecasting · generative models",
+    "nlp": "Advanced NLP for finance",
+    "llm": "LLMs in depth",
     "masterclass": "CXO masterclass · Language models in asset management",
     "intro": "Introduction · pandas",
     "data cleaning": "Data cleaning",
