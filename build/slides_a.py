@@ -89,7 +89,7 @@ add(f'''
     <div>&#160;</div>
     <div><span class="h-dim">10 alerts a day &#8594; </span><span class="h-val">{GN['fraud']['budget']['10']['gb']['caught']}</span><span class="h-dim"> of {GN['n']['fraud_test']} fraud rows</span></div>
   </div>
-  <div class="kicker">Machine Learning for Finance</div>
+  <div class="kicker">AI for Finance</div>
   <h1>Forecasting and<br/>Generative Models</h1>
   <div class="pt">Time series forecasting for finance<br/>Generative models, applied</div>
   <div class="rule"></div>

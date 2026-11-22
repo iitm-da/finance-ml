@@ -6,7 +6,7 @@ from slides_ner import C
 from slides_doc import D
 
 TITLE = 'Advanced NLP for Finance'
-RAIL = 'Machine Learning for Finance &#183; Advanced NLP for Finance'
+RAIL = 'AI for Finance &#183; Advanced NLP for Finance'
 OUT = 'advanced_nlp_for_finance.html'
 CSS = '''
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}

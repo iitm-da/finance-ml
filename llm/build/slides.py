@@ -6,7 +6,7 @@ from slides_prompt import C
 from slides_peft import D
 
 TITLE = 'LLMs in Depth'
-RAIL = 'Machine Learning for Finance &#183; LLMs in Depth'
+RAIL = 'AI for Finance &#183; LLMs in Depth'
 OUT = 'llms_in_depth.html'
 CSS = '''
 .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}

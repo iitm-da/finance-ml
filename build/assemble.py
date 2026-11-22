@@ -13,7 +13,7 @@ head = re.sub(r'<title>.*?</title>',
               '<title>Time Series Forecasting and Generative Models for Finance</title>', head)
 mech = src[src.index('/* ============================================================\n   deck mechanics'):
            src.index("(function(){\n  const el=document.getElementById('bw-data')")]
-mech = mech.replace('DA2402 &#183; Data Curation and Visualization', 'Machine Learning for Finance &#183; Forecasting and Generative Models')
+mech = mech.replace('DA2402 &#183; Data Curation and Visualization', 'AI for Finance &#183; Forecasting and Generative Models')
 mech = mech.replace('Lecture 1 &#183; ', '')
 assert 'DA2402' not in mech
 

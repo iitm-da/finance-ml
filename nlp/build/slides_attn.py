@@ -22,7 +22,7 @@ add(f'''
     <div><span class="h-dim">loan fields, rules      </span><span class="h-bad">{pct(sum(IE['m']['rules'].values()) / 6)}</span></div>
     <div><span class="h-dim">loan fields, QA model   </span><span class="h-val">{pct(sum(IE['m']['qa'].values()) / 6)}</span></div>
   </div>
-  <div class="kicker">Machine Learning for Finance</div>
+  <div class="kicker">AI for Finance</div>
   <h1>Advanced NLP<br/>for Finance</h1>
   <div class="pt">Attention, sentiment, entities, documents</div>
   <div class="rule"></div>

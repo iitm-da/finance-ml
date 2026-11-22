@@ -26,7 +26,7 @@ add(f'''
     <div>&#160;</div>
     <div><span class="h-dim">LoRA trains </span><span class="h-val">{PF['llm']['LoRA, rank 8, 3,000 labels']['trainable'] / PF['llm']['LoRA, rank 8, 3,000 labels']['total']:.2%}</span><span class="h-dim"> of the weights</span></div>
   </div>
-  <div class="kicker">Machine Learning for Finance</div>
+  <div class="kicker">AI for Finance</div>
   <h1>LLMs in Depth</h1>
   <div class="pt">Retrieval, evaluation, prompting, fine-tuning</div>
   <div class="rule"></div>

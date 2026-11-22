@@ -2,7 +2,7 @@
 from common import *
 
 TITLE = 'Agentic AI'
-RAIL = 'Machine Learning for Finance &#183; Agentic AI'
+RAIL = 'AI for Finance &#183; Agentic AI'
 OUT = 'agentic_ai.html'
 CSS = '''
 .cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -41,7 +41,7 @@ add(f'''
     <div>&#160;</div>
     <div><span class="h-dim">model   </span><span class="h-val">ANSWER: 19.9%</span></div>
   </div>
-  <div class="kicker">Machine Learning for Finance</div>
+  <div class="kicker">AI for Finance</div>
   <h1>Agentic AI</h1>
   <div class="pt">A model, tools and a loop</div>
   <div class="rule"></div>
