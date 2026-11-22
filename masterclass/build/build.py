@@ -39,6 +39,14 @@ css = """
 .tdot{width:20px;height:20px;border-radius:50%;margin:14px 0 26px}
 .th{font-size:29px;font-weight:600;line-height:1.2}
 .tb{font-size:24px;line-height:1.32;color:var(--muted);margin-top:8px!important}
+.tok{display:inline-flex;align-items:center;height:64px;padding:0 20px;border-radius:10px;background:var(--bluesoft);color:#1B33C9;font-size:30px;font-weight:600}
+.tok.q{background:#fff;border:3px dashed var(--blue);min-width:150px;justify-content:center}
+.tok.s{height:46px;padding:0 13px;font-size:23px;border-radius:8px}
+.pr{display:grid;grid-template-columns:200px 640px 1fr;column-gap:18px;align-items:center;margin-bottom:12px}
+.pr p{font-size:28px;font-weight:600;font-family:'Courier New',monospace}
+.pr b{font-size:27px;font-weight:600}
+p.li{font-size:27px;line-height:1.3;padding:14px 0;border-bottom:1px solid var(--line);margin:0}
+p.li:first-of-type{margin-top:14px!important}
 #nav{right:14px;bottom:calc(60px + env(safe-area-inset-bottom,0px));flex-direction:column}
 """
 

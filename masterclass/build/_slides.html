@@ -102,7 +102,97 @@
 <section class="slide blue" data-sec="">
   <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">01</p>
   <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">The three model types</h2>
-  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">What LLMs, VLMs and SLMs do, what they cost, and how leading firms combine them</p>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">How LLMs, VLMs and SLMs work, what they cost, where they run, and how leading firms combine them</p>
+</section>
+
+<!-- HOW 1: LLM -->
+<section class="slide" data-sec="How they work">
+  <h2 class="title">A language model does one thing: it predicts the next token, again and again</h2>
+  <p class="abs a k" style="left:120px;top:262px;--d:.15s"><b style="color:var(--blue)">1</b>&nbsp;&nbsp;The text is cut into tokens</p>
+  <div class="abs a" style="left:120px;top:308px;display:flex;gap:10px;--d:.25s">
+    <span class="tok">The</span><span class="tok">fund</span><span class="tok">manager</span><span class="tok">increased</span><span class="tok">the</span><span class="tok">allocation</span><span class="tok">to</span><span class="tok q">?</span>
+  </div>
+  <div class="abs a" style="left:120px;top:412px;width:1060px;height:104px;border-radius:14px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:28px;padding:0 34px;--d:.45s">
+    <p style="font-size:32px;font-weight:600;white-space:nowrap">Language model</p><p style="font-size:25px;line-height:1.3;color:rgba(255,255,255,.75)">billions of numbers, called parameters, learned by reading a large part of the internet</p>
+  </div>
+  <p class="abs a k" style="left:120px;top:556px;--d:.6s"><b style="color:var(--blue)">2</b>&nbsp;&nbsp;The model gives every possible next token a probability</p>
+  <div class="abs" style="left:120px;top:606px;width:1060px">
+    <div class="pr a" style="--d:.7s"><p>banks</p><div class="track" style="position:relative;width:640px;height:38px"><div class="bar" style="--w:243px;height:38px;background:var(--blue);--d:.9s"></div></div><b class="num">38%</b></div>
+    <div class="pr a" style="--d:.78s"><p>technology</p><div class="track" style="position:relative;width:640px;height:38px"><div class="bar" style="--w:134px;height:38px;background:#C9CEE3;--d:1s"></div></div><b class="num">21%</b></div>
+    <div class="pr a" style="--d:.86s"><p>equities</p><div class="track" style="position:relative;width:640px;height:38px"><div class="bar" style="--w:77px;height:38px;background:#C9CEE3;--d:1.1s"></div></div><b class="num">12%</b></div>
+    <div class="pr a" style="--d:.94s"><p>gold</p><div class="track" style="position:relative;width:640px;height:38px"><div class="bar" style="--w:45px;height:38px;background:#C9CEE3;--d:1.2s"></div></div><b class="num">7%</b></div>
+    <p class="a" style="--d:1.3s;font-size:24px;color:var(--muted);margin-top:6px!important">and tens of thousands of other tokens share the rest</p>
+  </div>
+  <div class="abs" style="left:1280px;top:262px;width:520px">
+    <div class="a" style="--d:1s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600"><b style="color:var(--blue)">3</b>&nbsp;&nbsp;One token is picked and the step repeats</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">A page of text is this step run a few hundred times.</p></div>
+    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:18px;margin-top:30px"><p style="font-size:30px;font-weight:600">It writes what is likely</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Likely is usually true, but not always. This is where confident errors come from.</p></div>
+    <div class="a" style="--d:1.4s;border-top:2px solid var(--ink);padding-top:18px;margin-top:30px"><p style="font-size:30px;font-weight:600">Your documents change the odds</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Put the factsheet in the prompt and the right figure becomes the likely one.</p></div>
+  </div>
+  <div class="foot"><span>Probabilities are illustrative</span><span class="pn"></span></div>
+</section>
+
+<!-- HOW 2: VLM -->
+<section class="slide" data-sec="How they work">
+  <h2 class="title">A vision model turns the page into tokens and passes them to the same language model</h2>
+  <svg class="abs a" style="left:120px;top:270px;--d:.2s" width="340" height="460" viewBox="0 0 340 460" aria-hidden="true">
+    <defs><pattern id="grid" width="56.67" height="57.5" patternUnits="userSpaceOnUse"><path d="M56.67 0H0V57.5" fill="none" stroke="#E8382D" stroke-width="2"/></pattern></defs>
+    <rect width="340" height="460" fill="#FBFAF6" stroke="#D9DCE8"/>
+    <rect x="26" y="26" width="170" height="14" rx="3" fill="#3A4166"/>
+    <g fill="#B9BED6"><rect x="26" y="70" width="120" height="8" rx="3"/><rect x="26" y="150" width="90" height="8" rx="3"/><rect x="26" y="230" width="140" height="8" rx="3"/><rect x="26" y="310" width="70" height="8" rx="3"/><rect x="26" y="400" width="280" height="7" rx="3"/><rect x="26" y="418" width="240" height="7" rx="3"/></g>
+    <g fill="#1A2152" font-family="'Courier New',monospace" font-weight="700" font-size="20"><text x="26" y="108">A SHARMA</text><text x="26" y="188">ABCDE1234F</text><text x="26" y="268">0012 3456 7890</text><text x="26" y="348">SBIN0001234</text></g>
+    <rect width="340" height="460" fill="url(#grid)"/><rect x="1" y="1" width="338" height="458" fill="none" stroke="#E8382D" stroke-width="2"/>
+  </svg>
+  <p class="abs a k" style="left:120px;top:744px;width:340px;--d:.3s"><b style="color:var(--red)">1</b>&nbsp;&nbsp;The page is cut into patches</p>
+  <svg class="abs a" style="left:0;top:0;--d:.5s" width="1920" height="1080" aria-hidden="true"><g stroke="#B9BED6" stroke-width="3" fill="#B9BED6">
+    <line x1="480" y1="500" x2="536" y2="500"/><path d="M536,491 l14,9 -14,9z"/>
+    <line x1="800" y1="500" x2="856" y2="500"/><path d="M856,491 l14,9 -14,9z"/>
+    <line x1="1250" y1="500" x2="1306" y2="500"/><path d="M1306,491 l14,9 -14,9z"/>
+    <line x1="1560" y1="500" x2="1596" y2="500"/><path d="M1596,491 l14,9 -14,9z"/></g></svg>
+  <div class="box a" style="left:560px;top:410px;width:230px;height:180px;background:var(--redsoft);--d:.5s"><h3>Vision encoder</h3><p>turns each patch into numbers</p></div>
+  <p class="abs a k" style="left:560px;top:744px;width:260px;--d:.5s"><b style="color:var(--red)">2</b>&nbsp;&nbsp;Each patch is encoded</p>
+  <div class="abs a" style="left:880px;top:330px;width:360px;--d:.7s">
+    <p style="font-size:24px;font-weight:600;color:#B8231A">Image tokens</p>
+    <div style="margin-top:12px;width:352px;height:104px;background:repeating-linear-gradient(90deg,#E8382D 0 16px,transparent 16px 22px);-webkit-mask:repeating-linear-gradient(0deg,#000 0 16px,transparent 16px 22px);mask:repeating-linear-gradient(0deg,#000 0 16px,transparent 16px 22px)"></div>
+    <p style="font-size:24px;font-weight:600;color:#1B33C9;margin-top:26px!important">Question tokens</p>
+    <div style="display:flex;gap:8px;margin-top:12px"><span class="tok s">What</span><span class="tok s">is</span><span class="tok s">the</span><span class="tok s">PAN</span><span class="tok s">?</span></div>
+  </div>
+  <p class="abs a k" style="left:880px;top:744px;width:380px;--d:.7s"><b style="color:var(--red)">3</b>&nbsp;&nbsp;Image and text join one sequence</p>
+  <div class="box a" style="left:1330px;top:410px;width:220px;height:180px;background:var(--ink);color:#fff;--d:.9s"><h3>Language model</h3><p style="color:rgba(255,255,255,.7)">predicts the next token</p></div>
+  <div class="abs a" style="left:1620px;top:462px;width:180px;--d:1.1s"><p style="font-size:22px;color:var(--muted)">Answer</p><p style="font-family:'Courier New',monospace;font-weight:700;font-size:27px;margin-top:6px!important">ABCDE1234F</p></div>
+  <p class="abs a k" style="left:1330px;top:744px;width:470px;--d:.9s"><b style="color:var(--red)">4</b>&nbsp;&nbsp;The answer is predicted as text</p>
+  <div class="abs" style="left:120px;top:830px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:16px"><p class="body" style="font-size:26px"><b>A page costs many tokens,</b> so long files are slow and expensive to send whole.</p></div>
+    <div class="a" style="--d:1.3s;border-top:2px solid var(--ink);padding-top:16px"><p class="body" style="font-size:26px"><b>Detail smaller than a patch is lost,</b> which is why small print and handwriting fail.</p></div>
+    <div class="a" style="--d:1.4s;border-top:2px solid var(--ink);padding-top:16px"><p class="body" style="font-size:26px"><b>The output is still a prediction,</b> so every extracted field needs a check.</p></div>
+  </div>
+  <div class="foot"><span>Illustrative form with dummy data</span><span class="pn"></span></div>
+</section>
+
+<!-- HOW 3: SLM -->
+<section class="slide" data-sec="How they work">
+  <h2 class="title">A small model is the same design with fewer parameters, prepared for one job</h2>
+  <div class="abs" style="left:120px;top:270px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:56px">
+    <div class="a" style="--d:.2s;border-top:4px solid var(--ink);padding-top:24px">
+      <p style="font-size:34px;font-weight:600">Distillation</p>
+      <svg width="480" height="170" viewBox="0 0 480 170" aria-hidden="true" style="margin-top:16px"><circle cx="85" cy="85" r="80" fill="#2B4BFF"/><g stroke="#B9BED6" stroke-width="3" fill="#B9BED6"><line x1="190" y1="85" x2="330" y2="85"/><path d="M330,76 l14,9 -14,9z"/></g><circle cx="390" cy="85" r="24" fill="#FFC800"/><text x="262" y="66" text-anchor="middle" font-size="21" fill="#5D6488" font-family="Geist,Arial">answers</text></svg>
+      <p class="body" style="font-size:27px;margin-top:14px">A large model answers thousands of questions, and the small model is trained to give the same answers.</p>
+    </div>
+    <div class="a" style="--d:.35s;border-top:4px solid var(--ink);padding-top:24px">
+      <p style="font-size:34px;font-weight:600">Fine-tuning</p>
+      <svg width="480" height="170" viewBox="0 0 480 170" aria-hidden="true" style="margin-top:16px"><g fill="#FBFAF6" stroke="#B9BED6" stroke-width="2"><rect x="20" y="40" width="90" height="110" rx="4"/><rect x="38" y="26" width="90" height="110" rx="4"/><rect x="56" y="12" width="90" height="110" rx="4"/></g><g fill="#B9BED6"><rect x="68" y="30" width="60" height="7" rx="3"/><rect x="68" y="48" width="46" height="7" rx="3"/><rect x="68" y="66" width="56" height="7" rx="3"/></g><g stroke="#B9BED6" stroke-width="3" fill="#B9BED6"><line x1="190" y1="85" x2="330" y2="85"/><path d="M330,76 l14,9 -14,9z"/></g><circle cx="390" cy="85" r="24" fill="#FFC800"/><text x="262" y="66" text-anchor="middle" font-size="21" fill="#5D6488" font-family="Geist,Arial">your examples</text></svg>
+      <p class="body" style="font-size:27px;margin-top:14px">Your own solved cases teach it one task. One study of financial tables needed 2,152 examples.</p>
+    </div>
+    <div class="a" style="--d:.5s;border-top:4px solid var(--ink);padding-top:24px">
+      <p style="font-size:34px;font-weight:600">Quantisation</p>
+      <div style="height:170px;margin-top:16px;display:flex;flex-direction:column;justify-content:center;gap:18px">
+        <div style="display:flex;align-items:center;gap:16px"><div style="position:relative;width:336px;height:44px"><div class="bar" style="--w:336px;background:#C9CEE3;--d:.8s"></div></div><p style="font-size:26px;font-weight:600">14 GB</p></div>
+        <div style="display:flex;align-items:center;gap:16px"><div style="position:relative;width:84px;height:44px"><div class="bar" style="--w:84px;background:var(--yellow);--d:1.1s"></div></div><p style="font-size:26px;font-weight:600">3.5 GB</p></div>
+      </div>
+      <p class="body" style="font-size:27px;margin-top:14px">Each parameter is stored in 4 bits instead of 16, so a 7B model shrinks to a quarter of the memory.</p>
+    </div>
+  </div>
+  <div class="abs a" style="left:120px;top:810px;width:1680px;background:var(--soft);border-radius:14px;padding:28px 40px;--d:.9s"><p class="body" style="font-size:28px"><b>What you give up is breadth.</b> Outside its own task a small model gets worse quickly, so each one needs its own test set and its own owner.</p></div>
+  <div class="foot"><span>Memory is for the weights alone: 7 billion parameters at 2 bytes and at half a byte each. Fine-tuning example: arXiv 2508.05669</span><span class="pn"></span></div>
 </section>
 
 <!-- 7 COMPARISON -->
@@ -198,6 +288,80 @@
   </table>
   <p class="abs a body" style="left:120px;top:880px;width:1680px;font-size:28px;--d:.9s"><b>Choose on five tests:</b> accuracy on 200&#8211;500 of your own cases, cost per completed task, where the data goes, licence terms and the exit route.</p>
   <div class="foot"><span>Sources: model provider documentation and releases, as of November 2026. Names change every few months.</span><span class="pn"></span></div>
+</section>
+
+<!-- LOCAL 1: WHERE -->
+<section class="slide" data-sec="Local deployment">
+  <h2 class="title">A model can run in four places, from a vendor's servers to a laptop</h2>
+  <div class="abs a" style="left:960px;top:246px;width:840px;height:36px;border:2px dashed var(--ink);border-bottom:0;border-radius:10px 10px 0 0;--d:.9s"></div>
+  <p class="abs a" style="left:960px;top:226px;width:840px;text-align:center;font-size:24px;font-weight:600;--d:.9s"><span style="background:#fff;padding:0 16px">Local deployment: data never leaves the AMC</span></p>
+  <table class="t" style="left:120px;top:296px;width:1680px;font-size:26px;table-layout:fixed">
+    <tr><th style="width:240px"></th><th>Vendor API</th><th>Your cloud account</th><th>Your own GPUs</th><th>On the device</th></tr>
+    <tr><td>Models</td><td>The newest closed models</td><td>Closed models through the cloud provider, and open ones</td><td>Open-weight models only</td><td>Small models only</td></tr>
+    <tr><td>Where data goes</td><td>The vendor's servers, under contract</td><td>Your tenancy, in a region you choose</td><td>Your data centre</td><td>Stays on the laptop or phone</td></tr>
+    <tr><td>How you pay</td><td>Per token</td><td>Per token or per GPU-hour</td><td>Hardware and people, fixed</td><td>Almost nothing per use</td></tr>
+    <tr><td>What you run</td><td>Nothing</td><td>Access, keys and logs</td><td>Everything, including upgrades</td><td>Distribution and updates</td></tr>
+    <tr><td>AMC example</td><td>Research synthesis on public filings</td><td>Staff assistant on internal documents</td><td>Dealing-room and investor data</td><td>Sales notes in the field, offline</td></tr>
+  </table>
+  <p class="abs a body" style="left:120px;top:910px;width:1680px;font-size:27px;--d:1.1s"><b>In India today:</b> Kotak AMC runs its research platform on a sovereign private cloud, the second column.</p>
+  <div class="foot"><span>Source for the example: Business Today (Feb 2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- LOCAL 2: HARDWARE -->
+<section class="slide" data-sec="Local deployment">
+  <h2 class="title">Memory decides the hardware: small models fit a laptop, a 100B model needs a data-centre GPU</h2>
+  <p class="abs a k" style="left:440px;top:270px;--d:.15s">Memory for the model's weights at 4 bits per parameter, in GB</p>
+  <div class="abs" style="left:440px;top:320px;width:1000px;height:400px">
+    <div class="abs" style="left:0;top:0;width:2px;height:380px;background:var(--ink)"></div>
+    <div class="abs a" style="left:200px;top:0;width:0;height:380px;border-left:2px dashed #8A90B0;--d:.9s"></div>
+    <div class="abs a" style="left:300px;top:0;width:0;height:380px;border-left:2px dashed #8A90B0;--d:1s"></div>
+    <div class="abs a" style="left:1000px;top:0;width:0;height:380px;border-left:2px dashed #8A90B0;--d:1.1s"></div>
+    <div class="gbar" style="left:0;top:24px;width:25px;height:52px;background:var(--yellow);padding:0;border-radius:0 6px 6px 0;--d:.3s"></div>
+    <div class="gbar" style="left:0;top:112px;width:56px;height:52px;background:var(--yellow);padding:0;border-radius:0 6px 6px 0;--d:.45s"></div>
+    <div class="gbar" style="left:0;top:200px;width:188px;height:52px;background:var(--red);padding:0;border-radius:0 6px 6px 0;--d:.6s"></div>
+    <div class="gbar" style="left:0;top:288px;width:656px;height:52px;background:var(--blue);padding:0;border-radius:0 6px 6px 0;--d:.75s"></div>
+    <p class="abs a num" style="left:39px;top:34px;font-size:28px;font-weight:600;--d:1.2s">2 GB</p>
+    <p class="abs a num" style="left:70px;top:122px;font-size:28px;font-weight:600;--d:1.3s">4.5 GB</p>
+    <p class="abs a num" style="left:202px;top:210px;font-size:28px;font-weight:600;background:#fff;padding:0 8px;--d:1.4s">15 GB</p>
+    <p class="abs a num" style="left:670px;top:298px;font-size:28px;font-weight:600;--d:1.5s">52.5 GB</p>
+    <p class="abs a" style="left:90px;top:392px;width:220px;text-align:center;font-size:22px;line-height:1.25;color:var(--muted);--d:.9s">16 GB<br>office laptop</p>
+    <p class="abs a" style="left:300px;top:392px;width:230px;padding-left:10px;font-size:22px;line-height:1.25;color:var(--muted);--d:1s">24 GB<br>one workstation GPU</p>
+    <p class="abs a" style="left:770px;top:392px;width:230px;text-align:right;font-size:22px;line-height:1.25;color:var(--muted);--d:1.1s">80 GB<br>one data-centre GPU</p>
+  </div>
+  <p class="abs a" style="left:120px;top:354px;font-size:28px;font-weight:600;--d:.25s">4B small model</p>
+  <p class="abs a" style="left:120px;top:442px;font-size:28px;font-weight:600;--d:.4s">9B small model</p>
+  <p class="abs a" style="left:120px;top:530px;font-size:28px;font-weight:600;--d:.55s">30B model</p>
+  <p class="abs a" style="left:120px;top:618px;font-size:28px;font-weight:600;--d:.7s">105B model</p>
+  <div class="abs" style="left:1500px;top:300px;width:300px">
+    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:16px"><p style="font-size:27px;font-weight:600">Closed frontier models</p><p class="body" style="font-size:24px;color:var(--muted);margin-top:6px">cannot be hosted locally; their weights are not released</p></div>
+    <div class="a" style="--d:1.35s;border-top:2px solid var(--ink);padding-top:16px;margin-top:28px"><p style="font-size:27px;font-weight:600">Serving software is free</p><p class="body" style="font-size:24px;color:var(--muted);margin-top:6px">Ollama on a laptop, vLLM on a server</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:830px;width:1680px;background:var(--soft);border-radius:14px;padding:24px 40px;--d:1.5s"><p class="body" style="font-size:27px"><b>The hardware is the easy part.</b> The work is the same as for any model: a gateway, logs, a test set, and people who keep it updated.</p></div>
+  <div class="foot"><span>Weights only: parameters times half a byte. Working memory adds to this. Sizes match Qwen 3.5 and Sarvam models.</span><span class="pn"></span></div>
+</section>
+
+<!-- LOCAL 3: WHEN -->
+<section class="slide" data-sec="Local deployment">
+  <h2 class="title">Run locally when data is sensitive and volume is steady; use an API for the hardest reasoning</h2>
+  <p class="abs a k" style="left:120px;top:270px;--d:.15s">Cost per month as volume grows (shape only, no scale)</p>
+  <svg class="abs" style="left:120px;top:320px" width="700" height="480" viewBox="0 0 700 480" role="img" aria-label="API cost rises in a straight line with volume; local cost is flat; the lines cross">
+    <line x1="40" y1="420" x2="680" y2="420" stroke="#0E1330" stroke-width="2"/><line x1="40" y1="20" x2="40" y2="420" stroke="#0E1330" stroke-width="2"/>
+    <path class="draw" style="--len:800;--d:.4s" pathLength="800" d="M40,410 L660,60" fill="none" stroke="#2B4BFF" stroke-width="5" stroke-linecap="round"/>
+    <path class="draw" style="--len:800;--d:.8s" pathLength="800" d="M40,250 L660,215" fill="none" stroke="#E0A800" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="341" cy="233" r="9" fill="#fff" stroke="#0E1330" stroke-width="3"/>
+    <text x="40" y="456" font-size="22" fill="#8A90B0" font-family="Geist,Arial">Few tasks</text><text x="680" y="456" text-anchor="end" font-size="22" fill="#8A90B0" font-family="Geist,Arial">Millions of tasks</text>
+  </svg>
+  <p class="abs a" style="left:560px;top:372px;font-size:24px;font-weight:600;--d:1.4s"><span class="key" style="background:var(--blue);margin-right:8px"></span>API, per token</p>
+  <p class="abs a" style="left:610px;top:556px;font-size:24px;font-weight:600;--d:1.6s"><span class="key" style="background:#E0A800;margin-right:8px"></span>Local, mostly fixed</p>
+  <p class="abs a" style="left:300px;top:440px;width:210px;font-size:22px;line-height:1.25;color:var(--muted);--d:1.8s">Break-even: find it from your own volumes</p>
+  <div class="abs" style="left:900px;top:270px;width:900px;display:grid;grid-template-columns:1fr 1fr;gap:48px">
+    <div class="a" style="--d:.5s;border-top:4px solid #E0A800;padding-top:22px"><p style="font-size:34px;font-weight:600">Local fits</p>
+      <p class="li">Holdings and pending orders</p><p class="li">Investor PAN, bank and KYC documents</p><p class="li">Millions of routine items a month</p><p class="li">Regional-language models you fine-tune</p><p class="li">Branches with poor connectivity</p></div>
+    <div class="a" style="--d:.7s;border-top:4px solid var(--blue);padding-top:22px"><p style="font-size:34px;font-weight:600">An API fits</p>
+      <p class="li">Reasoning across long filings</p><p class="li">Low or uneven volume</p><p class="li">The newest capability, without waiting</p><p class="li">Public or already-published data</p><p class="li">No team to run servers</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:850px;width:1680px;background:var(--soft);border-radius:14px;padding:24px 40px;--d:1.2s"><p class="body" style="font-size:27px"><b>Most firms end up with both,</b> behind one gateway that decides where each request may go. SEBI holds the AMC responsible for investor data in either case.</p></div>
+  <div class="foot"><span>Source: SEBI board memo (Dec 2024), in force February 2025</span><span class="pn"></span></div>
 </section>
 
 <!-- 11 DIVIDER -->
