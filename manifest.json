@@ -1,7 +1,7 @@
 {
  "repo": "iitm-da/finance-ml",
  "branch": "master",
- "generated": "2026-11-22 15:56 UTC",
+ "generated": "2026-11-23 05:28 UTC",
  "items": [
   {
    "path": "forecasting_and_generative_models.html",
@@ -63,8 +63,8 @@
    "folder": "masterclass",
    "section": "CXO masterclass \u00b7 Language models in asset management",
    "kind": "deck",
-   "size": 113606,
-   "updated": "2026-11-22"
+   "size": 134652,
+   "updated": "2026-11-23"
   },
   {
    "path": "nlp/advanced_nlp_for_finance.html",
