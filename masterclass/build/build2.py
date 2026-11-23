@@ -282,7 +282,7 @@ S = f"""
   <p class="abs a" style="left:170px;top:300px;font-size:28px;font-weight:500;color:var(--yellow);--d:.1s">AI Masterclass for CXOs</p>
   <h1 class="abs a" style="left:166px;top:350px;width:1000px;font-size:120px;font-weight:600;letter-spacing:-.045em;line-height:1;--d:.2s">AI across business functions</h1>
   <p class="abs a" style="left:170px;top:640px;width:900px;font-size:38px;line-height:1.35;font-weight:300;color:rgba(255,255,255,.82);--d:.35s">Where language models fit in each part of an asset management company</p>
-  <p class="abs a" style="left:170px;top:910px;font-size:26px;color:rgba(255,255,255,.6);--d:.5s">Dr. Arun Ayyar</p>
+  <div class="abs a" style="left:170px;bottom:84px;--d:.5s"><p style="font-size:46px;font-weight:600;letter-spacing:-.02em;color:#fff">Dr. Arun Ayyar</p><p style="font-size:28px;line-height:1.4;color:rgba(255,255,255,.7);margin-top:8px">Adjunct Faculty, DSAI, IIT Madras</p></div>
 </section>
 
 <!-- 2 MAP -->
