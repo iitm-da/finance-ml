@@ -910,6 +910,64 @@
   <div class="foot"><span>Field-level extraction accuracy, PaddleOCR configurations. Source: OCBC, multistage KYC extraction pipeline (2026)</span><span class="pn"></span></div>
 </section>
 
+<!-- SCALE-BEGIN G -->
+<section class="slide b6" data-sec="The evidence">
+  <style>
+  .b6 .vd{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--ink);cursor:pointer;border:1px solid var(--line);box-shadow:0 10px 28px rgba(14,19,48,.12)}
+  .b6 .vd img,.b6 .vd iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;display:block}
+  .b6 .vd img{transition:transform .5s}
+  .b6 .vd:hover img{transform:scale(1.03)}
+  .b6 .vd::after{content:"";position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:rgba(14,19,48,.82);transition:background .25s,transform .25s}
+  .b6 .vd::before{content:"";position:absolute;z-index:1;left:50%;top:50%;margin:-18px 0 0 -11px;border:18px solid transparent;border-left:30px solid #fff;border-right:0}
+  .b6 .vd:hover::after{background:var(--blue);transform:scale(1.08)}
+  .b6 .vd.play::after,.b6 .vd.play::before{display:none}
+  .b6 .nm{font-size:31px;font-weight:600;line-height:1.2;margin-top:10px!important}
+  .b6 .ds{font-size:25px;line-height:1.36;color:var(--muted);margin-top:8px!important}
+  .b6 a{font-size:22px;font-weight:600;color:#1B33C9;text-decoration:none}
+  .b6 a:hover{text-decoration:underline}
+  </style>
+  <h2 class="title">What we have built at SFRPL: an internal GPT, a trade settlement agent and BankVision 4B</h2>
+  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:48px">
+    <div class="a" style="--d:.2s">
+      <div class="vd" data-id="QqfTUNcryms" role="button" tabindex="0" aria-label="Play video: Internal GPT for company documents"><img src="img/sfrpl_internal_gpt.jpg" alt=""></div>
+      <p style="margin-top:18px!important;display:flex;justify-content:space-between;align-items:center"><span class="tag t-llm">LLM</span><a href="https://youtu.be/QqfTUNcryms" target="_blank" rel="noopener">Open on YouTube &#8599;</a></p>
+      <p class="nm">Internal GPT for company documents</p>
+      <p class="ds">An orchestrator directs agents that explore, research and write, and it answers from the company's own documents.</p>
+    </div>
+    <div class="a" style="--d:.35s">
+      <div class="vd" data-id="5jTInN53RvU" role="button" tabindex="0" aria-label="Play video: Smart Settle agent for trade settlement"><img src="img/sfrpl_smart_settle.jpg" alt=""></div>
+      <p style="margin-top:18px!important;display:flex;justify-content:space-between;align-items:center"><span class="tag t-slm">Agent</span><a href="https://youtu.be/5jTInN53RvU" target="_blank" rel="noopener">Open on YouTube &#8599;</a></p>
+      <p class="nm">Smart Settle, a trade settlement agent</p>
+      <p class="ds">It reads the counterparty's email and lays it over our booking field by field: ISIN, nominal, price, cash and dates.</p>
+    </div>
+    <div class="a" style="--d:.5s">
+      <div class="vd" data-id="rgJDB1r9K7w" role="button" tabindex="0" aria-label="Play video: BankVision 4B"><img src="img/sfrpl_bankvision.jpg" alt=""></div>
+      <p style="margin-top:18px!important;display:flex;justify-content:space-between;align-items:center"><span class="tag t-vlm">VLM</span><a href="https://youtu.be/rgJDB1r9K7w" target="_blank" rel="noopener">Open on YouTube &#8599;</a></p>
+      <p class="nm">BankVision 4B</p>
+      <p class="ds">A vision model that reads bank statements: 125 US banks, 96.6% layout accuracy and 93% extraction accuracy on 2,000+ statements.</p>
+    </div>
+  </div>
+  <div class="abs a" style="left:120px;top:862px;width:1680px;background:var(--soft);border-radius:14px;padding:22px 40px;--d:.8s"><p class="body" style="font-size:27px;line-height:1.35"><b>The same building blocks as this session:</b> a language model over company documents, an agent on one narrow workflow, and a vision model for one type of document.</p></div>
+  <div class="foot"><span>Videos: SFRPL (Santa Fe Research) on YouTube; click a frame to play. BankVision figures are as stated in its video.</span><span class="pn"></span></div>
+  <script>
+  (function(){
+    var sec=document.currentScript.closest('.slide'),vs=sec.querySelectorAll('.vd');
+    function play(v){var id=v.dataset.id;
+      if(location.protocol==='file:'){window.open('https://youtu.be/'+id,'_blank','noopener');return}
+      stop();v.classList.add('play');
+      var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0';
+      f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;f.title=v.getAttribute('aria-label');v.appendChild(f)}
+    function stop(){[].forEach.call(vs,function(v){var f=v.querySelector('iframe');if(f)f.remove();v.classList.remove('play')})}
+    [].forEach.call(vs,function(v){
+      v.addEventListener('click',function(e){e.stopPropagation();if(!v.classList.contains('play'))play(v)});
+      v.addEventListener('keydown',function(e){if(e.key==='Enter'){e.stopPropagation();play(v)}})});
+    [].forEach.call(sec.querySelectorAll('a'),function(a){a.addEventListener('click',function(e){e.stopPropagation()})});
+    new MutationObserver(function(){if(!sec.classList.contains('active'))stop()}).observe(sec,{attributes:true,attributeFilter:['class']});
+  })();
+  </script>
+</section>
+<!-- SCALE-END G -->
+
 <!-- 17 WHERE VALUE LANDS -->
 <section class="slide" data-sec="The evidence">
   <h2 class="title">BCG expects the largest capacity gains in RFPs, client coverage and research</h2>
