@@ -470,8 +470,12 @@ S += NIPPON + DIV_FN
 _lk = 'target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#1B33C9;font-weight:600;text-decoration:none"'
 EXTRA = {2: f'''<p class="abs a" style="left:120px;top:971px;width:1680px;font-size:21px;line-height:1.2;color:var(--muted);--d:1.2s"><b style="color:var(--ink)">Built at SFRPL:</b>&nbsp; <a href="https://youtu.be/5jTInN53RvU" {_lk}>Smart Settle, a trade settlement agent &#8599;</a> &nbsp;&#183;&nbsp; <a href="https://youtu.be/QqfTUNcryms" {_lk}>Internal GPT, RAG over company documents &#8599;</a></p>'''}
 
+VOICE = (d / "parts" / "voice_agent.html").read_text(encoding="utf-8")
+
 for i, f in enumerate(F):
     S += fslide(4 + i, *f, ART[i], EXTRA.get(i, ""))
+    if f[0].startswith("Sales"):
+        S += VOICE          # voice agents, straight after the Sales slide
 
 # one slide in place of the seven "three places to start" slides and the heat grid
 _rows = ""

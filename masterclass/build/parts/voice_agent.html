@@ -1,0 +1,77 @@
+<!-- SALES: VOICE AGENT -->
+<section class="slide v1" data-sec="The functions">
+  <style>
+  .v1 .call{position:relative;height:100%;display:flex;flex-direction:column}
+  .v1 .hd{display:flex;align-items:center;justify-content:space-between;font-size:21px;font-weight:600;color:var(--muted)}
+  .v1 .lang{background:var(--yellowsoft);color:#7A5B00;border-radius:999px;padding:4px 14px;font-size:19px}
+  .v1 .wv{display:flex;align-items:center;gap:5px;height:44px;margin:10px 0 6px}
+  .v1 .wv i{width:6px;height:8px;border-radius:3px;background:#C9CEE3;transition:height .12s,background .2s}
+  .v1 .wv.ai i{background:var(--blue)}.v1 .wv.inv i{background:var(--ink)}.v1 .wv.hum i{background:var(--red)}
+  .v1 .who{font-size:19px;font-weight:600;margin-left:14px;color:var(--muted);white-space:nowrap}
+  .v1 .log{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;overflow:hidden}
+  .v1 .bub{max-width:82%;border-radius:14px;padding:11px 18px;font-size:23px;line-height:1.3;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s}
+  .v1 .bub.in{opacity:1;transform:none}
+  .v1 .bub.ai{align-self:flex-start;background:var(--bluesoft);color:var(--ink)}
+  .v1 .bub.inv{align-self:flex-end;background:#fff;border:1.5px solid var(--line)}
+  .v1 .bub.hum{align-self:flex-start;background:var(--ink);color:#fff}
+  .v1 .bub b{display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:#1B33C9}
+  .v1 .bub.inv b{color:var(--muted)}.v1 .bub.hum b{color:var(--yellow)}
+  .v1 .vcl{border-left:1px solid var(--line);padding-left:28px}
+  .v1 .vch{font-size:21px;font-weight:600;color:var(--muted)}
+  .v1 .vct{font-weight:400;font-size:23px;line-height:1.3;margin-top:6px!important}
+  </style>
+  <h2 class="title">Sales: a voice agent makes the routine calls in the investor's language and hands advice to a person</h2>
+  <p class="abs a" style="left:120px;top:262px;width:790px;font-size:23px;line-height:1.35;color:var(--muted);--d:.2s"><b style="color:var(--ink)">Today:</b> a call list goes to the sales team &#8594; each call is dialled by hand &#8594; most are reminders and routine questions</p>
+  <div class="abs" style="left:120px;top:372px;width:790px">
+    <div class="sp slm a" style="--d:.5s"><b>Speech model</b><span>Turns what the investor says into text</span></div>
+    <div class="sp llm a" style="--d:.62s"><b>Large model</b><span>Answers from approved documents and decides the next step</span></div>
+    <div class="sp slm a" style="--d:.74s"><b>Speech model</b><span>Speaks the reply in the investor's language</span></div>
+    <div class="sp hum a" style="--d:.86s"><b>Person</b><span>Takes over for advice, complaints and anything unclear</span></div>
+  </div>
+  <div class="abs a" style="left:960px;top:262px;width:840px;height:548px;background:var(--soft);border-radius:16px;padding:22px 30px 26px;--d:.4s">
+    <div class="call">
+      <div class="hd"><span>What a call sounds like (illustrative)</span><span class="lang">Spoken in Hindi</span></div>
+      <div style="display:flex;align-items:center"><div class="wv"></div><span class="who"></span></div>
+      <div class="log"></div>
+    </div>
+  </div>
+  <div class="abs" style="left:120px;top:842px;width:1680px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px">
+    <div class="a" style="--d:.9s"><p class="vch">Where to start</p><p class="vct">Missed-SIP and mandate reminders; call-backs on new enquiries; a helpline for distributors</p></div>
+    <div class="a vcl" style="--d:1s"><p class="vch">Controls</p><p class="vct">Says it is an AI at the start; gives no scheme advice; calls only with consent; every call recorded and transcribed</p></div>
+    <div class="a vcl" style="--d:1.1s"><p class="vch">Already in use</p><p class="vct">SEBI ran a multilingual AI calling pilot with Sarvam in 2026. CAMS handles 8 million calls a year for mutual funds.</p></div>
+  </div>
+  <div class="foot"><span>The call is illustrative. Controls are our recommendation. Sources: Business Today (Feb 2026); CAMS Annual Report FY2024-25</span><span class="pn"></span></div>
+  <script>
+  (function(){
+    var sec=document.currentScript.closest('.slide'),tok=0,wv=sec.querySelector('.wv'),who=sec.querySelector('.who'),log=sec.querySelector('.log'),bars=[],timer=0;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    for(var k=0;k<34;k++){var b=document.createElement('i');wv.appendChild(b);bars.push(b)}
+    var L=[
+      ['ai','Voice agent','Hello, this is an AI assistant calling from your mutual fund. Your SIP instalment did not go through this month.'],
+      ['inv','Investor','I changed my bank account last month.'],
+      ['ai','Voice agent','I can send a link to update the mandate to your registered mobile number. Shall I send it?'],
+      ['inv','Investor','Yes. And which fund should I put more money in?'],
+      ['ai','Voice agent','I cannot advise on schemes. I am connecting you to your relationship manager now.'],
+      ['hum','Relationship manager','Good afternoon, I have your details on my screen.']
+    ];
+    var NAME={ai:'Voice agent speaking',inv:'Investor speaking',hum:'A person has taken over'};
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function talk(kind){clearInterval(timer);wv.className='wv '+(kind||'');who.textContent=kind?NAME[kind]:'';
+      if(!kind){bars.forEach(function(b){b.style.height='8px'});return}
+      timer=setInterval(function(){bars.forEach(function(b,i){b.style.height=(8+Math.random()*34*(.45+.55*Math.abs(Math.sin(i*.6))))+'px'})},110)}
+    function bubble(l){var d=document.createElement('div');d.className='bub '+l[0];d.innerHTML='<b>'+l[1]+'</b>'+l[2];log.appendChild(d);void d.offsetWidth;d.classList.add('in');
+      while(log.children.length>4)log.removeChild(log.firstChild)}
+    async function play(my){
+      while(tok===my){
+        log.innerHTML='';talk('');await sleep(900);
+        for(var i=0;i<L.length;i++){if(tok!==my)return;talk(L[i][0]);await sleep(500);if(tok!==my)return;bubble(L[i]);await sleep(1300+L[i][2].length*22)}
+        talk('');await sleep(4200);
+      }
+    }
+    function start(){tok++;if(reduce){log.innerHTML='';L.slice(2).forEach(bubble);return}play(tok)}
+    new MutationObserver(function(){if(sec.classList.contains('active'))start();else{tok++;talk('')}}).observe(sec,{attributes:true,attributeFilter:['class']});
+    if(sec.classList.contains('active'))start();
+  })();
+  </script>
+</section>
+
