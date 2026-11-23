@@ -64,6 +64,8 @@ p.li:first-of-type{margin-top:14px!important}
 .st.slm{background:var(--yellowsoft)}.st.slm b{color:#7A5B00}
 .st.rule{background:#fff;border:2px solid var(--line)}.st.rule b{color:var(--muted)}
 .st.hum{background:var(--ink);color:#fff}.st.hum b{color:var(--yellow)}
+.st.r{min-height:0;height:108px;display:flex;align-items:center;font-size:26px}
+.st.r.hum{font-size:29px;font-weight:600}
 .dot{display:inline-block;width:22px;height:22px;border-radius:50%}
 .dot.off{background:transparent;border:2px solid var(--line)}
 #nav{right:14px;bottom:calc(60px + env(safe-area-inset-bottom,0px));flex-direction:column}

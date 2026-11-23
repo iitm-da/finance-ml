@@ -154,6 +154,8 @@ p.li:first-of-type{margin-top:14px!important}
 .st.slm{background:var(--yellowsoft)}.st.slm b{color:#7A5B00}
 .st.rule{background:#fff;border:2px solid var(--line)}.st.rule b{color:var(--muted)}
 .st.hum{background:var(--ink);color:#fff}.st.hum b{color:var(--yellow)}
+.st.r{min-height:0;height:108px;display:flex;align-items:center;font-size:26px}
+.st.r.hum{font-size:29px;font-weight:600}
 .dot{display:inline-block;width:22px;height:22px;border-radius:50%}
 .dot.off{background:transparent;border:2px solid var(--line)}
 #nav{right:14px;bottom:calc(60px + env(safe-area-inset-bottom,0px));flex-direction:column}
@@ -271,6 +273,25 @@ p.li:first-of-type{margin-top:14px!important}
   <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">How LLMs, VLMs and SLMs work, what they cost, where they run, and how leading firms combine them</p>
 </section>
 
+<!-- SCALE-BEGIN A -->
+<section class="slide" data-sec="Before LLMs">
+  <h2 class="title">Before large language models, every language task needed its own model and its own labelled data</h2>
+  <div class="fl" style="top:270px">
+    <div class="row a" style="--d:.15s;margin-bottom:14px"><p class="k" style="flex:1">Labelled data</p><p class="k" style="flex:1">Model</p><p class="k" style="flex:1">The one task it does</p></div>
+    <div class="row a" style="--d:0.25s;margin-bottom:16px"><div class="st r rule">News headlines marked positive or negative</div><div class="st r hum">Sentiment model</div><div class="st r llm">Scores the tone of market news</div></div>
+    <div class="row a" style="--d:0.40s;margin-bottom:16px"><div class="st r rule">Filings with every company name tagged</div><div class="st r hum">Entity model</div><div class="st r llm">Finds company names in filings</div></div>
+    <div class="row a" style="--d:0.55s;margin-bottom:16px"><div class="st r rule">Sentence pairs in English and Hindi</div><div class="st r hum">Translation model</div><div class="st r llm">Translates a factsheet</div></div>
+    <div class="row a" style="--d:0.70s;margin-bottom:16px"><div class="st r rule">Past investor emails sorted by hand</div><div class="st r hum">Routing model</div><div class="st r llm">Sends an email to the right desk</div></div>
+  </div>
+  <div class="abs" style="left:1340px;top:270px;width:460px">
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600">Thousands of labelled examples for each task</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">OpenAI put the need at "thousands or tens of thousands of examples" per task.</p></div>
+    <div class="a" style="--d:1.05s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">A model did not transfer</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">The sentiment model could not translate. A new task was a new project.</p></div>
+    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">Cost grew with the task list</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Each model had its own data, its own team and its own upkeep.</p></div>
+  </div>
+  <div class="foot"><span>The four tasks are illustrative. Quote: Brown et al., Language Models are Few-Shot Learners (OpenAI, 2020)</span><span class="pn"></span></div>
+</section>
+<!-- SCALE-END A -->
+
 <!-- HOW 1: LLM -->
 <section class="slide" data-sec="How they work">
   <h2 class="title">A language model does one thing: it predicts the next token, again and again</h2>
@@ -296,6 +317,86 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Probabilities are illustrative</span><span class="pn"></span></div>
 </section>
+
+<!-- SCALE-BEGIN B -->
+<section class="slide" data-sec="Scale">
+  <h2 class="title">OpenAI kept one design and made it about 1,500 times larger, and one model began to handle many tasks</h2>
+  <div class="abs" style="left:120px;top:236px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:56px">
+    <div class="a" style="--d:.2s">
+      <div style="display:flex;align-items:center;gap:26px;height:300px"><svg width="7.8" height="7.8" viewBox="0 0 7.8 7.8" aria-hidden="true"><circle cx="3.88" cy="3.88" r="3.88" fill="#2B4BFF"/></svg>
+        <div><p class="big" style="font-size:52px">GPT-1</p><p style="font-size:26px;color:var(--muted);margin-top:8px">2018 &#183; 117 million parameters</p></div></div>
+      <div style="border-top:2px solid var(--ink);padding-top:16px;margin-top:14px"><p style="font-size:29px;font-weight:600;line-height:1.2">Trained again for each task</p><p class="body" style="font-size:25px;line-height:1.34;color:var(--muted);margin-top:8px">It first learned to predict the next token from books. Each task then needed a second round of training on labelled examples.</p></div>
+    </div>
+    <div class="a" style="--d:.45s">
+      <div style="display:flex;align-items:center;gap:26px;height:300px"><svg width="27.8" height="27.8" viewBox="0 0 27.8 27.8" aria-hidden="true"><circle cx="13.89" cy="13.89" r="13.89" fill="#2B4BFF"/></svg>
+        <div><p class="big" style="font-size:52px">GPT-2</p><p style="font-size:26px;color:var(--muted);margin-top:8px">2019 &#183; 1.5 billion parameters</p></div></div>
+      <div style="border-top:2px solid var(--ink);padding-top:16px;margin-top:14px"><p style="font-size:29px;font-weight:600;line-height:1.2">Tested on tasks it was never trained for</p><p class="body" style="font-size:25px;line-height:1.34;color:var(--muted);margin-top:8px">Reading comprehension, translation and summarising, with no task training. The paper was titled "Language Models are Unsupervised Multitask Learners".</p></div>
+    </div>
+    <div class="a" style="--d:.7s">
+      <div style="display:flex;align-items:center;gap:26px;height:300px"><svg width="300.0" height="300.0" viewBox="0 0 300.0 300.0" aria-hidden="true"><circle cx="150.00" cy="150.00" r="150.00" fill="#2B4BFF"/></svg>
+        <div><p class="big" style="font-size:52px">GPT-3</p><p style="font-size:26px;color:var(--muted);margin-top:8px">2020 &#183; 175 billion parameters</p></div></div>
+      <div style="border-top:2px solid var(--ink);padding-top:16px;margin-top:14px"><p style="font-size:29px;font-weight:600;line-height:1.2">Given the task in the prompt</p><p class="body" style="font-size:25px;line-height:1.34;color:var(--muted);margin-top:8px">A few examples in the prompt were enough for translation, question answering and three-digit arithmetic. The model itself was not changed.</p></div>
+    </div>
+  </div>
+  <div class="abs a" style="left:120px;top:852px;width:1680px;background:var(--soft);border-radius:14px;padding:26px 40px;--d:1.1s"><p class="body" style="font-size:28px"><b>The training goal was the same in all three: predict the next token.</b> What changed was the size, and the task moved out of the training data and into the prompt.</p></div>
+  <div class="foot"><span>Circle area in proportion to parameter count. Sources: Radford et al. (OpenAI, 2018 and 2019); Brown et al. (OpenAI, 2020)</span><span class="pn"></span></div>
+</section>
+<!-- SCALE-END B -->
+
+<!-- SCALE-BEGIN C -->
+<section class="slide" data-sec="Scale">
+  <h2 class="title">Scaling laws: each tenfold increase in parameters cut the test loss by about 16%</h2>
+  <p class="abs a k" style="left:120px;top:250px;--d:.2s">Test loss, the error in predicting the next token (log scale, lower is better)</p>
+  <svg class="abs" style="left:120px;top:300px" width="1000" height="570" viewBox="0 0 1000 570" role="img" aria-label="Line chart on two logarithmic axes: test loss falls in a straight line from 4.78 at 100 thousand parameters to 2.38 at 1 billion"><line x1="110" x2="940" y1="470.0" y2="470.0" stroke="#0E1330" stroke-width="2"/><text x="96" y="477.0" text-anchor="end" font-size="22" fill="#8A90B0">2</text><line x1="110" x2="940" y1="307.6" y2="307.6" stroke="#E2E5F0" stroke-width="1"/><text x="96" y="314.6" text-anchor="end" font-size="22" fill="#8A90B0">3</text><line x1="110" x2="940" y1="192.4" y2="192.4" stroke="#E2E5F0" stroke-width="1"/><text x="96" y="199.4" text-anchor="end" font-size="22" fill="#8A90B0">4</text><line x1="110" x2="940" y1="103.0" y2="103.0" stroke="#E2E5F0" stroke-width="1"/><text x="96" y="110.0" text-anchor="end" font-size="22" fill="#8A90B0">5</text><line x1="110" x2="940" y1="30.0" y2="30.0" stroke="#E2E5F0" stroke-width="1"/><text x="96" y="37.0" text-anchor="end" font-size="22" fill="#8A90B0">6</text><text x="110.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">100 thousand</text><text x="317.5" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">1 million</text><text x="525.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">10 million</text><text x="732.5" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">100 million</text><text x="940.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">1 billion</text><text x="525.0" y="552" text-anchor="middle" font-size="22" fill="#5D6488">Parameters in the model (log scale)</text><path class="draw" style="--len:1000;--d:.4s" pathLength="1000" fill="none" stroke="#2B4BFF" stroke-width="5" stroke-linecap="round" d="M110.0,120.7 L940.0,401.1"/><g class="a" style="--d:0.7s"><circle cx="110.0" cy="120.7" r="9" fill="#2B4BFF" stroke="#fff" stroke-width="3"/><text x="116.0" y="100.7" font-size="26" font-weight="600" fill="#0E1330">4.78</text></g><g class="a" style="--d:1.0s"><circle cx="317.5" cy="190.8" r="9" fill="#2B4BFF" stroke="#fff" stroke-width="3"/><text x="323.5" y="170.8" font-size="26" font-weight="600" fill="#0E1330">4.02</text></g><g class="a" style="--d:1.3s"><circle cx="525.0" cy="260.9" r="9" fill="#2B4BFF" stroke="#fff" stroke-width="3"/><text x="531.0" y="240.9" font-size="26" font-weight="600" fill="#0E1330">3.37</text></g><g class="a" style="--d:1.6s"><circle cx="732.5" cy="331.0" r="9" fill="#2B4BFF" stroke="#fff" stroke-width="3"/><text x="738.5" y="311.0" font-size="26" font-weight="600" fill="#0E1330">2.83</text></g><g class="a" style="--d:1.9s"><circle cx="940.0" cy="401.1" r="9" fill="#2B4BFF" stroke="#fff" stroke-width="3"/><text x="946.0" y="381.1" font-size="26" font-weight="600" fill="#0E1330">2.38</text></g></svg>
+  <div class="abs" style="left:1240px;top:250px;width:560px">
+    <div class="a" style="--d:.5s;border-top:2px solid var(--ink);padding-top:18px"><p class="big" style="font-size:60px">7+</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:6px">orders of magnitude over which some of the trends held</p></div>
+    <div class="a" style="--d:.7s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p style="font-size:30px;font-weight:600">Parameters, data and compute</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">The loss followed the same kind of law in each of the three.</p></div>
+    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p style="font-size:30px;font-weight:600">A larger model became a forecast</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">A lab could estimate the gain from a bigger training run before paying for it.</p></div>
+    <div class="a" style="--d:1.1s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p style="font-size:30px;font-weight:600">Data has to grow with size</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">In 2022 DeepMind's 70B Chinchilla, trained on 4x more data, beat the 175B GPT-3.</p></div>
+  </div>
+  <div class="foot"><span>Line is the fitted law L = (8.8&#215;10&#185;&#179; / N)^0.076 from Kaplan et al. (OpenAI, 2020). 16% is our calculation. Hoffmann et al. (DeepMind, 2022)</span><span class="pn"></span></div>
+</section>
+<!-- SCALE-END C -->
+
+<!-- SCALE-BEGIN D -->
+<section class="slide" data-sec="Emergence">
+  <h2 class="title">Emergent abilities: GPT-3 scored 0% on three-digit addition at 3 billion parameters and 76% at full size</h2>
+  <p class="abs a k" style="left:120px;top:250px;--d:.2s">Three-digit additions answered exactly right</p>
+  <svg class="abs" style="left:120px;top:300px" width="1000" height="570" viewBox="0 0 1000 570" role="img" aria-label="Line chart: accuracy on three-digit addition stays near zero for GPT-3 up to 6 billion parameters, then reaches 17% at 13 billion and 76% at 175 billion. Google BIG-G stays at zero up to 27 billion and reaches 52% at 128 billion"><line x1="90" x2="940" y1="470.0" y2="470.0" stroke="#0E1330" stroke-width="2"/><text x="76" y="477.0" text-anchor="end" font-size="22" fill="#8A90B0">0%</text><line x1="90" x2="940" y1="360.0" y2="360.0" stroke="#E2E5F0" stroke-width="1"/><text x="76" y="367.0" text-anchor="end" font-size="22" fill="#8A90B0">25%</text><line x1="90" x2="940" y1="250.0" y2="250.0" stroke="#E2E5F0" stroke-width="1"/><text x="76" y="257.0" text-anchor="end" font-size="22" fill="#8A90B0">50%</text><line x1="90" x2="940" y1="140.0" y2="140.0" stroke="#E2E5F0" stroke-width="1"/><text x="76" y="147.0" text-anchor="end" font-size="22" fill="#8A90B0">75%</text><line x1="90" x2="940" y1="30.0" y2="30.0" stroke="#E2E5F0" stroke-width="1"/><text x="76" y="37.0" text-anchor="end" font-size="22" fill="#8A90B0">100%</text><text x="90.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">100 million</text><text x="302.5" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">1 billion</text><text x="515.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">10 billion</text><text x="727.5" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">100 billion</text><text x="940.0" y="506" text-anchor="middle" font-size="22" fill="#8A90B0">1 trillion</text><text x="515.0" y="552" text-anchor="middle" font-size="22" fill="#5D6488">Parameters in the model (log scale)</text><path class="draw" style="--len:1000;--d:1.5s" pathLength="1000" fill="none" stroke="#E8382D" stroke-width="4" stroke-linejoin="round" d="M137.3,470.0 L192.3,470.0 L238.9,470.0 L314.5,470.0 L374.4,470.0 L423.8,470.0 L502.4,470.0 L613.9,470.0 L757.0,242.1"/><path class="draw" style="--len:1000;--d:.4s" pathLength="1000" fill="none" stroke="#2B4BFF" stroke-width="5" stroke-linejoin="round" d="M110.6,467.4 L205.6,470.0 L277.2,470.0 L326.7,470.0 L403.9,470.0 L467.9,467.4 L539.2,395.6 L779.1,136.0"/><g class="a" style="--d:2.6s"><rect x="131.3" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="186.3" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="232.9" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="308.5" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="368.4" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="417.8" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="496.4" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="607.9" y="464.0" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><rect x="751.0" y="236.1" width="12" height="12" fill="#E8382D" stroke="#fff" stroke-width="2"/><text x="775.0" y="278.1" font-size="24" font-weight="600" fill="#B8231A">Google BIG-G 52%</text></g><g class="a" style="--d:1.5s"><circle cx="110.6" cy="467.4" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="205.6" cy="470.0" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="277.2" cy="470.0" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="326.7" cy="470.0" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="403.9" cy="470.0" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="467.9" cy="467.4" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="539.2" cy="395.6" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><circle cx="779.1" cy="136.0" r="8" fill="#2B4BFF" stroke="#fff" stroke-width="2"/><text x="795.1" y="144.0" font-size="24" font-weight="600" fill="#1B33C9">GPT-3 76%</text><text x="523.2" y="391.6" text-anchor="end" font-size="24" font-weight="600" fill="#1B33C9">17% at 13 billion</text></g></svg>
+  <div class="abs" style="left:1240px;top:250px;width:560px">
+    <div class="a" style="--d:.5s;background:var(--bluesoft);border-radius:14px;padding:24px 28px"><p style="font-size:28px;line-height:1.32;font-weight:600">"An ability is emergent if it is not present in smaller models but is present in larger models."</p><p style="font-size:23px;color:var(--muted);margin-top:10px">Wei et al., Google, 2022</p></div>
+    <div class="a" style="--d:1.6s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">Addition was not a training goal</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Every size was trained only to predict the next token.</p></div>
+    <div class="a" style="--d:2.7s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p style="font-size:30px;font-weight:600">The size at which it appears differs</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Google's models scored 0% at 27 billion parameters and 52% at 128 billion.</p></div>
+    <div class="a" style="--d:2.9s;border-top:2px solid var(--ink);padding-top:18px;margin-top:26px"><p style="font-size:30px;font-weight:600">The loss curve gave no sign of it</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Loss falls smoothly with size while single tasks move in steps.</p></div>
+  </div>
+  <div class="foot"><span>Data: BIG-bench results, three-digit addition, zero-shot, exact match; largest GPT-3 plotted at 175B. Definition: Wei et al. (2022)</span><span class="pn"></span></div>
+</section>
+<!-- SCALE-END D -->
+
+<!-- SCALE-BEGIN E -->
+<section class="slide" data-sec="Emergence">
+  <h2 class="title">Emergence is a limit on prediction, so each new model version needs a test on your own work</h2>
+  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:56px">
+    <div class="a" style="--d:.2s;border-top:4px solid var(--ink);padding-top:22px">
+      <p style="font-size:33px;font-weight:600;line-height:1.2">The jump depends on how you score</p>
+      <p class="body" style="font-size:26px;margin-top:12px">Stanford researchers scored each digit separately in 2023 and found a smooth rise. The step appears when all four digits of the answer must be right together.</p>
+      <div style="margin-top:22px"><div class="lr" style="grid-template-columns:140px 190px 1fr;column-gap:14px;margin-bottom:10px"><p style="font-size:24px;white-space:nowrap">50% a digit</p><div class="track" style="position:relative;width:190px;height:34px"><div class="bar" style="--w:12px;height:34px;background:var(--blue);--d:.9s"></div></div><b style="font-size:24px;white-space:nowrap">6% of sums</b></div><div class="lr" style="grid-template-columns:140px 190px 1fr;column-gap:14px;margin-bottom:10px"><p style="font-size:24px;white-space:nowrap">70% a digit</p><div class="track" style="position:relative;width:190px;height:34px"><div class="bar" style="--w:46px;height:34px;background:var(--blue);--d:.9s"></div></div><b style="font-size:24px;white-space:nowrap">24% of sums</b></div><div class="lr" style="grid-template-columns:140px 190px 1fr;column-gap:14px;margin-bottom:10px"><p style="font-size:24px;white-space:nowrap">90% a digit</p><div class="track" style="position:relative;width:190px;height:34px"><div class="bar" style="--w:125px;height:34px;background:var(--blue);--d:.9s"></div></div><b style="font-size:24px;white-space:nowrap">66% of sums</b></div><div class="lr" style="grid-template-columns:140px 190px 1fr;column-gap:14px;margin-bottom:10px"><p style="font-size:24px;white-space:nowrap">97% a digit</p><div class="track" style="position:relative;width:190px;height:34px"><div class="bar" style="--w:168px;height:34px;background:var(--blue);--d:.9s"></div></div><b style="font-size:24px;white-space:nowrap">89% of sums</b></div></div>
+    </div>
+    <div class="a" style="--d:.4s;border-top:4px solid var(--ink);padding-top:22px">
+      <p style="font-size:33px;font-weight:600;line-height:1.2">A business scores all-or-nothing</p>
+      <p class="body" style="font-size:26px;margin-top:12px">A NAV or a PAN with one wrong digit is a wrong NAV or PAN. The strict measure is the one that matters in operations.</p>
+      <p class="body" style="font-size:26px;color:var(--muted);margin-top:22px">"A language model that can almost perform a task is not much more useful than one that can't perform it at all."</p>
+    </div>
+    <div class="a" style="--d:.6s;border-top:4px solid var(--ink);padding-top:22px">
+      <p style="font-size:33px;font-weight:600;line-height:1.2">A test confirms an ability; it cannot rule one out</p>
+      <p class="body" style="font-size:26px;margin-top:12px">Asking a model to "think step by step" raised its maths scores with no retraining. Abilities can surface after release.</p>
+      <p class="body" style="font-size:26px;margin-top:22px"><b>For the AMC:</b> treat a vendor upgrade as a new model and rerun your own test set before it reaches a process.</p>
+    </div>
+  </div>
+  <div class="abs a" style="left:120px;top:846px;width:1680px;background:var(--soft);border-radius:14px;padding:24px 40px;--d:1.1s"><p class="body" style="font-size:28px;font-weight:600">"These developments are neither magical nor inexplicable: we just have limited ability to predict them."</p><p style="font-size:24px;color:var(--muted);margin-top:6px">Thomas Woodside, CSET, Georgetown University, April 2024</p></div>
+  <div class="foot"><span>Sources: Woodside, CSET explainer (April 2024); Schaeffer, Miranda and Koyejo (Stanford, 2023). Bars are our calculation.</span><span class="pn"></span></div>
+</section>
+<!-- SCALE-END E -->
 
 <!-- HOW 2: VLM -->
 <section class="slide" data-sec="How they work">
