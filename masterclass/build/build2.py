@@ -448,9 +448,11 @@ PLAN = f"""
   <div class="foot"><span>The timings are a planning guide. Shadow testing before launch is among the practices in SEBI's June 2025 draft.</span><span class="pn"></span></div>
 </section>
 """
+# the twelve-month plan, the CXO questions and the board dashboard, moved here from the LLM deck
+LEAD = (d / "parts" / "leadership_agenda.html").read_text(encoding="utf-8")
 DIV_FN = divider("01", "Function by function", "For each function: the work with language models, what it looks like, and three places to start")
 DIV_AG = divider("02", "From assistants to agents", "How the same three models are chained into agents, and how much autonomy to give them")
-DIV_CH = divider("03", "Choosing where to start", "Which processes to pick first, what each function head brings, and a thirteen-week plan")
+DIV_CH = divider("03", "Choosing where to start", "Which processes to pick first, what each function head brings, and the leadership agenda for the next twelve months")
 S += NIPPON + DIV_FN
 
 for i, f in enumerate(F):
@@ -541,7 +543,7 @@ S += f"""
   <div class="foot"><span>Source: Mercer, AI in asset management survey of 131 managers (May 2026)</span><span class="pn"></span></div>
 </section>
 
-{PLAN}
+{LEAD}
 <!-- 14 EXERCISE -->
 <section class="slide" data-sec="Exercise">
   <h2 class="title">Exercise: describe one process from your function in five lines</h2>
