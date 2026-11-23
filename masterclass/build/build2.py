@@ -107,7 +107,7 @@ def flow(label, steps, top, delay):
     return f'<div class="fl" style="top:{top}px"><p class="lab a" style="--d:{delay:.2f}s">{label}</p><div class="row">{cells}</div></div>'
 
 
-def fslide(n, title, today, withai, big, cap, track, watch, src, art=""):
+def fslide(n, title, today, withai, big, cap, track, watch, src, art="", extra=""):
     steps = ""
     for i, (kind, text) in enumerate(withai):
         steps += f'<div class="sp {kind} a" style="--d:{.5 + i * .12:.2f}s"><b>{TAGS[kind]}</b><span>{text}</span></div>'
@@ -126,6 +126,7 @@ def fslide(n, title, today, withai, big, cap, track, watch, src, art=""):
     <div class="a" style="--d:1s;border-left:1px solid var(--line);padding-left:28px"><p style="font-size:21px;font-weight:600;color:var(--muted)">Track</p><p style="font-size:23px;line-height:1.3;margin-top:6px!important">{track}</p></div>
     <div class="a" style="--d:1.1s;border-left:1px solid var(--line);padding-left:28px"><p style="font-size:21px;font-weight:600;color:var(--muted)">Watch</p><p style="font-size:23px;line-height:1.3;margin-top:6px!important">{watch}</p></div>
   </div>
+  {extra}
   <div class="foot"><span>{src}</span><span class="pn"></span></div>
 </section>"""
 
@@ -461,8 +462,12 @@ DIV_AG = divider("02", "From assistants to agents", "How the same three models a
 DIV_CH = divider("02", "Choosing where to start", "Which processes to pick first, what each function head brings, how much autonomy to give an agent, and the leadership agenda")
 S += NIPPON + DIV_FN
 
+# pointers from a function slide to our own demo videos (slide index in F -> html)
+_lk = 'target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#1B33C9;font-weight:600;text-decoration:none"'
+EXTRA = {2: f'''<p class="abs a" style="left:120px;top:971px;width:1680px;font-size:21px;line-height:1.2;color:var(--muted);--d:1.2s"><b style="color:var(--ink)">Built at SFRPL:</b>&nbsp; <a href="https://youtu.be/5jTInN53RvU" {_lk}>Smart Settle, a trade settlement agent &#8599;</a> &nbsp;&#183;&nbsp; <a href="https://youtu.be/QqfTUNcryms" {_lk}>Internal GPT, RAG over company documents &#8599;</a></p>'''}
+
 for i, f in enumerate(F):
-    S += fslide(4 + i, *f, ART[i])
+    S += fslide(4 + i, *f, ART[i], EXTRA.get(i, ""))
 
 # one slide in place of the seven "three places to start" slides and the heat grid
 _rows = ""
