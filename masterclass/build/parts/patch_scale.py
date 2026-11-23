@@ -76,29 +76,112 @@ def add_chart():
     return o + "</svg>"
 
 # ------------------------------------------------------------------ slides
-ROWS = [("News headlines marked positive or negative", "Sentiment model", "Scores the tone of market news"),
-        ("Filings with every company name tagged", "Entity model", "Finds company names in filings"),
-        ("Sentence pairs in English and Hindi", "Translation model", "Translates a factsheet"),
-        ("Past investor emails sorted by hand", "Routing model", "Sends an email to the right desk")]
-rows = "".join(f"""
-    <div class="row a" style="--d:{.25 + i * .15:.2f}s;margin-bottom:16px"><div class="st r rule">{a}</div><div class="st r hum">{b}</div><div class="st r llm">{c}</div></div>""" for i, (a, b, c) in enumerate(ROWS))
-
-A = f"""<!-- SCALE-BEGIN A -->
-<section class="slide" data-sec="Before LLMs">
+# slide A: four live lanes, one model per task (plain string: holds CSS and JS braces)
+A = r'''<!-- SCALE-BEGIN A -->
+<section class="slide b4" data-sec="Before LLMs">
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600&display=swap');
+  .b4 .hd{display:grid;grid-template-columns:380px 44px 250px 44px 422px;margin-bottom:12px}
+  .b4 .ln{display:grid;grid-template-columns:380px 44px 250px 44px 422px;height:128px;margin-bottom:14px}
+  .b4 .in{border:2px solid var(--line);border-radius:12px;padding:0 20px;background:#fff;display:flex;align-items:center}
+  .b4 .tx{font-size:25px;line-height:1.28;font-weight:500;min-height:32px}
+  .b4 .tx.ty::after{content:"";display:inline-block;width:3px;height:26px;background:var(--blue);margin-left:3px;vertical-align:-4px;animation:b4bl .5s steps(2) infinite}
+  @keyframes b4bl{50%{opacity:0}}
+  .b4 mark{background:transparent;color:inherit;border-radius:5px;padding:1px 3px;margin:0 -3px;transition:background .45s}
+  .b4 mark.hit{background:var(--yellow)}
+  .b4 .cn{position:relative}
+  .b4 .cn::before{content:"";position:absolute;left:5px;right:5px;top:50%;height:2px;margin-top:-1px;background:#C9CEE3}
+  .b4 .cn i{position:absolute;top:50%;left:0;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--blue);opacity:0}
+  .b4 .cn i.go{animation:b4go .5s linear forwards}
+  @keyframes b4go{0%{left:0;opacity:1}85%{opacity:1}100%{left:calc(100% - 14px);opacity:0}}
+  .b4 .md{background:var(--ink);color:#fff;border-radius:12px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;transition:box-shadow .3s,transform .3s}
+  .b4 .md b{font-size:25px;font-weight:600;white-space:nowrap}
+  .b4 .md span{font-size:19px;line-height:1.25;color:rgba(255,255,255,.62);margin-top:5px}
+  .b4 .md.on{box-shadow:0 0 0 4px var(--blue),0 0 36px rgba(43,75,255,.6);transform:scale(1.04)}
+  .b4 .ou{background:var(--bluesoft);border-radius:12px;padding:0 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;align-content:center}
+  .b4 .trk{position:relative;width:170px;height:16px;border-radius:8px;background:#fff}
+  .b4 .trk::after{content:"";position:absolute;left:50%;top:-6px;width:2px;height:28px;margin-left:-1px;background:var(--ink)}
+  .b4 .fill{position:absolute;top:0;height:16px;width:0;border-radius:8px;transition:width .55s cubic-bezier(.2,.8,.2,1)}
+  .b4 .res{font-size:28px;font-weight:600;opacity:0;transition:opacity .3s}
+  .b4 .chip{font-size:22px;font-weight:600;padding:6px 14px;border-radius:999px;background:var(--yellow);color:var(--ink);opacity:0;transform:scale(.6);transition:opacity .3s,transform .35s cubic-bezier(.2,1.6,.4,1);white-space:nowrap}
+  .b4 .chip.on{opacity:1;transform:none}
+  .b4 .hi{font-size:25px;line-height:1.35;font-weight:600;color:#1B33C9;font-family:'Geist','Noto Sans Devanagari','Nirmala UI','Mangal',sans-serif}
+  .b4 .dk{font-size:20px;font-weight:600;padding:5px 11px;border-radius:999px;border:2px solid #C9CEE3;color:var(--faint);background:#fff;transition:all .3s;white-space:nowrap}
+  .b4 .ou.rt{gap:8px;flex-wrap:nowrap}
+  .b4 .dk.on{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+  </style>
   <h2 class="title">Before large language models, every language task needed its own model and its own labelled data</h2>
-  <div class="fl" style="top:270px">
-    <div class="row a" style="--d:.15s;margin-bottom:14px"><p class="k" style="flex:1">Labelled data</p><p class="k" style="flex:1">Model</p><p class="k" style="flex:1">The one task it does</p></div>{rows}
+  <div class="abs" style="left:120px;top:254px;width:1140px">
+    <div class="hd a" style="--d:.15s"><p class="k">A sample comes in</p><span></span><p class="k">Its own model</p><span></span><p class="k">The one thing it does</p></div>
+    <div class="ln a" data-k="sent" style="--d:.25s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Sentiment model</b><span>trained on labelled headlines</span></div><div class="cn"><i></i></div><div class="ou"><div class="trk"><div class="fill"></div></div><b class="res"></b></div></div>
+    <div class="ln a" data-k="ent" style="--d:.4s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Entity model</b><span>trained on tagged filings</span></div><div class="cn"><i></i></div><div class="ou"></div></div>
+    <div class="ln a" data-k="tr" style="--d:.55s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Translation model</b><span>trained on sentence pairs</span></div><div class="cn"><i></i></div><div class="ou"><p class="hi"></p></div></div>
+    <div class="ln a" data-k="rt" style="--d:.7s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Routing model</b><span>trained on sorted emails</span></div><div class="cn"><i></i></div><div class="ou rt"><span class="dk">Payments</span><span class="dk">KYC</span><span class="dk">Redemptions</span></div></div>
   </div>
   <div class="abs" style="left:1340px;top:270px;width:460px">
     <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600">Thousands of labelled examples for each task</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">OpenAI put the need at "thousands or tens of thousands of examples" per task.</p></div>
     <div class="a" style="--d:1.05s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">A model did not transfer</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">The sentiment model could not translate. A new task was a new project.</p></div>
     <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">Cost grew with the task list</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Each model had its own data, its own team and its own upkeep.</p></div>
   </div>
-  <div class="foot"><span>The four tasks are illustrative. Quote: Brown et al., Language Models are Few-Shot Learners (OpenAI, 2020)</span><span class="pn"></span></div>
+  <div class="foot"><span>Samples and company names are invented. Quote: Brown et al., Language Models are Few-Shot Learners (OpenAI, 2020)</span><span class="pn"></span></div>
+  <script>
+  (function(){
+    var sec=document.currentScript.closest('.slide'),tok=0;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var S={
+      sent:[{t:'Bank profits beat estimates',v:.8},{t:'Rupee slides to a record low',v:-.7},{t:'Auto sales rise for a third month',v:.55}],
+      ent:[{t:'<mark>Meridian Cements</mark> will merge with <mark>Kaveri Paints</mark>'},{t:'Auditors of <mark>Northgate Finance</mark> have resigned'},{t:'<mark>Solvix Pharma</mark> buys a plant from <mark>Arden Labs</mark>'}],
+      tr:[{t:'Mutual fund investments are subject to market risks',h:'म्यूचुअल फंड निवेश बाज़ार जोखिमों के अधीन हैं'},{t:'Read all scheme related documents carefully',h:'योजना संबंधी सभी दस्तावेज़ों को ध्यान से पढ़ें'}],
+      rt:[{t:'My SIP was debited twice this month',d:0},{t:'My KYC status shows on hold',d:1},{t:'Where is my redemption money?',d:2}]
+    };
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function plain(h){return h.replace(/<[^>]+>/g,'')}
+    function reset(ln,k){
+      var ou=ln.querySelector('.ou');ln.querySelector('.tx').textContent='';ln.querySelector('.md').classList.remove('on');
+      if(k==='sent'){ou.querySelector('.fill').style.width='0';ou.querySelector('.res').style.opacity=0}
+      if(k==='ent')ou.innerHTML='';
+      if(k==='tr')ou.querySelector('.hi').textContent='';
+      if(k==='rt')[].forEach.call(ou.querySelectorAll('.dk'),function(d){d.classList.remove('on')});
+    }
+    async function show(ln,k,s,fast){
+      var ou=ln.querySelector('.ou'),tx=ln.querySelector('.tx');
+      if(k==='sent'){var f=ou.querySelector('.fill'),r=ou.querySelector('.res'),pos=s.v>0,c=pos?'#2B4BFF':'#E8382D';
+        f.style.background=c;f.style.left=pos?'50%':'auto';f.style.right=pos?'auto':'50%';f.style.width=(Math.abs(s.v)*50)+'%';
+        r.textContent=pos?'Positive':'Negative';r.style.color=pos?'#1B33C9':'#B8231A';r.style.opacity=1}
+      if(k==='ent'){tx.innerHTML=s.t;var ms=tx.querySelectorAll('mark');
+        for(var i=0;i<ms.length;i++){var c2=document.createElement('span');c2.className='chip';c2.textContent=ms[i].textContent;ou.appendChild(c2)}
+        void ou.offsetWidth;
+        for(i=0;i<ms.length;i++){ms[i].classList.add('hit');ou.children[i].classList.add('on');if(!fast)await sleep(320)}}
+      if(k==='tr'){var w=s.h.split(' '),p=ou.querySelector('.hi');
+        for(var j=1;j<=w.length;j++){p.textContent=w.slice(0,j).join(' ');if(!fast)await sleep(130)}}
+      if(k==='rt')ou.querySelectorAll('.dk')[s.d].classList.add('on');
+    }
+    function dot(el){var i=el.querySelector('i');i.classList.remove('go');void i.offsetWidth;i.classList.add('go')}
+    async function lane(ln,my,delay){
+      var k=ln.dataset.k,n=0,tx=ln.querySelector('.tx'),cn=ln.querySelectorAll('.cn'),md=ln.querySelector('.md');
+      await sleep(delay);
+      while(tok===my){
+        var s=S[k][n%S[k].length],t=plain(s.t);reset(ln,k);
+        tx.classList.add('ty');
+        for(var c=1;c<=t.length;c++){if(tok!==my)return;tx.textContent=t.slice(0,c);await sleep(22)}
+        tx.classList.remove('ty');await sleep(250);if(tok!==my)return;
+        dot(cn[0]);await sleep(480);md.classList.add('on');await sleep(520);if(tok!==my)return;
+        dot(cn[1]);await sleep(480);md.classList.remove('on');
+        await show(ln,k,s,false);await sleep(2600);n++;
+      }
+    }
+    function start(){tok++;var my=tok,ls=sec.querySelectorAll('.ln');
+      [].forEach.call(ls,function(ln,i){var k=ln.dataset.k;
+        if(reduce){reset(ln,k);ln.querySelector('.tx').textContent=plain(S[k][0].t);show(ln,k,S[k][0],true)}
+        else{reset(ln,k);lane(ln,my,900+i*650)}})}
+    new MutationObserver(function(){if(sec.classList.contains('active'))start();else tok++}).observe(sec,{attributes:true,attributeFilter:['class']});
+    if(sec.classList.contains('active'))start();
+  })();
+  </script>
 </section>
 <!-- SCALE-END A -->
 
-"""
+'''
 
 def gpt(i, name, year, params, head, body, dly):
     r = rad[i]
