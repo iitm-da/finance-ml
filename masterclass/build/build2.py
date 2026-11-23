@@ -280,6 +280,9 @@ fns = [("Research", "filings, notes"), ("Fund management", "briefs, records"), (
 fnb = "".join(f'<div class="fn a" style="left:{120 + i * 244}px;--d:{.2 + i * .08:.2f}s">{a}<span>{b}</span></div>' for i, (a, b) in enumerate(fns))
 fnl = "".join(f'<div class="abs a" style="left:{120 + i * 244 + 107}px;top:440px;width:2px;height:90px;background:#B9BED6;--d:{.8 + i * .05:.2f}s"></div>' for i in range(7))
 
+# opening frame: accuracy against automation, with each process moving toward the top right
+GOAL = (d / "parts" / "accuracy_automation.html").read_text(encoding="utf-8")
+
 S = f"""
 <svg style="display:none"><g id="flow"></g></svg><svg id="g95" style="display:none"></svg>
 <!-- 1 COVER -->
@@ -292,6 +295,7 @@ S = f"""
   <div class="abs a" style="left:170px;bottom:84px;--d:.5s"><p style="font-size:46px;font-weight:600;letter-spacing:-.02em;color:#fff">Dr. Arun Ayyar</p><p style="font-size:28px;line-height:1.4;color:rgba(255,255,255,.7);margin-top:8px">Adjunct Faculty, DSAI, IIT Madras</p></div>
 </section>
 
+{GOAL}
 <!-- 2 MAP -->
 <section class="slide" data-sec="The map">
   <h2 class="title">Seven functions do different work on one shared platform</h2>

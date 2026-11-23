@@ -266,6 +266,91 @@ p.li:first-of-type{margin-top:14px!important}
   <div class="abs a" style="left:170px;bottom:84px;--d:.5s"><p style="font-size:46px;font-weight:600;letter-spacing:-.02em;color:#fff">Dr. Arun Ayyar</p><p style="font-size:28px;line-height:1.4;color:rgba(255,255,255,.7);margin-top:8px">Adjunct Faculty, DSAI, IIT Madras</p></div>
 </section>
 
+<!-- GOAL: accuracy against automation -->
+<section class="slide g1" data-sec="The goal">
+  <style>
+  .g1 .tk{font:500 21px 'Geist',Arial,sans-serif;fill:#8A90B0}
+  .g1 .ax{font:500 22px 'Geist',Arial,sans-serif;fill:#5D6488}
+  .g1 .lb{font:600 22px 'Geist',Arial,sans-serif;fill:#0E1330;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+  .g1 .gh{fill:none;stroke-width:2.5;stroke-dasharray:3 7;stroke-linecap:round;opacity:.55}
+  .g1 .tr{fill:none;stroke-width:5;stroke-linecap:round}
+  .g1 .tb{font:600 23px/1 'Geist',Arial,sans-serif;padding:13px 22px;border-radius:999px;border:2px solid #C9CEE3;background:#fff;color:var(--muted);cursor:pointer;margin-right:10px;transition:background .3s,color .3s,border-color .3s}
+  .g1 .tb.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .g1 .tb:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+  .g1 .gcap{color:var(--ink);font-size:29px;font-weight:600;line-height:1.3;min-height:114px;margin-top:22px!important;transition:opacity .3s}
+  .g1 .nt{border-top:2px solid var(--ink);padding-top:14px;margin-top:20px}
+  .g1 .nt p:first-child{font-size:26px;font-weight:600}
+  .g1 .nt p:last-child{font-size:23px;line-height:1.32;color:var(--muted);margin-top:5px!important}
+  </style>
+  <h2 class="title">Every process starts at its own mix of accuracy and automation, and the work is to move it to the top right</h2>
+  <svg class="abs a" style="left:120px;top:250px;overflow:visible;--d:.2s" width="1090" height="700" viewBox="0 0 1090 700" role="img" aria-label="Chart of automation against accuracy. Four processes start at different points and move toward the top right corner over twelve months.">
+    <rect x="850" y="20" width="190" height="110" fill="#E8ECFF" rx="10"/>
+    <g class="grid"></g>
+    <line x1="90" y1="570" x2="1040" y2="570" stroke="#0E1330" stroke-width="2"/><line x1="90" y1="20" x2="90" y2="570" stroke="#0E1330" stroke-width="2"/>
+    <text class="ax" x="565" y="650" text-anchor="middle">Accuracy: how often the output is right, on your own test cases</text>
+    <text class="ax" transform="translate(24,295) rotate(-90)" text-anchor="middle">Automation: share of cases no person touches</text>
+    <circle cx="1040" cy="20" r="13" fill="none" stroke="#2B4BFF" stroke-width="3"/><circle cx="1040" cy="20" r="5" fill="#2B4BFF"/>
+    <text x="1016" y="12" text-anchor="end" style="font:600 21px 'Geist',Arial,sans-serif;fill:#1B33C9">The goal: 100% on both</text>
+    <g class="pts"></g>
+  </svg>
+  <div class="abs" style="left:1270px;top:250px;width:530px">
+    <div class="a" style="--d:.4s" role="tablist"><button class="tb" role="tab">Today</button><button class="tb" role="tab">Month 6</button><button class="tb" role="tab">Month 12</button></div>
+    <p class="gcap a" style="--d:.5s"></p>
+    <div class="nt a" style="--d:.7s"><p>Processes start in different places</p><p>Where an error is cheap, start with high automation. Where it is costly, start with a person on every case.</p></div>
+    <div class="nt a" style="--d:.85s"><p>Move right before moving up</p><p>A process earns more automation only after its accuracy on your own cases has risen.</p></div>
+    <div class="nt a" style="--d:1s"><p>Some work stays low on purpose</p><p>A research view or an order stays with a person, however accurate the draft.</p></div>
+  </div>
+  <div class="foot"><span>Positions and paths are our assessment, for discussion. Each function measures both numbers on its own cases.</span><span class="pn"></span></div>
+  <script>
+  (function(){
+    var sec=document.currentScript.closest('.slide'),NS='http://www.w3.org/2000/svg',tok=0,auto=true,cur=0;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function X(a){return 90+(a-.5)/.5*950}function Y(u){return 570-u*550}
+    // [accuracy, automation] today, month 6, month 12
+    var P=[
+      {n:'Request tagging',m:'SLM',c:'#E0A800',side:'top',p:[[.80,.70],[.88,.82],[.94,.90]]},
+      {n:'Form and KYC extraction',m:'VLM',c:'#E8382D',side:'top',p:[[.82,.15],[.90,.40],[.95,.65]]},
+      {n:'Replies to investors',m:'LLM',c:'#2B4BFF',side:'top',p:[[.75,.06],[.85,.14],[.92,.30]]},
+      {n:'Research note drafts',m:'LLM',c:'#2B4BFF',side:'left',p:[[.66,.02],[.78,.03],[.86,.05]]}
+    ];
+    var CAP=['Today a person checks almost every case, except where an error is cheap.','By month 6 accuracy has risen, from test cases, better prompts and fine-tuning.','By month 12 automation follows, one process at a time, where accuracy has earned it.'];
+    function el(t,a,par){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);par.appendChild(e);return e}
+    var g=sec.querySelector('.grid'),pts=sec.querySelector('.pts'),tabs=sec.querySelectorAll('.tb'),cap=sec.querySelector('.gcap');
+    [0,.25,.5,.75,1].forEach(function(u){if(u)el('line',{x1:90,x2:1040,y1:Y(u),y2:Y(u),stroke:'#E2E5F0'},g);el('text',{class:'tk',x:76,y:Y(u)+7,'text-anchor':'end'},g).textContent=Math.round(u*100)+'%'});
+    [.5,.6,.7,.8,.9,1].forEach(function(a){if(a>.5)el('line',{x1:X(a),x2:X(a),y1:20,y2:570,stroke:'#E2E5F0'},g);el('text',{class:'tk',x:X(a),y:602,'text-anchor':'middle'},g).textContent=Math.round(a*100)+'%'});
+    P.forEach(function(q){
+      el('path',{class:'gh',stroke:q.c,d:'M'+q.p.map(function(v){return X(v[0])+','+Y(v[1])}).join(' L')},pts);
+      q.tr=el('path',{class:'tr',stroke:q.c,d:''},pts);
+      el('circle',{cx:X(q.p[0][0]),cy:Y(q.p[0][1]),r:8,fill:'#fff',stroke:q.c,'stroke-width':3},pts);
+      q.dot=el('circle',{r:13,fill:q.c,stroke:'#fff','stroke-width':3},pts);
+      q.lab=el('text',{class:'lb'},pts);q.lab.textContent=q.n+' · '+q.m});
+    function at(q,t){var i=Math.min(1,Math.floor(t)),f=t-i,a=q.p[i],b=q.p[i+1];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
+    function draw(t){P.forEach(function(q){var v=at(q,t),x=X(v[0]),y=Y(v[1]),d='M'+X(q.p[0][0])+','+Y(q.p[0][1]);
+      if(t>1)d+=' L'+X(q.p[1][0])+','+Y(q.p[1][1]);d+=' L'+x+','+y;q.tr.setAttribute('d',d);
+      q.dot.setAttribute('cx',x);q.dot.setAttribute('cy',y);
+      if(q.side==='left'){q.lab.setAttribute('x',x-22);q.lab.setAttribute('y',y-14);q.lab.setAttribute('text-anchor','end')}
+      else{q.lab.setAttribute('x',Math.min(x,905));q.lab.setAttribute('y',y-24);q.lab.setAttribute('text-anchor','middle')}})}
+    function mark(i){[].forEach.call(tabs,function(b,j){b.classList.toggle('on',j===i);b.setAttribute('aria-selected',j===i)});cap.textContent=CAP[i]}
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function glide(a,b,my){return new Promise(function(res){var t0=null;function st(ts){if(tok!==my)return res();if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/1500),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;cur=a+(b-a)*e;draw(cur);if(p<1)requestAnimationFrame(st);else res()}requestAnimationFrame(st)})}
+    async function play(my){
+      while(tok===my){
+        cur=0;draw(0);mark(0);await sleep(2600);if(tok!==my)return;
+        mark(1);await glide(0,1,my);await sleep(2200);if(tok!==my)return;
+        mark(2);await glide(1,2,my);await sleep(5000);
+      }
+    }
+    async function jump(i){tok++;var my=tok;mark(i);await glide(cur,i,my)}
+    [].forEach.call(tabs,function(b,j){b.addEventListener('click',function(e){e.stopPropagation();auto=false;jump(j)})});
+    function start(){tok++;if(reduce){cur=2;draw(2);mark(2);return}play(tok)}
+    new MutationObserver(function(){if(sec.classList.contains('active'))start();else tok++}).observe(sec,{attributes:true,attributeFilter:['class']});
+    draw(0);mark(0);
+    if(sec.classList.contains('active'))start();
+  })();
+  </script>
+</section>
+
+
 <!-- 2 MAP -->
 <section class="slide" data-sec="The map">
   <h2 class="title">Seven functions do different work on one shared platform</h2>
