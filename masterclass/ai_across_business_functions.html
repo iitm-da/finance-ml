@@ -222,6 +222,12 @@ p.li:first-of-type{margin-top:14px!important}
 .en h3{font-size:34px;font-weight:600;margin-bottom:12px!important}
 .en p{font-size:25px;line-height:1.32}
 .en p.who{font-size:22px;color:var(--muted);margin-top:16px!important;padding-top:14px;border-top:1px solid var(--line)}
+.sr3{display:grid;grid-template-columns:300px repeat(3,1fr);column-gap:24px;align-items:center;height:86px;border-bottom:1px solid var(--line)}
+.sr3 b{font-size:28px;font-weight:600}
+.sr3 p{font-size:25px;line-height:1.2;display:flex;align-items:center;gap:14px}
+.sr3 .tag{flex:none;width:64px;text-align:center;padding:4px 0}
+.sr3.hd{height:54px;border-bottom:2px solid var(--ink)}
+.sr3.hd b,.sr3.hd p{font-size:24px;font-weight:600;color:var(--muted)}
 .uc{background:var(--soft);border-radius:16px;padding:30px 30px 26px;height:510px;display:flex;flex-direction:column}
 .uc .dg{display:flex;align-items:center;justify-content:space-between;gap:8px;height:120px;margin-bottom:26px}
 .uc .io{flex:1;background:#fff;border-radius:10px;box-shadow:0 3px 10px rgba(14,19,48,.07);height:84px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:21px;font-weight:600;line-height:1.2;padding:0 10px}
@@ -334,20 +340,6 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Sources: OpenAI case study on Balyasny (vendor-published, March 2026); BCG (July 2026); arXiv 2407.17866</span><span class="pn"></span></div>
 </section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Research: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Transcript</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Summary</span></div>
-      <p class="un">Concall summaries</p><p class="ud">A one-page summary of each earnings call, with the quotes it rests on</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Report pages</span><b class="ar"></b><span class="mc" style="background:var(--red);color:#fff">VLM</span><b class="ar"></b><span class="io">Model inputs</span></div>
-      <p class="un">Financial spreading</p><p class="ud">Tables lifted from annual reports straight into the analyst's model</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Filings</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Comparison</span></div>
-      <p class="un">Peer comparisons</p><p class="ud">A first comparison table across several companies' filings</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
-</section>
 <!-- 5 -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Fund management: AI briefs, flags and records; it does not place orders</h2>
@@ -368,20 +360,6 @@ p.li:first-of-type{margin-top:14px!important}
     <div class="a" style="--d:1.1s;border-left:1px solid var(--line);padding-left:28px"><p style="font-size:21px;font-weight:600;color:var(--muted)">Watch</p><p style="font-size:23px;line-height:1.3;margin-top:6px!important">Holdings and pending orders must stay on systems the AMC controls.</p></div>
   </div>
   <div class="foot"><span>Source: NBIM chief executive, Storting hearing (May 2026). BCG estimates 50&#8211;70% fewer trade errors (July 2026).</span><span class="pn"></span></div>
-</section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Fund management: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">News, filings</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Brief</span></div>
-      <p class="un">Morning brief</p><p class="ud">Overnight news and filings on every holding, before the market opens</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Raw notes</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Record</span></div>
-      <p class="un">Meeting notes</p><p class="ud">Notes from management meetings turned into a structured record</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Notes</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Rationale</span></div>
-      <p class="un">Rationale records</p><p class="ud">A draft of the investment rationale for the file, from the manager's notes</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
 </section>
 <!-- 6 -->
 <section class="slide" data-sec="The functions">
@@ -407,20 +385,6 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Source: OCBC, multistage KYC extraction pipeline (2026). BCG estimates 55&#8211;65% more operations capacity (July 2026).</span><span class="pn"></span></div>
 </section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Operations: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Scans</span><b class="ar"></b><span class="mc" style="background:var(--red);color:#fff">VLM</span><b class="ar"></b><span class="io">Fields</span></div>
-      <p class="un">Form and KYC extraction</p><p class="ud">Application forms and identity proofs turned into checked fields</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Images</span><b class="ar"></b><span class="mc" style="background:var(--red);color:#fff">VLM</span><b class="ar"></b><span class="io">Bank details</span></div>
-      <p class="un">Mandates and cheques</p><p class="ud">Bank mandates and cancelled cheques read and matched to the folio</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Break list</span><b class="ar"></b><span class="mc" style="background:var(--yellow);color:var(--ink)">SLM</span><b class="ar"></b><span class="io">Likely cause</span></div>
-      <p class="un">Reconciliation breaks</p><p class="ud">A suggested cause for each break, from the entries and the mail trail</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
-</section>
 <!-- 7 -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Risk and compliance: each circular mapped to the policies it changes</h2>
@@ -444,20 +408,6 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Sources: EY (Sept 2025); CAMS already does this for registrar clients with CAMSLens (Business Today, Nov 2025)</span><span class="pn"></span></div>
 </section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Risk and compliance: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Circular</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Gap list</span></div>
-      <p class="un">Circular mapping</p><p class="ud">Each new circular split into obligations and matched to policies</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class=""></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Draft</span><b class="ar"></b><span class="mc" style="background:var(--yellow);color:var(--ink)">SLM</span><b class="ar"></b><span class="io">Flags</span></div>
-      <p class="un">Marketing pre-check</p><p class="ud">Drafts screened for return claims and missing disclaimers before review</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Messages</span><b class="ar"></b><span class="mc" style="background:var(--yellow);color:var(--ink)">SLM</span><b class="ar"></b><span class="io">Alerts</span></div>
-      <p class="un">Message surveillance</p><p class="ud">Staff messages sorted so reviewers see the few that matter</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
-</section>
 <!-- 8 -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Sales and distribution: one assistant behind 1,26,600 distributors and 271 locations</h2>
@@ -478,20 +428,6 @@ p.li:first-of-type{margin-top:14px!important}
     <div class="a" style="--d:1.1s;border-left:1px solid var(--line);padding-left:28px"><p style="font-size:21px;font-weight:600;color:var(--muted)">Watch</p><p style="font-size:23px;line-height:1.3;margin-top:6px!important">An assistant that recommends a scheme without a suitability check is giving advice.</p></div>
   </div>
   <div class="foot"><span>Sources: NAM India Annual Report 2025-26 and Q2 FY27 presentation. BCG estimates 3&#8211;5x client coverage and 5&#8211;10x RFP capacity.</span><span class="pn"></span></div>
-</section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Sales and distribution: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Query</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Cited answer</span></div>
-      <p class="un">Distributor assistant</p><p class="ud">Answers from approved documents, with the page cited</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Questions</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Draft reply</span></div>
-      <p class="un">RFP and questionnaire drafts</p><p class="ud">First drafts of institutional RFPs and due-diligence forms</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class=""></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">CRM, holdings</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Brief</span></div>
-      <p class="un">Meeting preparation</p><p class="ud">A one-page brief on the client's holdings and past conversations</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
 </section>
 <!-- 9 -->
 <section class="slide" data-sec="The functions">
@@ -517,20 +453,6 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Sources: SEBI Investor Survey 2025; SEBI common advertisement code (Oct 2026). Nippon India has piloted AI-made Gujarati videos.</span><span class="pn"></span></div>
 </section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Marketing: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Portfolio data</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Commentary</span></div>
-      <p class="un">Fund commentary</p><p class="ud">Monthly commentary drafted from portfolio data and approved facts</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class="on"></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">English text</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Nine languages</span></div>
-      <p class="un">Regional-language versions</p><p class="ud">The same approved text in Hindi and the main regional languages</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class="on"></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Factsheet</span><b class="ar"></b><span class="mc" style="background:var(--red);color:#fff">VLM</span><b class="ar"></b><span class="io">Mismatches</span></div>
-      <p class="un">Factsheet checks</p><p class="ud">The published factsheet compared line by line with the source data</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class=""></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
-</section>
 <!-- 10 -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Investor service: small models sort the requests; large models draft the replies</h2>
@@ -551,20 +473,6 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="foot"><span>Sources: CAMS Annual Report FY2024-25; Microsoft case study on Kotak AMC (vendor-published); Maginative (2025)</span><span class="pn"></span></div>
 </section>
-<section class="slide" data-sec="The functions">
-  <h2 class="title">Investor service: three places to start</h2>
-  <div class="abs" style="left:120px;top:262px;width:1680px;display:grid;grid-template-columns:repeat(3,1fr);gap:42px"><div class="uc a" style="--d:0.20s">
-      <div class="dg"><span class="io">Email, call</span><b class="ar"></b><span class="mc" style="background:var(--yellow);color:var(--ink)">SLM</span><b class="ar"></b><span class="io">Tags</span></div>
-      <p class="un">Request tagging</p><p class="ud">Every email and call tagged by type, language and urgency</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class=""></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.35s">
-      <div class="dg"><span class="io">Request</span><b class="ar"></b><span class="mc" style="background:var(--blue);color:#fff">LLM</span><b class="ar"></b><span class="io">Draft reply</span></div>
-      <p class="un">Reply drafts</p><p class="ud">A draft reply from folio data and policy, for the agent to approve</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class=""></i></span></p></div></div><div class="uc a" style="--d:0.50s">
-      <div class="dg"><span class="io">Speech</span><b class="ar"></b><span class="mc" style="background:var(--yellow);color:var(--ink)">SLM</span><b class="ar"></b><span class="io">Spoken reply</span></div>
-      <p class="un">Voice in regional languages</p><p class="ud">Spoken answers to routine questions in the investor's language</p>
-      <div class="mt"><p>Volume<span class="me"><i class="on"></i><i class="on"></i><i class="on"></i></span></p><p>Cost of a wrong output<span class="me r"><i class="on"></i><i class="on"></i><i class="on"></i></span></p></div></div></div>
-  <div class="foot"><span>Meters are our assessment, for discussion with the function head</span><span class="pn"></span></div>
-</section>
 <!-- 11 ENABLING -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Finance, HR, legal and technology use the same three model types</h2>
@@ -583,60 +491,22 @@ p.li:first-of-type{margin-top:14px!important}
 </section>
 
 
+<!-- WHERE EACH FUNCTION STARTS -->
 <section class="slide" data-sec="The functions">
   <h2 class="title">Large models lead in research, fund management, sales and marketing; small and vision models in operations and service</h2>
-  <div class="abs" style="left:120px;top:262px;width:1120px;display:grid;grid-template-columns:340px repeat(3,1fr);gap:6px;align-items:stretch">
-    <p></p><p class="hh">Small model</p><p class="hh">Vision model</p><p class="hh">Large model</p>
-    <p class="hn a" style="--d:0.20s">Research</p><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.20s"></div><div class="hc a" style="background:#9FAEFF;color:var(--ink);--d:0.20s">2</div><div class="hc a" style="background:#2B4BFF;color:#fff;--d:0.20s">4</div><p class="hn a" style="--d:0.27s">Fund management</p><div class="hc a" style="background:#D6DCFF;color:var(--ink);--d:0.27s">1</div><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.27s"></div><div class="hc a" style="background:#1B33C9;color:#fff;--d:0.27s">5</div><p class="hn a" style="--d:0.34s">Operations</p><div class="hc a" style="background:#D6DCFF;color:var(--ink);--d:0.34s">1</div><div class="hc a" style="background:#5F78FF;color:#fff;--d:0.34s">3</div><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.34s"></div><p class="hn a" style="--d:0.41s">Risk and compliance</p><div class="hc a" style="background:#5F78FF;color:#fff;--d:0.41s">3</div><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.41s"></div><div class="hc a" style="background:#5F78FF;color:#fff;--d:0.41s">3</div><p class="hn a" style="--d:0.48s">Sales</p><div class="hc a" style="background:#D6DCFF;color:var(--ink);--d:0.48s">1</div><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.48s"></div><div class="hc a" style="background:#2B4BFF;color:#fff;--d:0.48s">4</div><p class="hn a" style="--d:0.55s">Marketing</p><div class="hc a" style="background:#D6DCFF;color:var(--ink);--d:0.55s">1</div><div class="hc a" style="background:#D6DCFF;color:var(--ink);--d:0.55s">1</div><div class="hc a" style="background:#2B4BFF;color:#fff;--d:0.55s">4</div><p class="hn a" style="--d:0.62s">Investor service</p><div class="hc a" style="background:#2B4BFF;color:#fff;--d:0.62s">4</div><div class="hc a" style="background:#F4F6FB;color:var(--ink);--d:0.62s"></div><div class="hc a" style="background:#9FAEFF;color:var(--ink);--d:0.62s">2</div>
+  <div class="abs" style="left:120px;top:250px;width:1680px">
+    <div class="sr3 hd a" style="--d:.1s"><b>Function</b><p>Three places to start</p><p></p><p></p></div>
+    <div class="sr3 a" style="--d:0.2s"><b>Research</b><p><span class="tag t-llm">LLM</span>Concall summaries</p><p><span class="tag t-vlm">VLM</span>Financial spreading</p><p><span class="tag t-llm">LLM</span>Peer comparisons</p></div><div class="sr3 a" style="--d:0.3s"><b>Fund management</b><p><span class="tag t-llm">LLM</span>Morning brief</p><p><span class="tag t-llm">LLM</span>Meeting notes</p><p><span class="tag t-llm">LLM</span>Rationale records</p></div><div class="sr3 a" style="--d:0.4s"><b>Operations</b><p><span class="tag t-vlm">VLM</span>Form and KYC extraction</p><p><span class="tag t-vlm">VLM</span>Mandates and cheques</p><p><span class="tag t-slm">SLM</span>Reconciliation breaks</p></div><div class="sr3 a" style="--d:0.5s"><b>Risk and compliance</b><p><span class="tag t-llm">LLM</span>Circular mapping</p><p><span class="tag t-slm">SLM</span>Marketing pre-check</p><p><span class="tag t-slm">SLM</span>Message surveillance</p></div><div class="sr3 a" style="--d:0.6s"><b>Sales</b><p><span class="tag t-llm">LLM</span>Distributor assistant</p><p><span class="tag t-llm">LLM</span>RFP and questionnaire drafts</p><p><span class="tag t-llm">LLM</span>Meeting preparation</p></div><div class="sr3 a" style="--d:0.7s"><b>Marketing</b><p><span class="tag t-llm">LLM</span>Fund commentary</p><p><span class="tag t-llm">LLM</span>Regional-language versions</p><p><span class="tag t-vlm">VLM</span>Factsheet checks</p></div><div class="sr3 a" style="--d:0.8s"><b>Investor service</b><p><span class="tag t-slm">SLM</span>Request tagging</p><p><span class="tag t-llm">LLM</span>Reply drafts</p><p><span class="tag t-slm">SLM</span>Voice in regional languages</p></div>
   </div>
-  <div class="abs" style="left:1320px;top:300px;width:480px">
-    <div class="a" style="--d:.8s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600">One platform, not seven</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Every function draws on the same three model types, so the gateway and controls are built once.</p></div>
-    <div class="a" style="--d:1s;border-top:2px solid var(--ink);padding-top:18px;margin-top:34px"><p style="font-size:30px;font-weight:600">Different owners</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">What differs by function is the process, the test cases and the person who approves.</p></div>
-  </div>
-  <div class="foot"><span>Each cell counts the steps and starting use cases shown for that function on the earlier slides</span><span class="pn"></span></div>
+  <div class="foot"><span>The use cases are our suggestions, for discussion with each function head</span><span class="pn"></span></div>
 </section>
+
+
 
 <section class="slide blue" data-sec="">
   <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">02</p>
-  <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">From assistants to agents</h2>
-  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">How the same three models are chained into agents, and how much autonomy to give them</p>
-</section>
-<!-- AGENTS A1 -->
-<section class="slide" data-sec="Agents">
-  <h2 class="title">An agent chains the steps a function does today, with the three models sharing the work</h2>
-  <table class="t tight" style="left:120px;top:240px;width:1680px;font-size:24px;line-height:1.25">
-    <tr><th style="width:15%">Function</th><th style="width:16%">Agent</th><th>What it does from start to finish</th><th style="width:6%;text-align:center;padding-right:0">Small</th><th style="width:6%;text-align:center;padding-right:0">Vision</th><th style="width:6%;text-align:center;padding-right:0">Large</th><th style="width:14%;padding-left:24px">Who approves</th></tr>
-    <tr><td>Research</td><td style="font-weight:600">Earnings-season agent</td><td>Collects the filing and transcript when results come out, pulls the tables, updates the draft note</td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Analyst</td></tr>
-    <tr><td>Fund management</td><td style="font-weight:600">Morning-brief agent</td><td>Watches overnight news on holdings, checks scheme limits, prepares the brief</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Fund manager</td></tr>
-    <tr><td>Operations</td><td style="font-weight:600">Onboarding agent</td><td>Reads the form and proofs, checks KYC, asks the investor for what is missing</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Operations staff</td></tr>
-    <tr><td>Risk and compliance</td><td style="font-weight:600">Circular agent</td><td>Spots a new circular, splits it into obligations, maps them to policies, opens tasks</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Compliance officer</td></tr>
-    <tr><td>Sales</td><td style="font-weight:600">Distributor-desk agent</td><td>Answers the query from approved documents, logs it, schedules the follow-up</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Relationship manager</td></tr>
-    <tr><td>Marketing</td><td style="font-weight:600">Factsheet agent</td><td>Pulls portfolio data, drafts commentary, translates it, runs the code check</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot off"></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Compliance</td></tr>
-    <tr><td>Investor service</td><td style="font-weight:600">Service agent</td><td>Tags the request, reads any attachment, fetches folio status, drafts the reply</td><td style="text-align:center"><span class="dot" style=background:var(--yellow)></span></td><td style="text-align:center"><span class="dot" style=background:var(--red)></span></td><td style="text-align:center"><span class="dot" style=background:var(--blue)></span></td><td>Service agent</td></tr>
-    </table>
-  <div class="abs a" style="left:120px;top:880px;width:1680px;--d:1.2s"><p class="body" style="font-size:27px"><b>The pattern repeats:</b> a small model handles the volume, a vision model reads documents where there are any, a large model plans and drafts, and a named person approves.</p></div>
-  <div class="foot"><span>Illustrative designs; the model mix follows the function slides before this one</span><span class="pn"></span></div>
-</section>
-
-<!-- AGENTS A2 -->
-<section class="slide" data-sec="Agents">
-  <h2 class="title">Agents earn autonomy in three levels, and most AMC work belongs at the first two</h2>
-  <div class="abs a" style="left:120px;top:560px;width:540px;height:290px;background:var(--bluesoft);border-radius:14px 14px 0 0;padding:26px 30px;--d:.2s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 1</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Drafts</p><p style="font-size:25px;line-height:1.3;color:var(--muted);margin-top:10px!important">The model prepares; a person does everything after</p></div>
-  <div class="abs a" style="left:680px;top:470px;width:540px;height:380px;background:#C9D3FF;border-radius:14px 14px 0 0;padding:26px 30px;--d:.4s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 2</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts after approval</p><p style="font-size:25px;line-height:1.3;color:var(--ink2);margin-top:10px!important">The agent prepares the action; a person approves each one</p></div>
-  <div class="abs a" style="left:1240px;top:320px;width:560px;height:530px;background:var(--blue);color:#fff;border-radius:14px 14px 0 0;padding:26px 30px;--d:.6s"><p style="font-size:24px;font-weight:600;color:var(--yellow)">Level 3</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts within limits</p><p style="font-size:25px;line-height:1.3;color:rgba(255,255,255,.85);margin-top:10px!important">The agent completes routine cases alone, inside set limits, with every action logged and sampled</p></div>
-  <div class="abs" style="left:120px;top:850px;width:1680px;height:2px;background:var(--ink)"></div>
-  <p class="abs a" style="left:150px;top:776px;width:480px;font-size:23px;line-height:1.3;--d:.8s"><b>Fits:</b> research notes, commentary, rationale records</p>
-  <p class="abs a" style="left:710px;top:740px;width:480px;font-size:23px;line-height:1.3;--d:.9s"><b>Fits:</b> onboarding exceptions, distributor and investor replies</p>
-  <p class="abs a" style="left:1270px;top:740px;width:500px;font-size:23px;line-height:1.3;color:#fff;--d:1s"><b>Fits:</b> tagging and routing requests, opening compliance tasks, internal look-ups</p>
-  <div class="abs a" style="left:120px;top:270px;width:1040px;--d:1.1s"><p class="body" style="font-size:28px"><b>A working rule:</b> anything that reaches an investor or the order book stays at level 2 or below.</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:14px">Today 7% of asset managers have deployed agents and 5% give AI any autonomous authority in investing.</p></div>
-  <div class="foot"><span>The rule is our recommendation. Sources: EY (Sept 2025); Mercer (May 2026)</span><span class="pn"></span></div>
-</section>
-
-
-<section class="slide blue" data-sec="">
-  <p class="abs a big" style="left:120px;top:300px;font-size:200px;color:rgba(255,255,255,.35);--d:.1s">03</p>
   <h2 class="abs a" style="left:120px;top:540px;font-size:96px;font-weight:600;letter-spacing:-.04em;--d:.2s">Choosing where to start</h2>
-  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">Which processes to pick first, what each function head brings, and the leadership agenda for the next twelve months</p>
+  <p class="abs a lead" style="left:124px;top:680px;width:1100px;color:rgba(255,255,255,.85);--d:.3s">Which processes to pick first, what each function head brings, how much autonomy to give an agent, and the leadership agenda</p>
 </section>
 <!-- 12 WHERE TO START -->
 <section class="slide" data-sec="Choosing">
@@ -669,6 +539,20 @@ p.li:first-of-type{margin-top:14px!important}
   </div>
   <div class="abs a" style="left:120px;top:800px;width:1680px;background:var(--soft);border-radius:14px;padding:28px 40px;--d:.8s"><p class="body" style="font-size:28px"><b>Without these four, a pilot cannot show a return.</b> In Mercer's 2026 survey, 55% of managers use AI in an investment process and 8% report a measurable improvement.</p></div>
   <div class="foot"><span>Source: Mercer, AI in asset management survey of 131 managers (May 2026)</span><span class="pn"></span></div>
+</section>
+
+<!-- AGENTS A2 -->
+<section class="slide" data-sec="Choosing">
+  <h2 class="title">Agents earn autonomy in three levels, and most AMC work belongs at the first two</h2>
+  <div class="abs a" style="left:120px;top:560px;width:540px;height:290px;background:var(--bluesoft);border-radius:14px 14px 0 0;padding:26px 30px;--d:.2s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 1</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Drafts</p><p style="font-size:25px;line-height:1.3;color:var(--muted);margin-top:10px!important">The model prepares; a person does everything after</p></div>
+  <div class="abs a" style="left:680px;top:470px;width:540px;height:380px;background:#C9D3FF;border-radius:14px 14px 0 0;padding:26px 30px;--d:.4s"><p style="font-size:24px;font-weight:600;color:#1B33C9">Level 2</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts after approval</p><p style="font-size:25px;line-height:1.3;color:var(--ink2);margin-top:10px!important">The agent prepares the action; a person approves each one</p></div>
+  <div class="abs a" style="left:1240px;top:320px;width:560px;height:530px;background:var(--blue);color:#fff;border-radius:14px 14px 0 0;padding:26px 30px;--d:.6s"><p style="font-size:24px;font-weight:600;color:var(--yellow)">Level 3</p><p style="font-size:34px;font-weight:600;margin-top:6px!important">Acts within limits</p><p style="font-size:25px;line-height:1.3;color:rgba(255,255,255,.85);margin-top:10px!important">The agent completes routine cases alone, inside set limits, with every action logged and sampled</p></div>
+  <div class="abs" style="left:120px;top:850px;width:1680px;height:2px;background:var(--ink)"></div>
+  <p class="abs a" style="left:150px;top:776px;width:480px;font-size:23px;line-height:1.3;--d:.8s"><b>Fits:</b> research notes, commentary, rationale records</p>
+  <p class="abs a" style="left:710px;top:740px;width:480px;font-size:23px;line-height:1.3;--d:.9s"><b>Fits:</b> onboarding exceptions, distributor and investor replies</p>
+  <p class="abs a" style="left:1270px;top:740px;width:500px;font-size:23px;line-height:1.3;color:#fff;--d:1s"><b>Fits:</b> tagging and routing requests, opening compliance tasks, internal look-ups</p>
+  <div class="abs a" style="left:120px;top:270px;width:1040px;--d:1.1s"><p class="body" style="font-size:28px"><b>A working rule:</b> anything that reaches an investor or the order book stays at level 2 or below.</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:14px">Today 7% of asset managers have deployed agents and 5% give AI any autonomous authority in investing.</p></div>
+  <div class="foot"><span>The rule is our recommendation. Sources: EY (Sept 2025); Mercer (May 2026)</span><span class="pn"></span></div>
 </section>
 
 <!-- LEADERSHIP: ROADMAP -->
