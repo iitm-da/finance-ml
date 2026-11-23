@@ -81,101 +81,158 @@ A = r'''<!-- SCALE-BEGIN A -->
 <section class="slide b4" data-sec="Before LLMs">
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600&display=swap');
-  .b4 .hd{display:grid;grid-template-columns:380px 44px 250px 44px 422px;margin-bottom:12px}
-  .b4 .ln{display:grid;grid-template-columns:380px 44px 250px 44px 422px;height:128px;margin-bottom:14px}
-  .b4 .in{border:2px solid var(--line);border-radius:12px;padding:0 20px;background:#fff;display:flex;align-items:center}
-  .b4 .tx{font-size:25px;line-height:1.28;font-weight:500;min-height:32px}
-  .b4 .tx.ty::after{content:"";display:inline-block;width:3px;height:26px;background:var(--blue);margin-left:3px;vertical-align:-4px;animation:b4bl .5s steps(2) infinite}
-  @keyframes b4bl{50%{opacity:0}}
+  .b4 .tb{font:600 24px/1 'Geist',Arial,sans-serif;padding:15px 26px;border-radius:999px;border:2px solid #C9CEE3;background:#fff;color:var(--muted);cursor:pointer;margin-right:12px;transition:background .3s,color .3s,border-color .3s}
+  .b4 .tb.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .b4 .tb:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+  .b4 .sc{position:relative;height:440px;border-radius:14px;padding:18px 20px;background:var(--soft);border:2px solid transparent;opacity:.4;transition:opacity .4s,background .4s,border-color .4s,box-shadow .4s}
+  .b4 .sc.done{opacity:1}
+  .b4 .sc.on{opacity:1;background:#fff;border-color:var(--blue);box-shadow:0 14px 36px rgba(43,75,255,.18)}
+  .b4 .sc:not(:last-child)::after{content:"";position:absolute;right:-33px;top:50%;margin-top:-11px;border:11px solid transparent;border-left:14px solid #C9CEE3;border-right:0;transition:border-left-color .4s}
+  .b4 .sc.done:not(:last-child)::after{border-left-color:var(--blue)}
+  .b4 .sh{font-size:29px;font-weight:600}
+  .b4 .sh b{color:var(--blue);margin-right:12px}
+  .b4 .cp{font-size:21px;line-height:1.3;color:var(--muted);margin-top:6px!important;min-height:55px}
+  .b4 .vz{margin-top:10px}
+  .b4 .it{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--soft);border:1.5px solid var(--line);border-radius:9px;padding:8px 12px;margin-bottom:8px;font-size:19px;line-height:1.3;font-weight:500;opacity:0;transform:translateX(-16px);transition:opacity .35s,transform .35s}
+  .b4 .sc:not(.on) .it{background:#fff}
+  .b4 .it.col{display:block}
+  .b4 .it.in{opacity:1;transform:none}
+  .b4 .lb{flex:none;font-size:16px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.5);transition:opacity .3s,transform .35s cubic-bezier(.2,1.6,.4,1)}
+  .b4 .lb.in{opacity:1;transform:none}
+  .b4 .lb.p{background:var(--bluesoft);color:#1B33C9}.b4 .lb.n{background:var(--redsoft);color:#B8231A}.b4 .lb.d{background:var(--yellow);color:var(--ink)}
+  .b4 .hin{display:block;font-family:'Geist','Noto Sans Devanagari','Nirmala UI','Mangal',sans-serif;font-size:18px;line-height:1.4;font-weight:600;color:#1B33C9;margin-top:4px;opacity:0;transition:opacity .4s}
+  .b4 .hin.in{opacity:1}
   .b4 mark{background:transparent;color:inherit;border-radius:5px;padding:1px 3px;margin:0 -3px;transition:background .45s}
   .b4 mark.hit{background:var(--yellow)}
-  .b4 .cn{position:relative}
-  .b4 .cn::before{content:"";position:absolute;left:5px;right:5px;top:50%;height:2px;margin-top:-1px;background:#C9CEE3}
-  .b4 .cn i{position:absolute;top:50%;left:0;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--blue);opacity:0}
-  .b4 .cn i.go{animation:b4go .5s linear forwards}
-  @keyframes b4go{0%{left:0;opacity:1}85%{opacity:1}100%{left:calc(100% - 14px);opacity:0}}
-  .b4 .md{background:var(--ink);color:#fff;border-radius:12px;padding:0 18px;display:flex;flex-direction:column;justify-content:center;transition:box-shadow .3s,transform .3s}
-  .b4 .md b{font-size:25px;font-weight:600;white-space:nowrap}
-  .b4 .md span{font-size:19px;line-height:1.25;color:rgba(255,255,255,.62);margin-top:5px}
-  .b4 .md.on{box-shadow:0 0 0 4px var(--blue),0 0 36px rgba(43,75,255,.6);transform:scale(1.04)}
-  .b4 .ou{background:var(--bluesoft);border-radius:12px;padding:0 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;align-content:center}
-  .b4 .trk{position:relative;width:170px;height:16px;border-radius:8px;background:#fff}
-  .b4 .trk::after{content:"";position:absolute;left:50%;top:-6px;width:2px;height:28px;margin-left:-1px;background:var(--ink)}
-  .b4 .fill{position:absolute;top:0;height:16px;width:0;border-radius:8px;transition:width .55s cubic-bezier(.2,.8,.2,1)}
-  .b4 .res{font-size:28px;font-weight:600;opacity:0;transition:opacity .3s}
-  .b4 .chip{font-size:22px;font-weight:600;padding:6px 14px;border-radius:999px;background:var(--yellow);color:var(--ink);opacity:0;transform:scale(.6);transition:opacity .3s,transform .35s cubic-bezier(.2,1.6,.4,1);white-space:nowrap}
-  .b4 .chip.on{opacity:1;transform:none}
-  .b4 .hi{font-size:25px;line-height:1.35;font-weight:600;color:#1B33C9;font-family:'Geist','Noto Sans Devanagari','Nirmala UI','Mangal',sans-serif}
-  .b4 .dk{font-size:20px;font-weight:600;padding:5px 11px;border-radius:999px;border:2px solid #C9CEE3;color:var(--faint);background:#fff;transition:all .3s;white-space:nowrap}
-  .b4 .ou.rt{gap:8px;flex-wrap:nowrap}
-  .b4 .dk.on{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1)}
+  .b4 .cv{fill:none;stroke:var(--blue);stroke-width:4;stroke-linecap:round;stroke-dasharray:1000;stroke-dashoffset:1000}
+  .b4 .cv.go{transition:stroke-dashoffset 1.7s cubic-bezier(.4,0,.2,1);stroke-dashoffset:0}
+  .b4 .pg{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:10px}
+  .b4 .pg div{height:12px;width:0;background:var(--blue);border-radius:6px}
+  .b4 .pg.go div{transition:width 1.7s linear;width:100%}
+  .b4 .pt{font-size:19px;color:var(--muted);margin-top:8px!important}
+  .b4 .bd{display:inline-block;background:var(--ink);color:#fff;font-size:22px;font-weight:600;padding:11px 20px;border-radius:10px;transition:box-shadow .3s,transform .35s cubic-bezier(.2,1.6,.4,1),opacity .3s}
+  .b4 .bd.hid{opacity:0;transform:scale(.5)}
+  .b4 .bd.glow{box-shadow:0 0 0 4px var(--blue),0 0 30px rgba(43,75,255,.6);transform:scale(1.05)}
+  .b4 .dn{position:relative;height:30px;width:2px;margin:4px 0 4px 40px;background:#C9CEE3}
+  .b4 .dn i{position:absolute;left:-6px;top:0;width:14px;height:14px;border-radius:50%;background:var(--blue);opacity:0}
+  .b4 .dn i.go{animation:b4dn .45s linear forwards}
+  @keyframes b4dn{0%{top:-4px;opacity:1}85%{opacity:1}100%{top:20px;opacity:0}}
+  .b4 .tx.ty::after{content:"";display:inline-block;width:3px;height:20px;background:var(--blue);margin-left:3px;vertical-align:-3px;animation:b4bl .5s steps(2) infinite}
+  @keyframes b4bl{50%{opacity:0}}
+  .b4 .out{min-height:62px;border-radius:9px;background:var(--bluesoft);padding:10px 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;opacity:0;transition:opacity .35s}
+  .b4 .out.in{opacity:1}
+  .b4 .trk{position:relative;width:130px;height:14px;border-radius:7px;background:#fff}
+  .b4 .trk::after{content:"";position:absolute;left:50%;top:-6px;width:2px;height:26px;margin-left:-1px;background:var(--ink)}
+  .b4 .fill{position:absolute;top:0;height:14px;width:0;border-radius:7px;transition:width .55s cubic-bezier(.2,.8,.2,1)}
+  .b4 .res{font-size:23px;font-weight:600}
+  .b4 .out .lb{font-size:19px;padding:5px 13px}
+  .b4 .out .hin{font-size:20px;margin:0}
+  .b4 .lp path{fill:none;stroke:var(--blue);stroke-width:3;stroke-dasharray:1000;stroke-dashoffset:1000}
+  .b4 .lp polygon{fill:var(--blue);opacity:0}
+  .b4 .lp .lt{opacity:0;transition:opacity .5s}
+  .b4 .lp.go path{transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1);stroke-dashoffset:0}
+  .b4 .lp.go polygon{opacity:1;transition:opacity .2s 1.2s}
+  .b4 .lp.go .lt{opacity:1}
   </style>
   <h2 class="title">Before large language models, every language task needed its own model and its own labelled data</h2>
-  <div class="abs" style="left:120px;top:254px;width:1140px">
-    <div class="hd a" style="--d:.15s"><p class="k">A sample comes in</p><span></span><p class="k">Its own model</p><span></span><p class="k">The one thing it does</p></div>
-    <div class="ln a" data-k="sent" style="--d:.25s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Sentiment model</b><span>trained on labelled headlines</span></div><div class="cn"><i></i></div><div class="ou"><div class="trk"><div class="fill"></div></div><b class="res"></b></div></div>
-    <div class="ln a" data-k="ent" style="--d:.4s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Entity model</b><span>trained on tagged filings</span></div><div class="cn"><i></i></div><div class="ou"></div></div>
-    <div class="ln a" data-k="tr" style="--d:.55s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Translation model</b><span>trained on sentence pairs</span></div><div class="cn"><i></i></div><div class="ou"><p class="hi"></p></div></div>
-    <div class="ln a" data-k="rt" style="--d:.7s"><div class="in"><p class="tx"></p></div><div class="cn"><i></i></div><div class="md"><b>Routing model</b><span>trained on sorted emails</span></div><div class="cn"><i></i></div><div class="ou rt"><span class="dk">Payments</span><span class="dk">KYC</span><span class="dk">Redemptions</span></div></div>
+  <div class="abs a tabs" style="left:120px;top:246px;--d:.15s" role="tablist"><button class="tb" role="tab">Sentiment model</button><button class="tb" role="tab">Entity model</button><button class="tb" role="tab">Translation model</button><button class="tb" role="tab">Routing model</button></div>
+  <div class="abs a" style="left:120px;top:324px;width:1680px;display:grid;grid-template-columns:repeat(4,1fr);gap:44px;--d:.3s">
+    <div class="sc"><p class="sh"><b>1</b>Data</p><p class="cp"></p><div class="vz"></div></div>
+    <div class="sc"><p class="sh"><b>2</b>Labelling</p><p class="cp"></p><div class="vz"></div></div>
+    <div class="sc"><p class="sh"><b>3</b>Modelling</p><p class="cp"></p><div class="vz"></div></div>
+    <div class="sc"><p class="sh"><b>4</b>Deployment</p><p class="cp"></p><div class="vz"></div></div>
   </div>
-  <div class="abs" style="left:1340px;top:270px;width:460px">
-    <div class="a" style="--d:.9s;border-top:2px solid var(--ink);padding-top:18px"><p style="font-size:30px;font-weight:600">Thousands of labelled examples for each task</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">OpenAI put the need at "thousands or tens of thousands of examples" per task.</p></div>
-    <div class="a" style="--d:1.05s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">A model did not transfer</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">The sentiment model could not translate. A new task was a new project.</p></div>
-    <div class="a" style="--d:1.2s;border-top:2px solid var(--ink);padding-top:18px;margin-top:28px"><p style="font-size:30px;font-weight:600">Cost grew with the task list</p><p class="body" style="font-size:26px;color:var(--muted);margin-top:8px">Each model had its own data, its own team and its own upkeep.</p></div>
-  </div>
+  <svg class="abs lp" style="left:120px;top:766px" width="1680" height="64" viewBox="0 0 1680 64" aria-hidden="true">
+    <path pathLength="1000" d="M1486,2 V30 Q1486,42 1474,42 H206 Q194,42 194,30 V12"/><polygon points="184,14 204,14 194,0"/>
+    <g class="lt"><rect x="520" y="26" width="640" height="34" fill="#fff"/><text x="840" y="51" text-anchor="middle" font-size="23" font-weight="600" fill="#1B33C9" font-family="Geist,Arial,sans-serif">The loop: language changes, so collect, label and retrain</text></g>
+  </svg>
+  <div class="abs a" style="left:120px;top:846px;width:1680px;background:var(--soft);border-radius:14px;padding:20px 40px;--d:.6s"><p class="body" style="font-size:27px;line-height:1.35"><b>Every new task repeated the whole loop.</b> The sentiment model could not translate, and OpenAI put the labelling need at "thousands or tens of thousands of examples" for each task.</p></div>
   <div class="foot"><span>Samples and company names are invented. Quote: Brown et al., Language Models are Few-Shot Learners (OpenAI, 2020)</span><span class="pn"></span></div>
   <script>
   (function(){
-    var sec=document.currentScript.closest('.slide'),tok=0;
+    var sec=document.currentScript.closest('.slide'),tok=0,cur=0,auto=true;
     var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var S={
-      sent:[{t:'Bank profits beat estimates',v:.8},{t:'Rupee slides to a record low',v:-.7},{t:'Auto sales rise for a third month',v:.55}],
-      ent:[{t:'<mark>Meridian Cements</mark> will merge with <mark>Kaveri Paints</mark>'},{t:'Auditors of <mark>Northgate Finance</mark> have resigned'},{t:'<mark>Solvix Pharma</mark> buys a plant from <mark>Arden Labs</mark>'}],
-      tr:[{t:'Mutual fund investments are subject to market risks',h:'म्यूचुअल फंड निवेश बाज़ार जोखिमों के अधीन हैं'},{t:'Read all scheme related documents carefully',h:'योजना संबंधी सभी दस्तावेज़ों को ध्यान से पढ़ें'}],
-      rt:[{t:'My SIP was debited twice this month',d:0},{t:'My KYC status shows on hold',d:1},{t:'Where is my redemption money?',d:2}]
-    };
-    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    var T=[
+     {name:'Sentiment model',kind:'chip',
+      cp:['Collect market news headlines.','Analysts mark each headline positive or negative.','Train a classifier on the marked headlines.','Each new headline gets a score.'],
+      items:[['Bank profits beat estimates','Positive','p'],['Rupee slides to a record low','Negative','n'],['Auto sales rise for a third month','Positive','p'],['Fund house reports outflows','Negative','n']],
+      dep:{t:'IT firms raise full-year guidance',v:.8}},
+     {name:'Entity model',kind:'mark',
+      cp:['Collect sentences from company filings.','Annotators tag every company name by hand.','Train a tagger on the tagged sentences.','Names are pulled out of each new filing.'],
+      items:[['<mark>Meridian Cements</mark> will merge with <mark>Kaveri Paints</mark>'],['Auditors of <mark>Northgate Finance</mark> have resigned'],['<mark>Solvix Pharma</mark> buys a plant from <mark>Arden Labs</mark>']],
+      dep:{t:'Board of <mark>Tarini Motors</mark> approves a buyback'}},
+     {name:'Translation model',kind:'pair',
+      cp:['Collect English sentences from scheme documents.','Translators write the Hindi for each sentence.','Train on the sentence pairs.','New English text comes out in Hindi.'],
+      items:[['Mutual fund investments are subject to market risks','म्यूचुअल फंड निवेश बाज़ार जोखिमों के अधीन हैं'],['Read all scheme related documents carefully','योजना संबंधी सभी दस्तावेज़ों को ध्यान से पढ़ें']],
+      dep:{t:'Past performance may or may not be sustained in future',h:'पिछला प्रदर्शन भविष्य में कायम रह भी सकता है और नहीं भी'}},
+     {name:'Routing model',kind:'chip',
+      cp:['Collect past investor emails.','Service staff sort each email to a desk.','Train a classifier on the sorted emails.','Each new email goes to its desk.'],
+      items:[['My SIP was debited twice this month','Payments','d'],['My KYC status shows on hold','KYC','d'],['Where is my redemption money?','Redemptions','d'],['Please update my address','KYC','d']],
+      dep:{t:'Dividend not credited to my account',d:'Payments'}}
+    ];
+    var tabs=sec.querySelectorAll('.tb'),sc=sec.querySelectorAll('.sc'),lp=sec.querySelector('.lp');
     function plain(h){return h.replace(/<[^>]+>/g,'')}
-    function reset(ln,k){
-      var ou=ln.querySelector('.ou');ln.querySelector('.tx').textContent='';ln.querySelector('.md').classList.remove('on');
-      if(k==='sent'){ou.querySelector('.fill').style.width='0';ou.querySelector('.res').style.opacity=0}
-      if(k==='ent')ou.innerHTML='';
-      if(k==='tr')ou.querySelector('.hi').textContent='';
-      if(k==='rt')[].forEach.call(ou.querySelectorAll('.dk'),function(d){d.classList.remove('on')});
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function list(t,lab){return t.items.map(function(it){
+      if(t.kind==='chip')return '<div class="it"><span>'+it[0]+'</span>'+(lab?'<span class="lb '+it[2]+'">'+it[1]+'</span>':'')+'</div>';
+      if(t.kind==='pair')return '<div class="it col"><span>'+it[0]+'</span>'+(lab?'<span class="hin">'+it[1]+'</span>':'')+'</div>';
+      return '<div class="it"><span>'+(lab?it[0]:plain(it[0]))+'</span></div>'}).join('')}
+    function render(i){
+      var t=T[i];cur=i;
+      [].forEach.call(tabs,function(b,j){b.classList.toggle('on',j===i);b.setAttribute('aria-selected',j===i)});
+      [].forEach.call(sc,function(c,j){c.className='sc';c.querySelector('.cp').textContent=t.cp[j]});
+      lp.classList.remove('go');
+      sc[0].querySelector('.vz').innerHTML=list(t,false);
+      sc[1].querySelector('.vz').innerHTML=list(t,true);
+      sc[2].querySelector('.vz').innerHTML='<svg width="340" height="124" viewBox="0 0 340 150" preserveAspectRatio="none" aria-hidden="true"><line x1="8" y1="140" x2="336" y2="140" stroke="#0E1330" stroke-width="2"/><line x1="8" y1="6" x2="8" y2="140" stroke="#0E1330" stroke-width="2"/><path class="cv" pathLength="1000" d="M12,16 C60,96 120,118 190,124 S300,130 334,131"/></svg><p class="pt">Error on examples held back</p><div class="pg"><div></div></div><p class="pt">Training run</p><p style="margin-top:14px!important"><span class="bd hid">'+t.name+'</span></p>';
+      sc[3].querySelector('.vz').innerHTML='<div class="it in"><span class="tx"></span></div><div class="dn"><i></i></div><span class="bd">'+t.name+'</span><div class="dn"><i></i></div><div class="out"></div>';
     }
-    async function show(ln,k,s,fast){
-      var ou=ln.querySelector('.ou'),tx=ln.querySelector('.tx');
-      if(k==='sent'){var f=ou.querySelector('.fill'),r=ou.querySelector('.res'),pos=s.v>0,c=pos?'#2B4BFF':'#E8382D';
-        f.style.background=c;f.style.left=pos?'50%':'auto';f.style.right=pos?'auto':'50%';f.style.width=(Math.abs(s.v)*50)+'%';
-        r.textContent=pos?'Positive':'Negative';r.style.color=pos?'#1B33C9':'#B8231A';r.style.opacity=1}
-      if(k==='ent'){tx.innerHTML=s.t;var ms=tx.querySelectorAll('mark');
-        for(var i=0;i<ms.length;i++){var c2=document.createElement('span');c2.className='chip';c2.textContent=ms[i].textContent;ou.appendChild(c2)}
-        void ou.offsetWidth;
-        for(i=0;i<ms.length;i++){ms[i].classList.add('hit');ou.children[i].classList.add('on');if(!fast)await sleep(320)}}
-      if(k==='tr'){var w=s.h.split(' '),p=ou.querySelector('.hi');
-        for(var j=1;j<=w.length;j++){p.textContent=w.slice(0,j).join(' ');if(!fast)await sleep(130)}}
-      if(k==='rt')ou.querySelectorAll('.dk')[s.d].classList.add('on');
+    function on(j){[].forEach.call(sc,function(c,k){c.classList.toggle('on',k===j);if(k<j)c.classList.add('done')})}
+    function labels(now){var v=sc[1].querySelector('.vz');
+      [].forEach.call(v.querySelectorAll('.it'),function(e){e.classList.add('in')});
+      return [].slice.call(v.querySelectorAll('.it')).map(function(e){return function(){[].forEach.call(e.querySelectorAll('.lb,.hin'),function(x){x.classList.add('in')});[].forEach.call(e.querySelectorAll('mark'),function(x){x.classList.add('hit')})}})}
+    function result(t){var o=sc[3].querySelector('.out'),d=t.dep;
+      if(d.v!==undefined){var pos=d.v>0;o.innerHTML='<div class="trk"><div class="fill" style="background:'+(pos?'#2B4BFF':'#E8382D')+';'+(pos?'left:50%':'right:50%')+'"></div></div><b class="res" style="color:'+(pos?'#1B33C9':'#B8231A')+'">'+(pos?'Positive':'Negative')+'</b>';
+        void o.offsetWidth;o.querySelector('.fill').style.width=(Math.abs(d.v)*50)+'%'}
+      else if(d.h)o.innerHTML='<span class="hin in">'+d.h+'</span>';
+      else if(d.d)o.innerHTML='<span class="lb d in">'+d.d+'</span>';
+      else{var tx=sc[3].querySelector('.tx');tx.innerHTML=d.t;var m=tx.querySelectorAll('mark'),h='';
+        for(var i=0;i<m.length;i++){m[i].classList.add('hit');h+='<span class="lb d in">'+m[i].textContent+'</span>'}o.innerHTML=h}
+      o.classList.add('in')}
+    function still(i){render(i);var t=T[i];
+      [].forEach.call(sec.querySelectorAll('.sc'),function(c){c.classList.add('done')});
+      [].forEach.call(sc[0].querySelectorAll('.it'),function(e){e.classList.add('in')});
+      labels().forEach(function(f){f()});
+      sc[2].querySelector('.cv').classList.add('go');sc[2].querySelector('.pg').classList.add('go');sc[2].querySelector('.bd').classList.remove('hid');
+      sc[3].querySelector('.tx').textContent=plain(t.dep.t);result(t);lp.classList.add('go')}
+    async function play(i,my){
+      function w(ms){return sleep(ms).then(function(){if(tok!==my)throw 0})}
+      try{
+        while(true){
+          var t=T[i];render(i);await w(350);
+          on(0);var a=sc[0].querySelectorAll('.it');
+          for(var k=0;k<a.length;k++){a[k].classList.add('in');await w(380)}
+          await w(900);
+          on(1);var f=labels();await w(500);
+          for(k=0;k<f.length;k++){f[k]();await w(560)}
+          await w(900);
+          on(2);await w(300);sc[2].querySelector('.cv').classList.add('go');sc[2].querySelector('.pg').classList.add('go');
+          await w(1900);sc[2].querySelector('.bd').classList.remove('hid');await w(1100);
+          on(3);await w(300);var tx=sc[3].querySelector('.tx'),s=plain(t.dep.t),dn=sc[3].querySelectorAll('.dn i'),bd=sc[3].querySelector('.bd');
+          tx.classList.add('ty');for(k=1;k<=s.length;k++){tx.textContent=s.slice(0,k);await w(24)}
+          tx.classList.remove('ty');await w(250);
+          dn[0].classList.add('go');await w(450);bd.classList.add('glow');await w(550);
+          dn[1].classList.add('go');await w(450);bd.classList.remove('glow');result(t);await w(1700);
+          on(4);lp.classList.add('go');await w(3000);
+          if(auto)i=(i+1)%T.length;
+        }
+      }catch(e){}
     }
-    function dot(el){var i=el.querySelector('i');i.classList.remove('go');void i.offsetWidth;i.classList.add('go')}
-    async function lane(ln,my,delay){
-      var k=ln.dataset.k,n=0,tx=ln.querySelector('.tx'),cn=ln.querySelectorAll('.cn'),md=ln.querySelector('.md');
-      await sleep(delay);
-      while(tok===my){
-        var s=S[k][n%S[k].length],t=plain(s.t);reset(ln,k);
-        tx.classList.add('ty');
-        for(var c=1;c<=t.length;c++){if(tok!==my)return;tx.textContent=t.slice(0,c);await sleep(22)}
-        tx.classList.remove('ty');await sleep(250);if(tok!==my)return;
-        dot(cn[0]);await sleep(480);md.classList.add('on');await sleep(520);if(tok!==my)return;
-        dot(cn[1]);await sleep(480);md.classList.remove('on');
-        await show(ln,k,s,false);await sleep(2600);n++;
-      }
-    }
-    function start(){tok++;var my=tok,ls=sec.querySelectorAll('.ln');
-      [].forEach.call(ls,function(ln,i){var k=ln.dataset.k;
-        if(reduce){reset(ln,k);ln.querySelector('.tx').textContent=plain(S[k][0].t);show(ln,k,S[k][0],true)}
-        else{reset(ln,k);lane(ln,my,900+i*650)}})}
-    new MutationObserver(function(){if(sec.classList.contains('active'))start();else tok++}).observe(sec,{attributes:true,attributeFilter:['class']});
-    if(sec.classList.contains('active'))start();
+    function start(i){tok++;if(reduce){still(i);return}play(i,tok)}
+    [].forEach.call(tabs,function(b,j){b.addEventListener('click',function(e){e.stopPropagation();auto=false;start(j)})});
+    new MutationObserver(function(){if(sec.classList.contains('active')){auto=true;start(0)}else tok++}).observe(sec,{attributes:true,attributeFilter:['class']});
+    render(0);
+    if(sec.classList.contains('active'))start(0);
   })();
   </script>
 </section>
