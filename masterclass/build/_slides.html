@@ -370,6 +370,125 @@
 </section>
 <!-- SCALE-END E -->
 
+<!-- SCALE-BEGIN F -->
+<section class="slide b4 b5" data-sec="Emergence">
+  <style>
+  .b5 .pc,.b5 .oc{border-radius:14px;padding:20px 24px;background:var(--soft)}
+  .b5 .ph{font-size:22px;font-weight:600;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+  .b5 .cnt{font-size:19px;font-weight:600;color:#1B33C9;background:var(--bluesoft);padding:4px 12px;border-radius:999px;opacity:0;transition:opacity .3s}
+  .b5 .cnt.in{opacity:1}
+  .b5 .ins{font-size:25px;font-weight:600;line-height:1.3;margin:10px 0 12px!important;min-height:33px}
+  .b5 .it{font-size:21px;padding:9px 14px;background:#fff}
+  .b5 .it .lb{font-size:17px}
+  .b5 .it .hin{font-size:20px}
+  .b5 .ch{display:flex;gap:6px;flex:none}
+  .b5 .it.new{border:2px dashed var(--blue);margin-top:14px;margin-bottom:0;min-height:50px}
+  .b5 .hc{position:relative}
+  .b5 .hc::before{content:"";position:absolute;left:8px;right:8px;top:50%;height:2px;margin-top:-1px;background:#C9CEE3}
+  .b5 .hc i{position:absolute;top:50%;left:0;width:16px;height:16px;margin-top:-8px;border-radius:50%;background:var(--blue);opacity:0}
+  .b5 .hc i.go{animation:b5go .5s linear forwards}
+  @keyframes b5go{0%{left:0;opacity:1}85%{opacity:1}100%{left:calc(100% - 16px);opacity:0}}
+  .b5 .llm{align-self:center;height:230px;border-radius:16px;background:var(--ink);color:#fff;padding:0 26px;display:flex;flex-direction:column;justify-content:center;transition:box-shadow .3s,transform .3s}
+  .b5 .llm b{font-size:31px;font-weight:600;line-height:1.15}
+  .b5 .llm span{font-size:21px;line-height:1.3;color:rgba(255,255,255,.65);margin-top:12px}
+  .b5 .llm.glow{box-shadow:0 0 0 5px var(--blue),0 0 46px rgba(43,75,255,.65);transform:scale(1.04)}
+  .b5 .oc{display:flex;flex-direction:column}
+  .b5 .oc .out{flex:1;background:none;padding:0;gap:16px;align-content:center}
+  .b5 .oc .trk{width:170px;height:16px}.b5 .oc .fill{height:16px}
+  .b5 .oc .res{font-size:36px}
+  .b5 .oc .lb{font-size:26px;padding:8px 18px}
+  .b5 .oc .hin{font-size:28px;line-height:1.45}
+  .b5 .s5{border-top:3px solid var(--line);padding-top:12px;opacity:.35;transition:opacity .4s,border-color .4s}
+  .b5 .s5.on{opacity:1;border-color:var(--blue)}
+  .b5 .s5 p:first-child{font-size:25px;font-weight:600}
+  .b5 .s5 p:first-child b{color:var(--blue);margin-right:10px}
+  .b5 .s5 p:last-child{font-size:21px;line-height:1.3;color:var(--muted);margin-top:4px!important}
+  </style>
+  <h2 class="title">A large language model does all four tasks from a few examples in the prompt</h2>
+  <div class="abs a tabs" style="left:120px;top:246px;--d:.15s" role="tablist"><button class="tb" role="tab">Sentiment</button><button class="tb" role="tab">Company names</button><button class="tb" role="tab">Translation</button><button class="tb" role="tab">Routing</button></div>
+  <div class="abs a" style="left:120px;top:324px;width:1680px;height:372px;display:grid;grid-template-columns:800px 66px 300px 66px 448px;--d:.3s">
+    <div class="pc"><p class="ph"><span>The prompt</span><span class="cnt"></span></p><p class="ins"></p><div class="exs"></div><div class="it in new"><span class="tx"></span></div></div>
+    <div class="hc"><i></i></div>
+    <div class="llm"><b>Large language model</b><span>The same model in every tab. It is not retrained.</span></div>
+    <div class="hc"><i></i></div>
+    <div class="oc"><p class="ph"><span>The output</span></p><div class="out"></div></div>
+  </div>
+  <div class="abs a" style="left:120px;top:722px;width:1680px;display:grid;grid-template-columns:repeat(4,1fr);gap:44px;--d:.45s">
+    <div class="s5"><p><b>1</b>Data</p><p>A few samples, pasted into the prompt</p></div>
+    <div class="s5"><p><b>2</b>Labelling</p><p>A label typed beside each sample</p></div>
+    <div class="s5"><p><b>3</b><s>Modelling</s></p><p>No training run</p></div>
+    <div class="s5"><p><b>4</b>Deployment</p><p>One running model serves every task</p></div>
+  </div>
+  <div class="abs a" style="left:120px;top:846px;width:1680px;background:var(--soft);border-radius:14px;padding:20px 40px;--d:.6s"><p class="body" style="font-size:27px;line-height:1.35"><b>The task now lives in the prompt.</b> What took a labelling project and a training run for each task takes a few lines of text, and the same model does all four. Each prompt still needs a test on your own work.</p></div>
+  <div class="foot"><span>Prompts and outputs are illustrative and reuse the samples from slide 7. Few-shot prompting: Brown et al. (OpenAI, 2020)</span><span class="pn"></span></div>
+  <script>
+  (function(){
+    var sec=document.currentScript.closest('.slide'),tok=0,auto=true;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var HI='<span class="hin in">';
+    var T=[
+     {ins:'Classify each headline as Positive or Negative.',
+      ex:[['Bank profits beat estimates','<span class="lb p">Positive</span>'],['Rupee slides to a record low','<span class="lb n">Negative</span>'],['Auto sales rise for a third month','<span class="lb p">Positive</span>']],
+      q:'IT firms raise full-year guidance',
+      out:'<div class="trk"><div class="fill" style="background:#2B4BFF;left:50%"></div></div><b class="res" style="color:#1B33C9">Positive</b>'},
+     {ins:'List the company names in each sentence.',
+      ex:[['Meridian Cements will merge with Kaveri Paints','<span class="ch"><span class="lb d">Meridian Cements</span><span class="lb d">Kaveri Paints</span></span>'],['Auditors of Northgate Finance have resigned','<span class="lb d">Northgate Finance</span>']],
+      q:'Board of Tarini Motors approves a buyback',
+      out:'<span class="lb d in">Tarini Motors</span>'},
+     {ins:'Translate each sentence into Hindi.',col:true,
+      ex:[['Mutual fund investments are subject to market risks','<span class="hin">म्यूचुअल फंड निवेश बाज़ार जोखिमों के अधीन हैं</span>'],['Read all scheme related documents carefully','<span class="hin">योजना संबंधी सभी दस्तावेज़ों को ध्यान से पढ़ें</span>']],
+      q:'Past performance may or may not be sustained in future',
+      out:HI+'पिछला प्रदर्शन भविष्य में कायम रह भी सकता है और नहीं भी</span>'},
+     {ins:'Send each email to Payments, KYC or Redemptions.',
+      ex:[['My SIP was debited twice this month','<span class="lb d">Payments</span>'],['My KYC status shows on hold','<span class="lb d">KYC</span>'],['Where is my redemption money?','<span class="lb d">Redemptions</span>']],
+      q:'Dividend not credited to my account',
+      out:'<span class="lb d in">Payments</span>'}
+    ];
+    var tabs=sec.querySelectorAll('.tb'),ins=sec.querySelector('.ins'),exs=sec.querySelector('.exs'),tx=sec.querySelector('.new .tx'),
+        cnt=sec.querySelector('.cnt'),llm=sec.querySelector('.llm'),hc=sec.querySelectorAll('.hc i'),out=sec.querySelector('.oc .out'),s5=sec.querySelectorAll('.s5');
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+    function render(i){var t=T[i];
+      [].forEach.call(tabs,function(b,j){b.classList.toggle('on',j===i);b.setAttribute('aria-selected',j===i)});
+      ins.textContent='';tx.textContent='';out.innerHTML='';out.classList.remove('in');cnt.classList.remove('in');llm.classList.remove('glow');
+      [].forEach.call(s5,function(c){c.classList.remove('on')});
+      exs.innerHTML=t.ex.map(function(e){return '<div class="it'+(t.col?' col':'')+'"><span>'+e[0]+'</span>'+e[1]+'</div>'}).join('')}
+    function label(e){[].forEach.call(e.querySelectorAll('.lb,.hin'),function(x){x.classList.add('in')})}
+    function count(n){cnt.textContent=n+(n===1?' example':' examples');cnt.classList.add('in')}
+    function result(t){out.innerHTML=t.out;out.classList.add('in');var f=out.querySelector('.fill');if(f){void f.offsetWidth;f.style.width='40%'}}
+    function still(i){render(i);var t=T[i];ins.textContent=t.ins;tx.textContent=t.q;
+      [].forEach.call(exs.children,function(e){e.classList.add('in');label(e)});count(t.ex.length);result(t);
+      [].forEach.call(s5,function(c){c.classList.add('on')})}
+    async function play(i,my){
+      function w(ms){return sleep(ms).then(function(){if(tok!==my)throw 0})}
+      try{
+        while(true){
+          var t=T[i],k;render(i);await w(350);
+          ins.classList.add('tx','ty');for(k=1;k<=t.ins.length;k++){ins.textContent=t.ins.slice(0,k);await w(16)}
+          ins.classList.remove('ty');await w(300);
+          for(k=0;k<exs.children.length;k++){exs.children[k].classList.add('in');await w(380);label(exs.children[k]);count(k+1);await w(520)}
+          await w(300);
+          tx.classList.add('ty');for(k=1;k<=t.q.length;k++){tx.textContent=t.q.slice(0,k);await w(24)}
+          tx.classList.remove('ty');await w(350);
+          hc[0].classList.remove('go');void hc[0].offsetWidth;hc[0].classList.add('go');await w(500);
+          llm.classList.add('glow');await w(750);
+          hc[1].classList.remove('go');void hc[1].offsetWidth;hc[1].classList.add('go');await w(500);
+          llm.classList.remove('glow');result(t);await w(1200);
+          for(k=0;k<s5.length;k++){s5[k].classList.add('on');await w(420)}
+          await w(3200);
+          if(auto)i=(i+1)%T.length;
+        }
+      }catch(e){}
+    }
+    function start(i){tok++;if(reduce){still(i);return}play(i,tok)}
+    [].forEach.call(tabs,function(b,j){b.addEventListener('click',function(e){e.stopPropagation();auto=false;start(j)})});
+    new MutationObserver(function(){if(sec.classList.contains('active')){auto=true;start(0)}else tok++}).observe(sec,{attributes:true,attributeFilter:['class']});
+    render(0);
+    if(sec.classList.contains('active'))start(0);
+  })();
+  </script>
+</section>
+<!-- SCALE-END F -->
+
 <!-- HOW 2: VLM -->
 <section class="slide" data-sec="How they work">
   <h2 class="title">A vision model turns the page into tokens and passes them to the same language model</h2>
