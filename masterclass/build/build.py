@@ -98,6 +98,7 @@ js = """
 
 head = head.replace("</style>", css + "</style>")
 head = head.replace("<title>Language is the ledger: a CXO briefing</title>", "<title>Language is the ledger: LLMs, VLMs and SLMs for asset management</title>")
+tail = tail.replace("g.innerHTML=o;", "if(g)g.innerHTML=o;")
 tail = tail.replace("</body>", js + "</body>")
 out = d.parent / "llm_vlm_slm_for_amc.html"
 out.write_text(head + slides + tail, encoding="utf-8")

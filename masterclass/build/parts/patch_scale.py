@@ -511,7 +511,7 @@ G = r'''<!-- SCALE-BEGIN G -->
 '''
 
 m1, m2 = "<!-- HOW 1: LLM -->", "<!-- HOW 2: VLM -->"
-m3 = "<!-- 17 WHERE VALUE LANDS -->"
+m3 = "<!-- 19 DIVIDER -->"
 assert s.count(m3) == 1
 assert s.count(m1) == 1 and s.count(m2) == 1
 s = s.replace(m1, A + m1).replace(m2, B + C + D + E + F + m2).replace(m3, G + m3)
